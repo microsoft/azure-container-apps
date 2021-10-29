@@ -1,14 +1,11 @@
-# Project
+# Azure Container Apps
 
-> This repo has been populated by an initial template to help get you started. Please
-> make sure to update the content to build a great experience for community-building.
 
-As the maintainer of this project, please make a few updates:
+Azure Container Apps is a serverless hosting service for containerized applications and microservices. Azure Container Apps enables executing application code packaged in any container and is unopinionated about runtime or programming model. Applications can scale in response to HTTP requests, events, or simply run as always-on background jobs.
 
-- Improving this README.MD file to provide a great experience
-- Updating SUPPORT.MD with content about this project's support experience
-- Understanding the security reporting process in SECURITY.MD
-- Remove this section from the README
+Azure Container Apps is built on the foundation of powerful open-source technology in the Kubernetes ecosystem and abstracts the overhead of infrastructure management and orchestration. Azure Container Apps is a great choice for microservices, APIs, event processing, long running background jobs, and more
+
+> Please see https://aka.ms/containerapps for a product overview and please see https://aka.ms/containerapps/docs for the Azure Container Apps documentation.
 
 ## Contributing
 
