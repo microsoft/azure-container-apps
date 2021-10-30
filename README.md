@@ -7,6 +7,14 @@ Azure Container Apps is built on the foundation of powerful open-source technolo
 
 > Please see https://aka.ms/containerapps for a product overview and please see https://aka.ms/containerapps/docs for the Azure Container Apps documentation.
 
+## Frequently Asked Questions
+
+Please visit the [FAQs wiki page](https://github.com/microsoft/azure-container-apps/wiki/FAQs).
+
+## Known issues for public preview
+
+Please review the [known issues wiki page](https://github.com/microsoft/azure-container-apps/wiki/Known-Issues-for-public-preview) before reporting new issues.
+
 ## Contributing
 
 This project welcomes contributions and suggestions.  Most contributions require you to agree to a
