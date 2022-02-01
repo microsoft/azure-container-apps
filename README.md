@@ -21,7 +21,7 @@ Reach out with any questions you may have and we'll make sure to answer then as 
 
 | Platform  | Link        |
 |:----------|:------------|
-| 💬 Instant Message Chat (preferred) | https://aka.ms/containerapps-discord
+| 💬 Instant Message Chat (preferred) | [![Discord Banner](https://discord.com/api/guilds/938116342538706975/widget.png?style=banner2)](https://aka.ms/containerapps-discord)
 | 📧 Mailing List | https://groups.google.com/g/azure-container-apps
 | 🐤 Twitter | [@AzContainerApp](https://twitter.com/AzContainerApp)
 
