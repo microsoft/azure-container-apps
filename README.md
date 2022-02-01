@@ -15,6 +15,17 @@ Please visit the [FAQs wiki page](https://github.com/microsoft/azure-container-a
 
 Please review the [known issues wiki page](https://github.com/microsoft/azure-container-apps/wiki/Known-Issues-for-public-preview) before reporting new issues.
 
+### Contact Us
+
+Reach out with any questions you may have and we'll make sure to answer then as soon as possible!
+
+| Platform  | Link        |
+|:----------|:------------|
+| 💬 Instant Message Chat (preferred) | [![Discord Banner](https://discord.com/api/guilds/938116342538706975/widget.png?style=banner2)](https://aka.ms/containerapps-discord)
+| 📧 Mailing List | https://groups.google.com/g/azure-container-apps
+| 🐤 Twitter | [@AzContainerApp](https://twitter.com/AzContainerApp)
+
+
 ## Contributing
 
 This project welcomes contributions and suggestions.  Most contributions require you to agree to a
