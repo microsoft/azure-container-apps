@@ -26,7 +26,7 @@ A clear and concise description of the observed issue.
 
 **Actual behavior** [What actually happened.]
 
-**Screenshots**
+**Screenshots**         
 If applicable, add screenshots to help explain your problem.
 
 ### Additional context
