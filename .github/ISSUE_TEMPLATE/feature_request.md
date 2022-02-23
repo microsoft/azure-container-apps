@@ -1,6 +1,6 @@
 ---
 name: Feature request
-about: Suggest an enhancement Azure Container Apps
+about: Suggest an enhancement for Azure Container Apps
 title: 'Feature Request: '
 labels: enhancement
 assignees: ''
