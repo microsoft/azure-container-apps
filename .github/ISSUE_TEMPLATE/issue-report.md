@@ -15,10 +15,10 @@ assignees: ''
 - [ ] documentation issue or request
 - [ ] regression (a behavior that used to work and stopped in a new release)
 
-### Issue Description
+### Issue description
 A clear and concise description of the observed issue.
 
-### Steps to reproduce
+### Steps to reproduct
 1. ..
 2. ..
 
