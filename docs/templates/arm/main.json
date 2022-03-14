@@ -1,0 +1,89 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "environmentName": {
+            "type": "string"
+        },
+        "appName": {
+            "type": "string"
+        },
+        "location": {
+            "type": "string"
+        }
+    },
+    "variables": {
+        "logAnalyticsWorkspaceName": "[concat('logs-', parameters('environmentName'))]",
+        "appInsightsName": "[concat('appins-', parameters('environmentName'))]"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.OperationalInsights/workspaces",
+            "apiVersion": "2020-03-01-preview",
+            "name": "[variables('logAnalyticsWorkspaceName')]",
+            "location": "[parameters('location')]",
+            "properties":{
+                "retentionInDays": 30,
+                "features":{
+                    "searchVersion": 1
+                },
+                "sku": {
+                    "name": "PerGB2018"
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Insights/components",
+            "apiVersion": "2020-02-02",
+            "name": "[variables('appInsightsName')]",
+            "location": "[parameters('location')]",
+            "kind": "web",
+            "dependsOn": [ "[resourceId('Microsoft.OperationalInsights/workspaces/', variables('logAnalyticsWorkspaceName'))]" ],
+            "properties": {
+                "Application_Type": "web",
+                "WorkspaceResourceId": "[resourceId('Microsoft.OperationalInsights/workspaces/', variables('logAnalyticsWorkspaceName'))]"
+            }
+        },
+        {
+            "type": "Microsoft.App/managedEnvironments",
+            "apiVersion": "2022-01-01-preview",
+            "name": "[parameters('environmentName')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [ "[resourceId('Microsoft.Insights/components/', variables('appInsightsName'))]" ],
+            "properties": {
+                "daprAIInstrumentationKey": "[reference(resourceId('Microsoft.Insights/components/', variables('appInsightsName')), '2020-02-02').InstrumentationKey]",
+                "appLogsConfiguration":{
+                    "destination": "log-analytics",
+                    "logAnalyticsConfiguration": {
+                        "customerId": "[reference(resourceId('Microsoft.OperationalInsights/workspaces/', variables('logAnalyticsWorkspaceName')), '2020-03-01-preview').customerId]",
+                        "sharedKey": "[listKeys(resourceId('Microsoft.OperationalInsights/workspaces/', variables('logAnalyticsWorkspaceName')), '2020-03-01-preview').primarySharedKey]"
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.App/containerApps",
+            "apiVersion": "2022-01-01-preview",
+            "name": "[parameters('appName')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [ "[resourceId('Microsoft.App/managedEnvironments/', parameters('environmentName'))]" ],
+            "properties": {
+                "managedEnvironmentId": "[resourceId('Microsoft.App/managedEnvironments/', parameters('environmentName'))]",
+                "configuration": {
+                    "ingress": {
+                        "targetPort": 80,
+                        "external": true
+                    }
+                },
+                "template":{
+                    "containers":[
+                        {
+                            "image": "mcr.microsoft.com/azuredocs/containerapps-helloworld:latest",
+                            "name": "simple-hello-world-container"
+                        }
+                    ]
+                }
+            }
+        }
+    ]
+}
