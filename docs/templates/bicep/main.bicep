@@ -42,6 +42,34 @@ resource environment 'Microsoft.App/managedEnvironments@2022-01-01-preview' = {
       }
     }
   }
+  resource daprComponent 'daprComponents@2022-01-01-preview' = {
+    name: 'mycomponent'
+    properties: {
+      componentType: 'state.azure.cosmosdb'
+      version: 'v3'
+      ignoreErrors: true
+      initTimeout: '5s'
+      secrets: [
+        {
+          name: 'masterkeysecret'
+          value: 'secretvalue'
+        }
+      ]
+      metadata: [
+        {
+          name: 'masterkey'
+          secretRef: 'masterkeysecret'
+        }
+        {
+          name: 'foo'
+          value: 'bar'
+        }
+      ]
+      scopes:[
+        appName
+      ]
+    }
+  }
 }
 
 // https://github.com/Azure/azure-rest-api-specs/blob/Microsoft.App-2022-01-01-preview/specification/app/resource-manager/Microsoft.App/preview/2022-01-01-preview/ContainerApps.json
@@ -54,6 +82,12 @@ resource containerApp 'Microsoft.App/containerApps@2022-01-01-preview' ={
       ingress: {
         targetPort: 80
         external: true
+      }
+      dapr: {
+        enabled: true
+        appId: appName
+        appProtocol: 'http'
+        appPort: 80
       }
     }
     template: {
