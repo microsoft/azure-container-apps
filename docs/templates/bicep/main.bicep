@@ -66,7 +66,7 @@ resource environment 'Microsoft.App/managedEnvironments@2022-01-01-preview' = {
         }
       ]
       scopes:[
-        appName
+        appId
       ]
     }
   }
