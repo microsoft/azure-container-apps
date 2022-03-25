@@ -46,7 +46,7 @@ resource environment 'Microsoft.App/managedEnvironments@2022-01-01-preview' = {
     name: 'mycomponent'
     properties: {
       componentType: 'state.azure.cosmosdb'
-      version: 'v3'
+      version: 'v1'
       ignoreErrors: true
       initTimeout: '5s'
       secrets: [
