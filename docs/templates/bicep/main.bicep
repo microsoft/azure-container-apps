@@ -1,5 +1,6 @@
 param environmentName string
 param appName string
+param appId string
 param logAnalyticsWorkspaceName string = 'logs-${environmentName}'
 param appInsightsName string = 'appins-${environmentName}'
 param location string = resourceGroup().location
@@ -85,7 +86,7 @@ resource containerApp 'Microsoft.App/containerApps@2022-01-01-preview' ={
       }
       dapr: {
         enabled: true
-        appId: appName
+        appId: appId
         appProtocol: 'http'
         appPort: 80
       }
