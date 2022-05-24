@@ -1,8 +1,8 @@
 ---
-name: 'Issue report'
+name: Issue report
 about: Create a report to help us improve Azure Container Apps
 title: ''
-labels: 'issue'
+labels: ''
 assignees: ''
 
 ---

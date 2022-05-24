@@ -1,5 +1,6 @@
 param environmentName string
 param appName string
+param appId string
 param logAnalyticsWorkspaceName string = 'logs-${environmentName}'
 param appInsightsName string = 'appins-${environmentName}'
 param location string = resourceGroup().location
@@ -42,6 +43,34 @@ resource environment 'Microsoft.App/managedEnvironments@2022-01-01-preview' = {
       }
     }
   }
+  resource daprComponent 'daprComponents@2022-01-01-preview' = {
+    name: 'mycomponent'
+    properties: {
+      componentType: 'state.azure.cosmosdb'
+      version: 'v1'
+      ignoreErrors: true
+      initTimeout: '5s'
+      secrets: [
+        {
+          name: 'masterkeysecret'
+          value: 'secretvalue'
+        }
+      ]
+      metadata: [
+        {
+          name: 'masterkey'
+          secretRef: 'masterkeysecret'
+        }
+        {
+          name: 'foo'
+          value: 'bar'
+        }
+      ]
+      scopes:[
+        appId
+      ]
+    }
+  }
 }
 
 // https://github.com/Azure/azure-rest-api-specs/blob/Microsoft.App-2022-01-01-preview/specification/app/resource-manager/Microsoft.App/preview/2022-01-01-preview/ContainerApps.json
@@ -54,6 +83,12 @@ resource containerApp 'Microsoft.App/containerApps@2022-01-01-preview' ={
       ingress: {
         targetPort: 80
         external: true
+      }
+      dapr: {
+        enabled: true
+        appId: appId
+        appProtocol: 'http'
+        appPort: 80
       }
     }
     template: {
