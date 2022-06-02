@@ -29,8 +29,8 @@ resource appInsights 'Microsoft.Insights/components@2020-02-02' = {
   }
 }
 
-// https://github.com/Azure/azure-rest-api-specs/blob/Microsoft.App-2022-01-01-preview/specification/app/resource-manager/Microsoft.App/preview/2022-01-01-preview/ManagedEnvironments.json
-resource environment 'Microsoft.App/managedEnvironments@2022-01-01-preview' = {
+// https://github.com/Azure/azure-rest-api-specs/blob/Microsoft.App-2022-03-01/specification/app/resource-manager/Microsoft.App/preview/2022-01-01-preview/ManagedEnvironments.json
+resource environment 'Microsoft.App/managedEnvironments@2022-03-01' = {
   name: environmentName
   location: location
   properties: {
@@ -43,7 +43,7 @@ resource environment 'Microsoft.App/managedEnvironments@2022-01-01-preview' = {
       }
     }
   }
-  resource daprComponent 'daprComponents@2022-01-01-preview' = {
+  resource daprComponent 'daprComponents@2022-03-01' = {
     name: 'mycomponent'
     properties: {
       componentType: 'state.azure.cosmosdb'
@@ -74,7 +74,7 @@ resource environment 'Microsoft.App/managedEnvironments@2022-01-01-preview' = {
 }
 
 // https://github.com/Azure/azure-rest-api-specs/blob/Microsoft.App-2022-01-01-preview/specification/app/resource-manager/Microsoft.App/preview/2022-01-01-preview/ContainerApps.json
-resource containerApp 'Microsoft.App/containerApps@2022-01-01-preview' ={
+resource containerApp 'Microsoft.App/containerApps@2022-03-01' ={
   name: appName
   location: location
   properties:{

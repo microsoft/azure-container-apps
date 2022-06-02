@@ -46,7 +46,7 @@
         },
         {
             "type": "Microsoft.App/managedEnvironments",
-            "apiVersion": "2022-01-01-preview",
+            "apiVersion": "2022-03-01",
             "name": "[parameters('environmentName')]",
             "location": "[parameters('location')]",
             "dependsOn": [ "[resourceId('Microsoft.Insights/components/', variables('appInsightsName'))]" ],
@@ -63,7 +63,7 @@
         },
         {
             "type": "Microsoft.App/containerApps",
-            "apiVersion": "2022-01-01-preview",
+            "apiVersion": "2022-03-01",
             "name": "[parameters('appName')]",
             "location": "[parameters('location')]",
             "dependsOn": [ "[resourceId('Microsoft.App/managedEnvironments/', parameters('environmentName'))]" ],
