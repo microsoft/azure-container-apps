@@ -18,7 +18,7 @@ assignees: ''
 ### Issue description
 A clear and concise description of the observed issue.
 
-### Steps to reproduct
+### Steps to reproduce
 1. ..
 2. ..
 
