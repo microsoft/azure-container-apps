@@ -1,0 +1,51 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "cappDedicatedName": {
+      "value": "my-app-dedicated"
+    },
+    "cappDedicatedContainerImage": {
+      "value": "mcr.microsoft.com/azuredocs/containerapps-helloworld:latest"
+    },
+    "cappDedicatedCpu": {
+      "value": "1.4"
+    },
+    "cappDedicatedMemory": {
+      "value": "1.7"
+    },
+    "cappConsumptionName": {
+      "value": "my-app-consumption"
+    },
+    "cappConsumptionContainerImage": {
+      "value": "mcr.microsoft.com/azuredocs/containerapps-helloworld:latest"
+    },
+    "cappConsumptionCpu": {
+      "value": "0.5"
+    },
+    "cappConsumptionMemory": {
+      "value": "1"
+    },
+    "logAnalyticsWorkspaceName": {
+      "value": "logsAppBicep"
+    },
+    "managedEnvironmentName": {
+      "value": "workloadProfilesManagedEnv"
+    },
+    "location": {
+      "value": "eastus"
+    },
+    "workloadProfileType": {
+      "value": "D4"
+    },
+    "workloadProfileName": {
+      "value": "myDedicatedWP"
+    },
+    "workloadProfileMinimumCount": {
+      "value": 1
+    },
+    "workloadProfileMaximumCount": {
+      "value": 3
+    }
+  }
+}
