@@ -101,6 +101,14 @@ configuration:
       then:
       - addLabel:
           label: enhancement
+      description:
+    - if:
+      - payloadType: Issues
+      - isAction:
+          action: Opened
+      then:
+      - addLabel:
+          label: 'Needs: Triage :mag:'
       description: 
 onFailure: 
 onSuccess: 
