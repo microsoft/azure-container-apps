@@ -20,7 +20,7 @@ configuration:
       - hasLabel:
           label: 'Status: No Recent Activity'
       - noActivitySince:
-          days: 3
+          days: 7
       actions:
       - closeIssue
     - description: 
