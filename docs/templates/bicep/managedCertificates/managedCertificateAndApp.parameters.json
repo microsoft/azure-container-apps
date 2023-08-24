@@ -1,0 +1,27 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "cappName": {
+        "value": "my-app-name"
+      },
+      "location": {
+        "value": "East US"
+      },
+      "managedEnvironmentName": {
+        "value": "my-env"
+      },
+      "customDomainName": {
+        "value": "www.some-domain.com"
+      },
+      "cappContainerImage": {
+        "value": "mcr.microsoft.com/azuredocs/containerapps-helloworld:latest"
+      },
+      "cappConsumptionCpu": {
+        "value": "0.5"
+      },
+      "cappConsumptionMemory": {
+        "value": "1"
+    }
+  }
+}
