@@ -38,7 +38,7 @@ az deployment group create --resource-group $RESOURCE_GROUP --template-file main
 As the last step you have to approve the private endpoint from AFD into ACA. This can be done by following first [listing your private endpoint](https://learn.microsoft.com/en-us/azure/container-apps/how-to-integrate-with-azure-front-door#list-private-endpoint-connections) connections, and then [approving them](https://learn.microsoft.com/en-us/azure/container-apps/how-to-integrate-with-azure-front-door#approve-the-private-endpoint-connection).
 
 ```bash
-export ENVIRONMENT_NAME=mycontainerappenv # assuming names are kept as they are in the Bicep file
+export ENVIRONMENT_NAME=mycontainerappenv # Assuming names are kept as they are in the Bicep file
 
 
 az network private-endpoint-connection list \
@@ -46,7 +46,7 @@ az network private-endpoint-connection list \
     --resource-group $RESOURCE_GROUP \
     --type Microsoft.App/managedEnvironments
 
-# find the ACA side if the private endpoint, the one with managedEnvironments and privateEndpointConnections in the id
+# Record the private endpoint connection resource ID from the response. Don't confuse this with the private endpoint ID. Replace the <PLACEHOLDER> with the private endpoint connection resource ID.
 az network private-endpoint-connection approve --id <PRIVATE_ENDPOINT_CONNECTION_RESOURCE_ID>
 ```
 
