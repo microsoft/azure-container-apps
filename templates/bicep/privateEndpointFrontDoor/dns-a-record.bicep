@@ -1,4 +1,4 @@
-param privateDnsZoneName string 
+param privateDnsZoneName string
 param privateEndpointName string
 param containerAppEnv object
 
@@ -17,7 +17,6 @@ resource existingPrivateEndpoint 'Microsoft.Network/privateEndpoints@2021-08-01'
 resource dnsRecordSet 'Microsoft.Network/privateDnsZones/A@2024-06-01' = {
   parent: existingPrivateZone
   name: containerAppEnv.properties.defaultDomain
-  location: 'global'
   properties: {
     ttl: 3600
     aRecords: [
@@ -29,4 +28,3 @@ resource dnsRecordSet 'Microsoft.Network/privateDnsZones/A@2024-06-01' = {
   }
 
 }
-
