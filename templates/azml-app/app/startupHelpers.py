@@ -85,12 +85,6 @@ def set_score_file_generator_vars(sas_uri, model_dir_name, generator: ScoreFileG
             raise ValueError("AZURE_ML_PRETRAINED_MODEL_CLASS_NAME environment variable not set")
         generator.pipeline_class_name = os.getenv("AZURE_ML_PIPELINE_INSTANCE_TYPE")
         generator.pipeline_task_name = os.getenv("AZURE_ML_PIPELINE_TASK_NAME")
-        return 
-    elif generator.score_file_type.lower() == "custom":
-        # Custom model type detection logic
-        print("Custom model type detected. Attempting to load as ONNX model...")
-        for blob in blob_list_xml.findall(".//Blob"):
-            blob_name = blob.find("Name").text
-            if blob_name.endswith(".onnx") and generator.model_asset_path is None:
-                # remove the file name and only keep the path
-                generator.model_asset_path = blob_name
+        return
+    else:
+        raise ValueError(f"Invalid model type {generator.score_file_type}.")

@@ -22,7 +22,7 @@ async def run(request, pipe, tokenizer, model):
         prompt = body.get("prompt", "")
         output = pipe(prompt, max_new_tokens=100)
         result = output[0]["generated_text"]
-        return result
+        return {"response": result}
     if model is not None and tokenizer is not None:
         body = await request.json()
         prompt = body.get("prompt", "")
@@ -41,28 +41,6 @@ PIPELINE_LOADING_TEMPLATE = """print("Constructing pipeline...")
 KNOWN_TASK_PIPELINE_MAP = {
     "chat-completion": "TextGenerationPipeline",
 }
-SCORE_FILE_TEMPLATE_ONNX = """from fastapi import Request
-import onnxruntime
-import sys
-import os
-
-def init():
-    session = onnxruntime.InferenceSession("ONNX_PATH", providers=["CUDAExecutionProvider"])
-    return session, None, None
-
-
-async def run(request, session, tokenizer_placeholder=None, model_placeholder=None):
-    if session is None:
-        sys.stderr.write("Error: Session not loaded yet")
-        sys.stderr.flush()
-        return {"error": "Session not loaded yet"}
-
-    body = await request.json()
-    prompt = body.get("prompt", "")
-    output = session.run_async(None, {session.get_inputs()[0].name, prompt})
-    result = output[0]
-    return {result}
-"""
 
 
 class ScoreFileGenerator:
@@ -93,10 +71,8 @@ class ScoreFileGenerator:
         print("Generating score file...")
         if self.score_file_type.lower() == "mlflow":
             return self.generate_score_file_mlflow()
-        elif self.score_file_type.lower() == "custom":
-            return self.generate_score_file_onnx()
         else:
-            raise ValueError("Invalid model type.")
+            raise ValueError(f"Invalid model type {self.score_file_type}.")
 
     def generate_score_file_mlflow(self):
         pipeline_import_template = ""
@@ -127,17 +103,6 @@ class ScoreFileGenerator:
             .replace("MODEL_TYPE", self.model_loader_class_name) \
             .replace("TOKENIZER_PATH", f"/.azml_model_cache/{self.model_dir_name}/{self.tokenizer_path}") \
             .replace("SAFETENSOR_PATH", f"/.azml_model_cache/{self.model_dir_name}/{self.model_asset_path}")
-        try:
-            with open("/app/app/score.py", "w") as f:
-                f.write(template)
-            print("Score file generated successfully.")
-        except Exception as e:
-            raise RuntimeError("Error generating score file") from e
-
-    def generate_score_file_onnx(self):
-        template = \
-            SCORE_FILE_TEMPLATE_ONNX \
-            .replace("ONNX_PATH", f"/.azml_model_cache/{self.model_dir_name}/{self.model_asset_path}")
         try:
             with open("/app/app/score.py", "w") as f:
                 f.write(template)
