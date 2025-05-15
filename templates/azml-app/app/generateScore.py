@@ -5,6 +5,8 @@ from transformers import TOKENIZER_TYPE, MODEL_TYPE
 IMPORT_PIPELINE_TYPE
 import os
 
+from app.inferenceClasses import InferenceRequest, InferenceResponse
+
 def init():
     pipe = None
     model = None
@@ -17,22 +19,19 @@ def init():
     return pipe, model, tokenizer
 
 async def run(request, pipe, tokenizer, model):
+    prompt = request.prompt
     if pipe is not None:
-        body = await request.json()
-        prompt = body.get("prompt", "")
         output = pipe(prompt, max_new_tokens=100)
         result = output[0]["generated_text"]
-        return {"response": result}
+        return InferenceResponse(response=result)
     if model is not None and tokenizer is not None:
-        body = await request.json()
-        prompt = body.get("prompt", "")
         inputs = tokenizer(prompt, return_tensors="pt")
         output = model.generate(**inputs, max_new_tokens=100)
         result = tokenizer.decode(output[0], skip_special_tokens=True)
-        return {"response": result}
+        return InferenceResponse(response=result)
     else:
         print("Error: Model not loaded yet")
-        return {"error": "Model not loaded yet"}
+        return InferenceResponse(response="Model not loaded yet")
 
 """
 IMPORT_PIPELINE_TYPE = """from transformers import PIPELINE_TYPE"""
@@ -50,9 +49,9 @@ class ScoreFileGenerator:
         """
             Generates a score file for the model.
             :param model_dir_name: The name of the model directory.
-            :param pipeline_type_name: The type of the pipeline.
-            :param tokenizer_type_name: The type of the tokenizer.
-            :param model_loader_type_name: The type of the model loader.
+            :param pipeline_class_name: The type of the pipeline.
+            :param tokenizer_class_name: The type of the tokenizer.
+            :param model_loader_class_name: The type of the model loader.
             :param pipeline_task_name: The task name for the pipeline.
             :param tokenizer_path: The path to the tokenizer.
             :param model_asset_path: The path to the safetensor files.
@@ -69,7 +68,7 @@ class ScoreFileGenerator:
 
     def generate(self):
         print("Generating score file...")
-        if self.score_file_type.lower() == "mlflow":
+        if self.score_file_type and self.score_file_type.lower() == "mlflow":
             return self.generate_score_file_mlflow()
         else:
             raise ValueError(f"Invalid model type {self.score_file_type}.")

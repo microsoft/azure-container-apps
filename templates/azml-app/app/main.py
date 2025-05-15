@@ -1,7 +1,8 @@
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, Response, HTTPException
 import os
 import subprocess
 
+from app.inferenceClasses import InferenceRequest, InferenceResponse
 from app.generateScore import ScoreFileGenerator
 from app.startupHelpers import get_model_details, set_score_file_generator_vars
 
@@ -12,10 +13,12 @@ tokenizer = None
 model = None
 pipe = None
 
+
 # Serve out get traffic on root path ASAP, do not wait on model loading
 @app.get("/")
 def read_root():
     return {"message": "Hello from FastAPI!"}
+
 
 @app.get("/readiness", status_code=200)
 def readiness():
@@ -23,14 +26,16 @@ def readiness():
     Readiness probe for the application.
     """
     if tokenizer is None or model is None:
-        return {"status": "tokenizer or model hasn't been loaded yet"}, 503
-    return {"status": "ready"}, 200
+        raise HTTPException(status_code=503, detail="tokenizer or model hasn't been loaded yet")
+    return {"status": "ready"}
 
-@app.post("/generate")
-async def generate(request: Request):
+
+@app.post("/generate", summary="Generate a response from a prompt")
+async def generate(request: InferenceRequest) -> InferenceResponse:
     import app.score as score
     res = await score.run(request, pipe, tokenizer, model)
     return res
+
 
 # We expect model data to be loaded on a volume mounted at /.azml_model_cache
 @app.on_event("startup")
@@ -54,7 +59,7 @@ async def load_model():
                                   generator)
     generator.generate()
     if azcopy_process.returncode != 0:
-        raise RuntimeError(f"azcopy failed with return code {azcopy_process.returncode}")
+        raise RuntimeError(f"azcopy failed with return code {azcopy_process.returncode}. Stderr: {azcopy_stderr.decode()}")
     from app.score import init
     pipe, model, tokenizer = init()
     print("Model loaded. Ready to take inferencing requests under path /generate")

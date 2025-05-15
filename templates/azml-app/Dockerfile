@@ -2,24 +2,23 @@ FROM mcr.microsoft.com/azureml/minimal-py312-inference:latest
 
 USER root
 
-RUN apt-get update && apt-get install -y --no-install-recommends curl
-
-# Copy azcopy installation script and run it.
 COPY azcopy-installer.sh /azcopy-installer.sh
-RUN chmod +x /azcopy-installer.sh
-RUN /azcopy-installer.sh
+COPY entrypoint.sh /entrypoint.sh
 
-# Set working directory
+# Copy FastAPI app code and requirements file
 WORKDIR /app
-
-RUN mkdir /.azml_model_cache
-
-# Copy FastAPI app code
 COPY app/ ./app/
 COPY requirements.txt .
 
-COPY entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends curl && \
+    chmod +x /azcopy-installer.sh && \
+    chmod +x /entrypoint.sh && \
+    /azcopy-installer.sh && \
+    mkdir /.azml_model_cache
+
+# Set working directory
+
 
 # Run entrypoint script to install dependencies and start the server
 ENTRYPOINT [ "/entrypoint.sh" ]

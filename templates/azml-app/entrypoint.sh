@@ -1,6 +1,8 @@
 #!/bin/bash
 
-echo "Azure Container App AI model server integration starting model server for model id: $AZURE_ML_MODEL_ID"
+set -e
+
+echo "Azure Container App AI Foundry model integration starting model server for model id: $AZURE_ML_MODEL_ID"
 
 echo "Starting pip install for requirements.txt..."
 pip install --no-cache-dir -r /app/requirements.txt --quiet
