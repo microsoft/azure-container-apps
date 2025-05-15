@@ -22,6 +22,8 @@ This is the container template for deploying and hosting a Foundry Model on Azur
 |   |   # Dynamically generate a score.py file
 |   ├── startupHelpers.py
 |   |   # Helper functions that get invoked during server startup.
+|   ├── inferenceClasses.py
+|   |   # Request and response classes definition for inference endpoint.
 |   └── README.md
 |       # Documentation of the Python frontend app.
 ├── requirements.txt
