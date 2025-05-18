@@ -3,12 +3,12 @@ This is the container template for deploying and hosting a Foundry Model on Azur
 
 ## List of Blessed Models
 [`azureml` Registry](https://ml.azure.com/registries/azureml/models):
-- Phi-4
-- Phi-4-reasoning
-- Phi-4-mini-reasoning
-- Phi-3.5-mini-instruct
-- GPT2-medium
-- Mistralai-mistral-7b-v01
+- `Phi-4`
+- `Phi-4-reasoning`
+- `Phi-4-mini-reasoning`
+- `Phi-3.5-mini-instruct`
+- `GPT2-medium`
+- `Mistralai-mistral-7b-v01`
 
 Deploy the blessed models to a [serverless GPU location](https://aka.ms/aca/serverless-gpu-regions) using our provided MCR image by running the following command:
 ```
