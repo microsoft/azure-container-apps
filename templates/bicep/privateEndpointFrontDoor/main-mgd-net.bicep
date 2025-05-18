@@ -42,9 +42,6 @@ Private Endpoint
 Resource Type: Microsoft.Network/privateEndpoints
 Purpose: Creates a private endpoint to securely connect to the container app or other Azure services.
 
-
-
-
 Azure Container Apps Environment
 Resource Type: Microsoft.App/managedEnvironments
 Purpose: Creates an environment for hosting Azure Container Apps.
@@ -53,9 +50,6 @@ Container App
 Resource Type: Microsoft.App/containerApps
 Purpose: Deploys a containerized application within the Azure Container Apps environment.
 
-
-
-
 Private DNS Zone
 Resource Type: Microsoft.Network/privateDnsZones
 Purpose: Creates a private DNS zone for resolving private endpoint DNS names.
@@ -63,10 +57,6 @@ Purpose: Creates a private DNS zone for resolving private endpoint DNS names.
 Private DNS Zone Group
 Resource Type: Microsoft.Network/privateEndpoints/privateDnsZoneGroups
 Purpose: Associates the private DNS zone with the private endpoint.
-
-
-
-
 
 Azure Front Door Profile
 Resource Type: Microsoft.Cdn/profiles
@@ -80,9 +70,6 @@ Azure Front Door Backend Pool
 Resource Type: Microsoft.Cdn/profiles/backendPools
 Purpose: Configures a backend pool for the Azure Front Door to route traffic to the container app.
 */
-
-
-
 
 // create a vnet and suvbnet for pe termination only for ACA we use a managed network
 // CLI Details can be found here:
@@ -101,8 +88,8 @@ resource vnet 'Microsoft.Network/virtualNetworks@2024-03-01' = {
       {
         name: '${subnetName}-pe'
         properties: {
-          addressPrefixes: [ '10.0.1.0/24' ]
-          delegations: [ ]
+          addressPrefixes: ['10.0.1.0/24']
+          delegations: []
         }
       }
     ]
@@ -132,15 +119,7 @@ resource privateEndpoint 'Microsoft.Network/privateEndpoints@2021-08-01' = {
       }
     ]
   }
-  dependsOn: [
-    vnet, containerAppEnv
-  ]
 }
-
-
-
-
-
 
 // ACA Environment and application with public access disabled
 resource containerAppEnv 'Microsoft.App/managedEnvironments@2024-02-02-preview' = {
@@ -151,14 +130,12 @@ resource containerAppEnv 'Microsoft.App/managedEnvironments@2024-02-02-preview' 
 
     workloadProfiles: [
       {
-          workloadProfileType: 'Consumption'
-          name: 'Consumption'
-      } 
+        workloadProfileType: 'Consumption'
+        name: 'Consumption'
+      }
     ]
   }
 }
-
-
 
 resource containerApp 'Microsoft.App/containerApps@2024-02-02-preview' = {
   name: containerAppName
@@ -179,6 +156,7 @@ resource containerApp 'Microsoft.App/containerApps@2024-02-02-preview' = {
           name: containerAppName
           image: image
           resources: {
+            #disable-next-line BCP036
             cpu: '0.5'
             memory: '1Gi'
           }
@@ -187,9 +165,6 @@ resource containerApp 'Microsoft.App/containerApps@2024-02-02-preview' = {
     }
   }
 }
-
-
-
 
 // Private DNS resources
 resource privateDnsZone 'Microsoft.Network/privateDnsZones@2024-06-01' = {
@@ -200,7 +175,6 @@ resource privateDnsZone 'Microsoft.Network/privateDnsZones@2024-06-01' = {
     vnet
   ]
 }
-
 
 resource acaPrivateDnsZoneVirtualNetworkLink 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2024-06-01' = {
   parent: privateDnsZone
@@ -214,8 +188,6 @@ resource acaPrivateDnsZoneVirtualNetworkLink 'Microsoft.Network/privateDnsZones/
   }
 }
 
-
-
 // Front Door Resources
 // CLI Details can be found here:
 // https://learn.microsoft.com/en-us/azure/container-apps/how-to-integrate-with-azure-front-door
@@ -228,7 +200,6 @@ resource frontDoorProfile 'Microsoft.Cdn/profiles@2021-06-01' = {
   }
 }
 
-
 resource frontDoorEndpoint 'Microsoft.Cdn/profiles/afdEndpoints@2021-06-01' = {
   name: frontDoorEndpointName
   parent: frontDoorProfile
@@ -237,7 +208,6 @@ resource frontDoorEndpoint 'Microsoft.Cdn/profiles/afdEndpoints@2021-06-01' = {
     enabledState: 'Enabled'
   }
 }
-
 
 resource frontDoorOriginGroup 'Microsoft.Cdn/profiles/originGroups@2021-06-01' = {
   name: frontDoorOriginGroupName
@@ -251,7 +221,6 @@ resource frontDoorOriginGroup 'Microsoft.Cdn/profiles/originGroups@2021-06-01' =
     healthProbeSettings: null
   }
 }
-
 
 resource frontDoorOrigin 'Microsoft.Cdn/profiles/originGroups/origins@2024-09-01' = {
   name: frontDoorOriginName
@@ -272,7 +241,6 @@ resource frontDoorOrigin 'Microsoft.Cdn/profiles/originGroups/origins@2024-09-01
     }
   }
 }
-
 
 resource frontDoorRoute 'Microsoft.Cdn/profiles/afdEndpoints/routes@2021-06-01' = {
   name: frontDoorRouteName
@@ -297,7 +265,6 @@ resource frontDoorRoute 'Microsoft.Cdn/profiles/afdEndpoints/routes@2021-06-01' 
   }
 }
 
-
 module dnsARecord 'dns-a-record.bicep' = {
   name: 'dnsARecordModule'
   params: {
@@ -305,100 +272,15 @@ module dnsARecord 'dns-a-record.bicep' = {
     privateEndpointName: privateEndpoint.name
     containerAppEnv: containerAppEnv
   }
-  dependsOn: [
-    containerAppEnv, privateEndpoint
-  ]
 }
 
-
-/*
-// use privateEndpoint.customDnsConfigs[0].ipAddresses[0] to get the private IP address
-// aca envs default domain containerAppEnv.properties.defaultDomain
-
-resource dnsRecordSet 'Microsoft.Network/privateDnsZones/A@2024-06-01' = {
-  parent: privateDnsZone
-  name: containerAppEnv.properties.defaultDomain
-  location: 'global'
-  properties: {
-    TTL: 3600
-    ARecords: [
-      {
-        // we use the private endpoint IP from the subnet for our private DNS A record below
-        ipv4Address: privateEndpoint.customDnsConfigs[0].ipAddresses[0]
-      }
-    ]
+module containerAppEnvPrivateEndpoints 'containerappenv-pe.bicep' = {
+  name: 'containerAppEnvPrivateEndpointsModule'
+  params: {
+    environmentName: containerAppEnv.name
   }
   dependsOn: [
-    containerAppEnv, privateEndpoint
+    frontDoorOrigin
+    privateEndpoint
   ]
 }
-
-
-
-resource nestedDeployment 'Microsoft.Resources/deployments@2024-08-01' = {
-  name: 'nestedDeployment'
-  properties: {
-    mode: 'Incremental'
-    templateLink: {
-        uri: 'file://dns-a-record.bicep'
-    }
-    parameters: {
-      //location: location
-      privateDnsZone: privateDnsZone
-      privateEndpoint: privateEndpoint
-    }
-  }
-}
-
-
-
-resource nestedDeployment 'Microsoft.Resources/deployments@2021-04-01' = {
-  name: 'nestedDeployment'
-  properties: {
-    mode: 'Incremental'
-    template: {
-      '$schema': 'https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#'
-      contentVersion:'1.0.0.0'
-      resources: [
-        {
-          type: 'Microsoft.Network/privateDnsZones/A'
-          apiVersion: '2024-06-01'
-          name: '[format("{0}/{1}", parameters("privateDnsZoneName"), parameters("containerAppEnvDefaultDomain"))]'
-          location: 'global'
-          properties: {
-            TTL: 3600
-            ARecords: [
-              {
-                ipv4Address: '[parameters("privateEndpointIpAddress")]'
-              }
-            ]
-          }
-        }
-      ]
-      parameters: {
-        privateDnsZoneName: {
-          type: 'string'
-        }
-        containerAppEnvDefaultDomain: {
-          type: 'string'
-        }
-        privateEndpointIpAddress: {
-          type: 'string'
-        }
-    }
-    
-  }
-  parameters: {
-      privateDnsZoneName: {
-        value: privateDnsZone.name
-      }
-      containerAppEnvDefaultDomain: {
-        value: containerAppEnv.properties.defaultDomain
-      }
-      privateEndpointIpAddress: {
-        value: privateEndpoint.properties.customDnsConfigs[0].ipAddresses[0]
-      }
-    }
- }
-}
-*/
