@@ -1,8 +1,16 @@
-# Template to Deploy Azure AI Foundry Models to Azure Container Apps
+# Template to deploy Azure AI Foundry Models to Azure Container Apps
 This is the container template for deploying and hosting a Foundry Model on Azure Container Apps. This is also the source code of our MCR image that hosts our models.
 
-## List of Blessed Models
-[`azureml` Registry](https://ml.azure.com/registries/azureml/models):
+## Deploying models
+For models listed here, you can deploy them directly to Azure Container Apps serverless GPUs without needing to build your own image by using the below CLI command:
+
+```
+az containerapp up -n app-name -g resource-group-name -l gpu-location --environment your-env --model-registry azureml --model-name model-name --model-version version-number
+```
+
+For models not in this list, you will also need to specify the --image tag and follow additional steps in [Guidance to customization](https://github.com/microsoft/azure-container-apps/blob/d57bb0f924bc99234e3cbcde407af0f1508baf59/templates/azml-app/README.md#guidance-to-customization)
+
+[Models from `azureml` Registry](https://ml.azure.com/registries/azureml/models):
 - `Phi-4`
 - `Phi-4-reasoning`
 - `Phi-4-mini-reasoning`
@@ -10,29 +18,37 @@ This is the container template for deploying and hosting a Foundry Model on Azur
 - `GPT2-medium`
 - `Mistralai-mistral-7b-v01`
 
-Deploy the blessed models to a [serverless GPU location](https://aka.ms/aca/serverless-gpu-regions) using our provided MCR image by running the following command:
-```
-az containerapp up -n app-name -g resource-group-name -l gpu-location --environment your-env --model-registry azureml --model-name model-name --model-version version-number
-```
-You can then interact with your model by either visiting the /docs endpoint on your browser or sending POST request to /generate endpoint of your app.
+You can then interact with your model by either visiting the /docs endpoint for your deployed container app or sending a POST request to the /generate endpoint of your app.
 
-## Guidance to Customization
-### Deploying Models from `azureml` Model Registry
-You can also download this template and modify it to suit other Azure AI Foundry models in `azureml` model registry.
-Deploy the modified app to a [serverless GPU location](https://aka.ms/aca/serverless-gpu-regions) by building a docker image and pushing to a container registry and deploy to Azure Container Apps using
+## Guidance to customization
+
+### Deploying additional models from `azureml` Model Registry
+You can also download this template and modify it to deploy other Azure AI Foundry models in the `azureml` model registry.
+
+To do so, you will need to:
+
+1. Download this github template for the model image from the [Azure Container Apps repo](https://github.com/microsoft/azure-container-apps/tree/main/templates/azml-app).
+
+1. Modify the score.py file to match your model type. The scoring script (named *score.py*) defines how you interact with the model. The following example shows [how to use a custom score.py file](https://learn.microsoft.com/en-us/azure/machine-learning/how-to-deploy-online-endpoints?view=azureml-api-2&tabs=cli#understand-the-scoring-script).
+
+1. Make any other modifications to the Dockerfile, entrypoint.sh, or any other files in the template as needed for your model.
+
+1. Build the image and deploy it to a container registry.
+
+1. Use the below CLI command to deploy the model to serverless GPUs, but specify the `--image`. By using the `--model-registry`, `--model-name`, and `--model-version` parameters, the key environment variables are set for you to optimize cold start for your app.
+
 ```
 az containerapp up -n app-name -g resource-group-name -l gpu-location --environment your-env --image yourcontainerregistry.azurecr.io/repo:tag --model-registry azureml --model-name model-name --model-version version-number 
 ```
-When specifying `--image` option, the CLI command will only attempt to help you setting the environment variables for downloading the model. You can modify all other variables by either hardcoding them in the score.py file or setting environment variables in your container app by passing `--env-vars "key=value"` or modify them in Azure Portal after your app is successfully deployed.
 
 You will also need to manually set your ingress setting when using your customized image by providing `--ingress` and `--target-port` in `az containerapp up` command or running `az containerapp ingress` commands to further customize your ingress settings.
 
-### Deploying Models from other registries
-You can modify this template to your liking and deploy it like a normal Azure Container App by running `az containerapp up` or `az containerapp create`.
+### Deploying models from other registries
+You can modify this template to deploy it like a normal Azure Container App by running `az containerapp up` or `az containerapp create`.
 
 Learn more about `az containerapp` commands by visiting [az containerapp command documentation](https://learn.microsoft.com/en-us/cli/azure/containerapp?view=azure-cli-latest).
 
-## Environment Variables Needed for Running with the given `entrypoint.sh`
+## Environment variables needed for running with the given `entrypoint.sh`
 | Env Vars | Required | Description| Example |
 |---|---|---|---|
 |`AZURE_ML_MODEL_ID` | `Yes` | Azure AI Foundry model asset id. | `azureml://registries/azureml/models/Phi-4/versions/7` |
@@ -44,7 +60,7 @@ Learn more about `az containerapp` commands by visiting [az containerapp command
 |`AZURE_ML_PIPELINE_TASK_NAME` | `No` | The task type that the model is defined as. | `chat-completion`|
 
 
-## File Structure of the Repo
+## File structure of the repo
 ```
 ├── app/
 │   ├── main.py                
