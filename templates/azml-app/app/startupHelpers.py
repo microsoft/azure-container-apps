@@ -10,14 +10,12 @@ def get_model_details():
     This function retrieves the model from Azure ML and returns the model and tokenizer.
     It uses the azcopy command to copy the model files from Azure Blob Storage to the local directory.
     """
-    import xml.etree.ElementTree as et
-    import requests as rq
     # Get the model id and path from environment variables
     model_id = os.environ["AZURE_ML_MODEL_ID"]
     model_path = os.environ["AZURE_ML_MODEL_PATH"]
     if model_path is None or model_id is None:
         raise ValueError("AZURE_ML_MODEL_PATH or AZURE_ML_MODEL_ID environment variable not set")
-    res = rq.post("https://ml.azure.com/api/eastus/assetstore/v1.0/dataReference/getBlobReferenceSAS", json={"assetId": model_id, "blobUri": model_path})
+    res = requests.post("https://ml.azure.com/api/eastus/assetstore/v1.0/dataReference/getBlobReferenceSAS", json={"assetId": model_id, "blobUri": model_path}, timeout=15)
     if res.status_code != 200:
         raise ValueError(f"Failed to get blob reference: {res.status_code} {res.text}")
     res = res.json()
@@ -39,8 +37,6 @@ def get_model_file_structure(sas_uri):
     This function retrieves the model and tokenizer from the blob list.
     It uses the azcopy command to copy the model files from Azure Blob Storage to the local directory.
     """
-    import xml.etree.ElementTree as et
-    import requests as rq
     # Get the model id and path from environment variables
     sas_list_uri = f"{sas_uri}&comp=list&restype=container"
     blob_list_res = requests.get(sas_list_uri)

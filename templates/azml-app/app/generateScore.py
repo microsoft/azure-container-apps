@@ -20,13 +20,16 @@ def init():
 
 async def run(request, pipe, tokenizer, model):
     prompt = request.prompt
+    max_output_tokens = request.max_output_tokens
+    if prompt is None or prompt == "":
+        return InferenceResponse(response="Prompt is empty")
     if pipe is not None:
-        output = pipe(prompt, max_new_tokens=100)
+        output = pipe(prompt, max_new_tokens=max_output_tokens)
         result = output[0]["generated_text"]
         return InferenceResponse(response=result)
     if model is not None and tokenizer is not None:
         inputs = tokenizer(prompt, return_tensors="pt")
-        output = model.generate(**inputs, max_new_tokens=100)
+        output = model.generate(**inputs, max_new_tokens=max_output_tokens)
         result = tokenizer.decode(output[0], skip_special_tokens=True)
         return InferenceResponse(response=result)
     else:
@@ -39,6 +42,7 @@ PIPELINE_LOADING_TEMPLATE = """print("Constructing pipeline...")
     pipe = PIPELINE_TYPE(TASK_NAMEmodel=model, tokenizer=tokenizer)"""
 KNOWN_TASK_PIPELINE_MAP = {
     "chat-completion": "TextGenerationPipeline",
+    "text-generation": "TextGenerationPipeline",
 }
 
 
@@ -80,7 +84,7 @@ class ScoreFileGenerator:
             pipeline_loading_template = \
                 PIPELINE_LOADING_TEMPLATE \
                 .replace("TASK_NAME", f"task=\"{self.pipeline_task_name}\", ")
-            if self.pipeline_class_name is None and KNOWN_TASK_PIPELINE_MAP[self.pipeline_task_name] is not None:
+            if self.pipeline_class_name is None and self.pipeline_task_name in KNOWN_TASK_PIPELINE_MAP:
                 self.pipeline_class_name = KNOWN_TASK_PIPELINE_MAP[self.pipeline_task_name]
         else:
             pipeline_loading_template = \
