@@ -17,7 +17,7 @@ pipe = None
 # Serve out get traffic on root path ASAP, do not wait on model loading
 @app.get("/")
 def read_root():
-    return {"message": "Hello from FastAPI!"}
+    return {"message": "You have deployed your model! Add /docs to the browser URL to easily test your endpoint"}
 
 
 @app.get("/readiness", status_code=200)
@@ -32,6 +32,8 @@ def readiness():
 
 @app.post("/generate", summary="Generate a response from a prompt")
 async def generate(request: InferenceRequest) -> InferenceResponse:
+    if request.prompt is None or request.prompt == "":
+        raise HTTPException(status_code=204, detail="Prompt is empty")
     import app.score as score
     res = await score.run(request, pipe, tokenizer, model)
     return res
@@ -53,13 +55,13 @@ async def load_model():
     azcopy_stdout, azcopy_stderr = azcopy_process.communicate()
     print(f"azcopy stdout: {azcopy_stdout.decode()}")
     print(f"azcopy stderr: {azcopy_stderr.decode()}")
+    if azcopy_process.returncode != 0:
+        raise RuntimeError(f"azcopy failed with return code {azcopy_process.returncode}. Stderr: {azcopy_stderr.decode()}")
     print("Setting score file generator vars...")
     set_score_file_generator_vars(sas_uri,
                                   model_download_path_name,
                                   generator)
     generator.generate()
-    if azcopy_process.returncode != 0:
-        raise RuntimeError(f"azcopy failed with return code {azcopy_process.returncode}. Stderr: {azcopy_stderr.decode()}")
     from app.score import init
     pipe, model, tokenizer = init()
     print("Model loaded. Ready to take inferencing requests under path /generate")
