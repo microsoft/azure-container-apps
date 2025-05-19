@@ -24,7 +24,7 @@ async def run(request, pipe, tokenizer, model):
     if prompt is None or prompt == "":
         return InferenceResponse(response="Prompt is empty")
     if pipe is not None:
-        output = pipe(prompt, max_new_tokens=max_output_tokens)
+        output = pipe(prompt, max_new_tokens=max_output_tokens, return_full_text=False)
         result = output[0]["generated_text"]
         return InferenceResponse(response=result)
     if model is not None and tokenizer is not None:
