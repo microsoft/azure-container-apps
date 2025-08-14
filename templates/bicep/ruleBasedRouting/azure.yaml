@@ -5,20 +5,33 @@ metadata:
     template: azd-init@1.10.3
 services:
     app1:
-        project: App1
+        project: allapp
         host: containerapp
-        language: dotnet
+        language: python
         docker:
             path: Dockerfile
     app2:
-        project: App2
+        project: allapp
         host: containerapp
-        language: dotnet
+        language: python
         docker:
             path: Dockerfile
     app3:
-        project: App3
+        project: allapp
         host: containerapp
-        language: dotnet
+        language: python
         docker:
             path: Dockerfile
+    app4:
+        project: allapp
+        host: containerapp
+        language: python
+        docker:
+            path: Dockerfile
+    app5:
+        project: allapp
+        host: containerapp
+        language: python
+        docker:
+            path: Dockerfile
+

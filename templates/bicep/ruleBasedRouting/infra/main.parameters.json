@@ -11,51 +11,19 @@
       "app1Exists": {
         "value": "${SERVICE_APP1_RESOURCE_EXISTS=false}"
       },
-      "app1Definition": {
-        "value": {
-          "settings": [
-            {
-              "name": "",
-              "value": "${VAR}",
-              "_comment_name": "The name of the environment variable when running in Azure. If empty, ignored.",
-              "_comment_value": "The value to provide. This can be a fixed literal, or an expression like ${VAR} to use the value of 'VAR' from the current environment."
-            },
-            {
-              "name": "",
-              "value": "${VAR_S}",
-              "secret": true,
-              "_comment_name": "The name of the environment variable when running in Azure. If empty, ignored.",
-              "_comment_value": "The value to provide. This can be a fixed literal, or an expression like ${VAR_S} to use the value of 'VAR_S' from the current environment."
-            }
-          ]
-        }
-      },
       "app2Exists": {
         "value": "${SERVICE_APP2_RESOURCE_EXISTS=false}"
-      },
-      "app2Definition": {
-        "value": {
-          "settings": [
-            {
-              "name": "",
-              "value": "${VAR}",
-              "_comment_name": "The name of the environment variable when running in Azure. If empty, ignored.",
-              "_comment_value": "The value to provide. This can be a fixed literal, or an expression like ${VAR} to use the value of 'VAR' from the current environment."
-            },
-            {
-              "name": "",
-              "value": "${VAR_S}",
-              "secret": true,
-              "_comment_name": "The name of the environment variable when running in Azure. If empty, ignored.",
-              "_comment_value": "The value to provide. This can be a fixed literal, or an expression like ${VAR_S} to use the value of 'VAR_S' from the current environment."
-            }
-          ]
-        }
       },
       "app3Exists": {
         "value": "${SERVICE_APP3_RESOURCE_EXISTS=false}"
       },
-      "app3Definition": {
+      "app4Exists": {
+        "value": "${SERVICE_APP4_RESOURCE_EXISTS=false}"
+      },
+      "app5Exists": {
+        "value": "${SERVICE_APP5_RESOURCE_EXISTS=false}"
+      },
+      "allappDefinition": {
         "value": {
           "settings": [
             {
