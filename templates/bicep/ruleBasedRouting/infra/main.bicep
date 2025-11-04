@@ -10,14 +10,12 @@ param environmentName string
 param location string
 
 param app1Exists bool
-@secure()
-param app1Definition object
 param app2Exists bool
-@secure()
-param app2Definition object
 param app3Exists bool
+param app4Exists bool
+param app5Exists bool
 @secure()
-param app3Definition object
+param allappDefinition object
 
 @description('Id of the user or app to assign application roles')
 param principalId string
@@ -76,17 +74,17 @@ module app1 './app/app1.bicep' = {
   params: {
     name: 'app1'
     location: location
-    tags: tags
+    tags: union(tags, { 'azd-service-name': 'allapp' })
     identityName: '${abbrs.managedIdentityUserAssignedIdentities}app1-${resourceToken}'
     containerAppsEnvironmentName: appsEnv.outputs.name
     containerRegistryName: registry.outputs.name
     exists: app1Exists
-    appDefinition: app1Definition
+    appDefinition: allappDefinition
   }
   scope: rg
 }
 
-module app2 './app/app2.bicep' = {
+module app2 './app/app1.bicep' = {
   name: 'app2'
   params: {
     name: 'app2'
@@ -96,12 +94,12 @@ module app2 './app/app2.bicep' = {
     containerAppsEnvironmentName: appsEnv.outputs.name
     containerRegistryName: registry.outputs.name
     exists: app2Exists
-    appDefinition: app2Definition
+    appDefinition: allappDefinition
   }
   scope: rg
 }
 
-module app3 './app/app3.bicep' = {
+module app3 './app/app1.bicep' = {
   name: 'app3'
   params: {
     name: 'app3'
@@ -111,7 +109,37 @@ module app3 './app/app3.bicep' = {
     containerAppsEnvironmentName: appsEnv.outputs.name
     containerRegistryName: registry.outputs.name
     exists: app3Exists
-    appDefinition: app3Definition
+    appDefinition: allappDefinition
+  }
+  scope: rg
+}
+
+module app4 './app/app1.bicep' = {
+  name: 'app4'
+  params: {
+    name: 'app4'
+    location: location
+    tags: tags
+    identityName: '${abbrs.managedIdentityUserAssignedIdentities}app4-${resourceToken}'
+    containerAppsEnvironmentName: appsEnv.outputs.name
+    containerRegistryName: registry.outputs.name
+    exists: app4Exists
+    appDefinition: allappDefinition
+  }
+  scope: rg
+}
+
+module app5 './app/app1.bicep' = {
+  name: 'app5'
+  params: {
+    name: 'app5'
+    location: location
+    tags: tags
+    identityName: '${abbrs.managedIdentityUserAssignedIdentities}app5-${resourceToken}'
+    containerAppsEnvironmentName: appsEnv.outputs.name
+    containerRegistryName: registry.outputs.name
+    exists: app5Exists
+    appDefinition: allappDefinition
   }
   scope: rg
 }
@@ -120,11 +148,11 @@ module httpRoutes './shared/http-routes.bicep' = {
   name: 'http-routes'
   params: {
     containerAppsEnvironmentName: appsEnv.outputs.name
-    location: location
-    tags: tags
     app1Name: app1.name
     app2Name: app2.name
     app3Name: app3.name
+    app4Name: app4.name
+    app5Name: app5.name
   }
   scope: rg
 }

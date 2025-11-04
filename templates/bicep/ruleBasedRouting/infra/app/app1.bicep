@@ -55,7 +55,7 @@ module fetchLatestImage '../modules/fetch-container-image.bicep' = {
 resource app 'Microsoft.App/containerApps@2023-05-02-preview' = {
   name: name
   location: location
-  tags: union(tags, {'azd-service-name':  'app1' })
+  tags: union(tags, {'azd-service-name': name })
   dependsOn: [ acrPullRole ]
   identity: {
     type: 'UserAssigned'
@@ -91,6 +91,10 @@ resource app 'Microsoft.App/containerApps@2023-05-02-preview' = {
             {
               name: 'PORT'
               value: '8080'
+            }
+            {
+              name: 'APP_ID'
+              value: name
             }
           ],
           env,

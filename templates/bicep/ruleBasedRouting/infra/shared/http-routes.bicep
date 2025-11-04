@@ -1,9 +1,9 @@
 param containerAppsEnvironmentName string
-param location string
-param tags object
 param app1Name string
 param app2Name string
 param app3Name string
+param app4Name string
+param app5Name string
 
 resource containerEnv 'Microsoft.App/managedEnvironments@2023-11-02-preview' existing = {
   name: containerAppsEnvironmentName
@@ -12,29 +12,35 @@ resource containerEnv 'Microsoft.App/managedEnvironments@2023-11-02-preview' exi
 resource app1 'Microsoft.App/containerApps@2023-11-02-preview' existing = {
   name: app1Name
 }
-
 resource app2 'Microsoft.App/containerApps@2023-11-02-preview' existing = {
   name: app2Name
 }
-
 resource app3 'Microsoft.App/containerApps@2023-11-02-preview' existing = {
   name: app3Name
+}
+resource app4 'Microsoft.App/containerApps@2023-11-02-preview' existing = {
+  name: app4Name
+}
+resource app5 'Microsoft.App/containerApps@2023-11-02-preview' existing = {
+  name: app5Name
 }
 
 resource httpRouteConfig 'Microsoft.App/managedEnvironments/httpRouteConfigs@2024-10-02-preview' = {
   name: 'routeconfig1'
   parent: containerEnv
-  location: location  
   properties: {
     rules: [
+      // rules should be configured from specific to broad (similar to fw rules)
       {
-        description: 'App 1 rule'
+        description: 'API Gateway Pattern'
         routes: [
           {
             match: {
-              prefix: '/app1'
+              pathSeparatedPrefix: '/search'
+              caseSensitive: false
             }
             action: {
+              
               prefixRewrite: '/'
             }
           }
@@ -46,29 +52,14 @@ resource httpRouteConfig 'Microsoft.App/managedEnvironments/httpRouteConfigs@202
         ]
       }
       {
-        description: 'App 2 rule'
+        description: 'Pass-through'
         routes: [
           {
             match: {
-              prefix: '/app2'
+              prefix: '/home'
             }
             action: {
-              prefixRewrite: '/'
-            }
-          }
-        ]
-        targets: [
-          {
-            containerApp: app2.name
-          }
-        ]
-      }
-      {
-        description: 'App 3 rule'
-        routes: [
-          {
-            match: {
-              prefix: '/'
+              prefixRewrite: '/home'
             }
           }
         ]
@@ -78,11 +69,73 @@ resource httpRouteConfig 'Microsoft.App/managedEnvironments/httpRouteConfigs@202
           }
         ]
       }
+      {
+        description: 'Very Specific Remap'
+        routes: [
+          {
+            match: {
+              path: '/health'
+            }
+            action: {
+              prefixRewrite: '/status'
+            }
+          }
+        ]
+        targets: [
+          {
+            containerApp: app4.name
+          }
+        ]
+      }
+      {
+        description: 'App 5 Remap'
+        routes: [
+          {
+            match: {
+              prefix: '/app5'
+            }
+            action: {
+              prefixRewrite: '/'
+            }
+          }
+        ]
+        targets: [
+          {
+            containerApp: app5.name
+          }
+        ]
+      }
+      {
+        // this should be last since otherwise it will capture other paths/prefixes
+        description: 'Root Path Mapping (default)'
+        routes: [
+          {
+            match: {
+              prefix: '/'
+            }
+            action: {
+              prefixRewrite: '/api/v1/'
+            }
+          }
+        ]
+        targets: [
+          {
+            containerApp: app2.name
+            // optional add revision
+            // revision: app2--azd-1755189182
+          }
+        ]
+      }
     ]
   }
   dependsOn: [
     app1
     app2
     app3
+    app4
+    app5
   ]
 }
+
+
+output routeconfigurl string = 'https://${httpRouteConfig.properties.fqdn}'
