@@ -1,0 +1,93 @@
+# StdioToSSEWrappers maps stdio MCP server images to their SSE-wrapped equivalents
+# These wrappers run the upstream server under mcp-proxy so Azure Container Apps can
+# consume an SSE transport instead of stdio.
+
+wrappers:
+  # Exact-match rewrites for officially published stdio images
+  - stdio: "mcp/fetch@sha256:ef9535a3f07249142f9ca5a6033d7024950afdb6dc05e98292794a23e9f5dfbe"
+    sse: "simon.azurecr.io/fetch@sha256:e27940a50f8d51ee16f21c7fad758b4ddc671cd0674cdede555da88fc9f8fa80"
+    match_type: "exact"
+
+  - stdio: "mcp/slack@sha256:4cc10c3f4bd988bd2dce40e3068fe38fa3b3bad1da99f9653eb5fa5cce35baa1"
+    sse: "simon.azurecr.io/slack@sha256:0b3a017c9a76ca6ee175f76dd18aa8708e0b33f5bfe9da065af9358e62d58f4d"
+    match_type: "exact"
+
+  - stdio: "mcp/time@sha256:9c46a918633fb474bf8035e3ee90ebac6bcf2b18ccb00679ac4c179cba0ebfcf"
+    sse: "simon.azurecr.io/time@sha256:c0c7a3ecc3777dbfd09299a9a138b78c9f5d6427bbd2e3b7f9b14ac19b6c9391"
+    match_type: "exact"
+
+  - stdio: "mcp/postgres@sha256:b72c08f19e864b3e8beea8e90d048b9271924e704113345a29683f6d1e95a8f0"
+    sse: "simon.azurecr.io/postgres@sha256:dd5fadf34623816fcceeee62ab3835bd88da913303778ab9f0ff13478b86a6a4"
+    match_type: "exact"
+
+  - stdio: "mcp/sequentialthinking@sha256:cd3174b2ecf37738654cf7671fb1b719a225c40a78274817da00c4241f465e5f"
+    sse: "simon.azurecr.io/sequentialthinking@sha256:f1207e2b77b0c45888b9fa6086a8d6b48de9ef72a0196b002a35792606be41ea"
+    match_type: "exact"
+
+  - stdio: "mcp/git@sha256:ad6af958e79466a14b895891e772fdda28fdc12c06fff4a70637b66773303a2c"
+    sse: "simon.azurecr.io/git@sha256:64df2c75575403827b431fdfc4c11f16dc93081a73f53cd94571f1283a770e46"
+    match_type: "exact"
+
+  - stdio: "mcp/notion@sha256:27fc9ba99c6b9840c9631d2ae4cfc7665e6f2fa6607c0cee413be4d5e99aeea2"
+    sse: "simon.azurecr.io/notion@sha256:94380f06953aa6819e031a055fa1adbe6c5f22346040fd949407c4fb26ef21a2"
+    match_type: "exact"
+
+  - stdio: "mcp/mongodb@sha256:30c41cedbdc038e59cb707be065a83e4672d323afc1a585d6aacd88dfd5f01e7"
+    sse: "simon.azurecr.io/mongodb@sha256:fd26409166407c6aee7f98dda08b9c81cd4c99bb3de85181a15b68cb79478c5d"
+    match_type: "exact"
+
+  - stdio: "mcp/sqlite@sha256:efbc05ccace18df122f26b674bd1730c76ece716551df2b3961d519909c34696"
+    sse: "simon.azurecr.io/sqlite@sha256:e14d4419532e0fae2d8115dec3c07ff2014b8cafbe1ec926e4e7893f70f41324"
+    match_type: "exact"
+
+  - stdio: "mcp/filesystem@sha256:35fcf0217ca0d5bf7b0a5bd68fb3b89e08174676c0e0b4f431604512cf7b3f67"
+    sse: "simon.azurecr.io/filesystem@sha256:3f4fd0e16786d452d756f67bd72b789d457ed16f14ce2aab297c9e137cd761d1"
+    match_type: "exact"
+
+  - stdio: "mcp/playwright@sha256:e4b2d561b75f67367b46b4719055c28ff96e731a158d3c18775d14d2ccb4545f"
+    sse: "simon.azurecr.io/playwright@sha256:d82603b8ac36e34ba528af0b69cca24f967580fc3ef329857065a1e840e15530"
+    match_type: "exact"
+
+  - stdio: "mcp/cloudwatch-appsignals-mcp-server@sha256:873bf1023b30188b5b9de449bcafc7635b95ae11c37ae75f919b78ff951ba507"
+    sse: "simon.azurecr.io/appsignal@sha256:b5787ebeea78e7fead0994af7e44694857043e70db189a739e6c352bfe9c23f5"
+    match_type: "exact"
+
+  - stdio: "acuvity/mcp-server-google-bigquery@sha256:effc94fbae9d1c49fe87f7a98b02a9e4e85ada7e32254919c79dca2f4f6624b6"
+    sse: "simon.azurecr.io/bigquery@sha256:83f4ef538313a0d3a80e701cb694f72d61db7bb4d1b2a2fc696f19f59d8ddc4e"
+    match_type: "exact"
+
+  # Regex rewrites for community stdio images without stable digests
+  - stdio: "^mcp/duckduckgo@sha256:[a-f0-9]{64}$"
+    sse: "simon.azurecr.io/duckduckgo@sha256:937a399c273f30bc257432a7284a49d21d449f878d686fdaa9ad16ad3d4e0335"
+    match_type: "regex"
+    description: "Universal wrapper for any published mcp/duckduckgo stdio image"
+
+  - stdio: "^mcp/confluence@sha256:[a-f0-9]{64}$"
+    sse: "simon.azurecr.io/confluence@sha256:69a57b88cef00867a422060e29ce1bbb343070d4e524557fa035a35603aed8bb"
+    match_type: "regex"
+    description: "Wraps the @answerai/confluence-mcp stdio server"
+
+  - stdio: "^mcp/google-drive@sha256:[a-f0-9]{64}$"
+    sse: "simon.azurecr.io/google-drive@sha256:fa1dee438d3efdbd398e1bbbbdbd028506d05d123f188ad2916f27bf1f773cf8"
+    match_type: "regex"
+    description: "Bridge for the google-drive-mcp stdio implementation"
+
+  - stdio: "^mcp/supabase@sha256:[a-f0-9]{64}$"
+    sse: "simon.azurecr.io/supabase@sha256:6bfb97dd71a2fab1d0c639b77fa3e9d858a04367c8d122cfcc7d988d420b4bdd"
+    match_type: "regex"
+    description: "Covers the supabase-mcp stdio server"
+
+  - stdio: "^mcp/jira@sha256:[a-f0-9]{64}$"
+    sse: "simon.azurecr.io/jira@sha256:c817ba83b88ca97e5d35d95855731e99c1d34e73b383425cc38f0832ed6694c6"
+    match_type: "regex"
+    description: "Wraps the mcp-jira stdio server"
+
+  - stdio: "^mcp/mysql@sha256:[a-f0-9]{64}$"
+    sse: "simon.azurecr.io/mysql@sha256:32133d215b996110c4e5a0df08cf15dbaa54d1cd042b8817069588a23ee9921f"
+    match_type: "regex"
+    description: "Wraps the mcp-mysql stdio server"
+
+  - stdio: "^mcp/twist@sha256:[a-f0-9]{64}$"
+    sse: "simon.azurecr.io/twist@sha256:2dcd7530173bead23f93456e3e5e12dd8da40863f400a3145598a55aa981a68d"
+    match_type: "regex"
+    description: "Covers the twist-mcp stdio server"
