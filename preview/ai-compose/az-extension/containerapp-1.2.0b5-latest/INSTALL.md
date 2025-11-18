@@ -1,42 +1,40 @@
-# Quick Installation Guide (generated 2025-11-16 22:00:46 UTC)
+# Quick Installation Guide (generated 2025-11-18 05:04:50 UTC)
 
-These wheels live in your local Azure Container Apps preview repo checkout:
+These wheels are staged for commit under:
 
-- Location: `~./azure-container-apps/preview/ai-compose/az-extension/containerapp-1.2.0b5-latest`
-- Files staged for commit: `containerapp-1.2.0b5+ai.compose-py2.py3-none-any.whl`, `pycomposefile-0.0.32-py3-none-any.whl`, `MD5SUMS`, `INSTALL.md`, `RELEASE_NOTES.md`
-- Verification: `git status` in `preview/ai-compose/az-extension` shows the exact files above under "Changes to be committed"
+- Release folder: preview/ai-compose/az-extension/release-1.2.0b5+ai.compose-py2.py3-none-any
+- Latest alias: preview/ai-compose/az-extension/containerapp-1.2.0b5-latest
+- Checksum file: preview/ai-compose/az-extension/release-1.2.0b5+ai.compose-py2.py3-none-any/MD5SUMS
 
-## Quick Start – (use existing az cli, install from GH)
-```bash
+## Quick Start – GitHub hosted release folder
 PREVIEW_BASE=https://raw.githubusercontent.com/microsoft/azure-container-apps/main/preview/ai-compose/az-extension
 DROP=release-1.2.0b5+ai.compose-py2.py3-none-any
+PYCOMPOSE_WHEEL=pycomposefile-0.0.32-py3-none-any.whl
+CONTAINERAPP_WHEEL=containerapp-1.2.0b5+ai.compose-py2.py3-none-any.whl
 
+curl -s "https://raw.githubusercontent.com/microsoft/azure-container-apps/main/preview/ai-compose/az-extension/release-1.2.0b5+ai.compose-py2.py3-none-any/MD5SUMS"
 az extension remove --name containerapp
-pip install "$PREVIEW_BASE/$DROP/pycomposefile-0.0.32-py3-none-any.whl"
-az extension add --source "$PREVIEW_BASE/$DROP/containerapp-1.2.0b5+ai.compose-py2.py3-none-any.whl" --yes
+pip install "https://raw.githubusercontent.com/microsoft/azure-container-apps/main/preview/ai-compose/az-extension/release-1.2.0b5+ai.compose-py2.py3-none-any/pycomposefile-0.0.32-py3-none-any.whl"
+az extension add --source "https://raw.githubusercontent.com/microsoft/azure-container-apps/main/preview/ai-compose/az-extension/release-1.2.0b5+ai.compose-py2.py3-none-any/containerapp-1.2.0b5+ai.compose-py2.py3-none-any.whl" --yes
+az extension show --name containerapp --query version -o tsv
 az containerapp compose --help
-```
 
+## Option A – Existing Azure CLI (latest alias)
+az extension remove --name containerapp
+pip install "https://raw.githubusercontent.com/microsoft/azure-container-apps/main/preview/ai-compose/az-extension/containerapp-1.2.0b5-latest/pycomposefile-0.0.32-py3-none-any.whl"
+az extension add --source "https://raw.githubusercontent.com/microsoft/azure-container-apps/main/preview/ai-compose/az-extension/containerapp-1.2.0b5-latest/containerapp-1.2.0b5+ai.compose-py2.py3-none-any.whl" --yes
+az extension show --name containerapp --query version -o tsv
+az containerapp compose --help
 
-
-## Option B – Isolated testing (venv + remote install)
-Spin up a clean virtual environment that only contains what's needed for compose testing.
-```bash
-PREVIEW_BASE=https://raw.githubusercontent.com/microsoft/azure-container-apps/main/preview/ai-compose/az-extension
-DROP=release-1.2.0b5+ai.compose-py2.py3-none-any
-
-# install and create venv module
-pip install venv
+## Option B – Fresh virtual environment (release folder)
 python3 -m venv ~/venv-containerapp && source ~/venv-containerapp/bin/activate
-
-# install & create azure-cli and other requirements
 pip install --upgrade pip wheel azure-cli
-
-# install pycomposefile module and az-containerapp-ext
-pip install "$PREVIEW_BASE/$DROP/pycomposefile-0.0.32-py3-none-any.whl"
-az extension add --source "$PREVIEW_BASE/$DROP/containerapp-1.2.0b5+ai.compose-py2.py3-none-any.whl" --yes
-
-# try compose sub-command
+pip install "https://raw.githubusercontent.com/microsoft/azure-container-apps/main/preview/ai-compose/az-extension/release-1.2.0b5+ai.compose-py2.py3-none-any/pycomposefile-0.0.32-py3-none-any.whl"
+az extension add --source "https://raw.githubusercontent.com/microsoft/azure-container-apps/main/preview/ai-compose/az-extension/release-1.2.0b5+ai.compose-py2.py3-none-any/containerapp-1.2.0b5+ai.compose-py2.py3-none-any.whl" --yes
 az containerapp compose --help
 
-```
+## Option C – Local release folder
+az extension remove --name containerapp
+pip install /home/simon/code/azure-agent-compose-project/cli/releases/release-1.2.0b5+ai.compose-py2.py3-none-any/pycomposefile-0.0.32-py3-none-any.whl
+az extension add --source /home/simon/code/azure-agent-compose-project/cli/releases/release-1.2.0b5+ai.compose-py2.py3-none-any/containerapp-1.2.0b5+ai.compose-py2.py3-none-any.whl --yes
+az containerapp compose --help
