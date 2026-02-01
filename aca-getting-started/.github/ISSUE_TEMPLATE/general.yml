@@ -1,0 +1,25 @@
+name: General Issue
+description: General questions, suggestions, or feedback
+title: "[General]: "
+labels: ["question"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Have a question or suggestion? Let us know!
+
+  - type: textarea
+    id: details
+    attributes:
+      label: Details
+      description: Please provide details about your question or suggestion
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional Context
+      description: Add any other context or screenshots here
+    validations:
+      required: false
