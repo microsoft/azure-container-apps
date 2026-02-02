@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://microsoft.github.io/azure-container-apps/aca-getting-started/sitemap.xml

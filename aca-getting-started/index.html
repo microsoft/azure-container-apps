@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Azure Container Apps - Your central hub for all resources, documentation, and tools">
+    <title>Azure Container Apps Resources</title>
+    <style>
+        :root {
+            --primary-color: #0078d4;
+            --secondary-color: #106ebe;
+            --accent-color: #50e6ff;
+            --text-color: #323130;
+            --bg-color: #ffffff;
+            --border-color: #edebe9;
+            --hover-bg: #f3f2f1;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--bg-color);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 40px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            font-size: 1.2em;
+            opacity: 0.95;
+        }
+
+        nav {
+            background-color: #f8f8f8;
+            padding: 15px 0;
+            border-bottom: 2px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+        }
+
+        nav a {
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        nav a:hover {
+            color: var(--primary-color);
+        }
+
+        .section {
+            padding: 50px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .section h2 {
+            color: var(--primary-color);
+            font-size: 2em;
+            margin-bottom: 30px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid var(--accent-color);
+        }
+
+        .section h3 {
+            color: var(--secondary-color);
+            font-size: 1.5em;
+            margin: 30px 0 20px 0;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 25px;
+        }
+
+        .card {
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 25px;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .card:hover {
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transform: translateY(-3px);
+        }
+
+        .card h4 {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        .card p {
+            margin-bottom: 15px;
+            color: #605e5c;
+        }
+
+        .card a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+            display: inline-block;
+            margin-top: 10px;
+        }
+
+        .card a:hover {
+            text-decoration: underline;
+        }
+
+        .list-section ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .list-section li {
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .list-section li:last-child {
+            border-bottom: none;
+        }
+
+        .list-section a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .list-section a:hover {
+            text-decoration: underline;
+        }
+
+        .highlight-box {
+            background: linear-gradient(135deg, #f0f8ff, #e6f3ff);
+            border-left: 4px solid var(--primary-color);
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+
+        .tag {
+            display: inline-block;
+            background: var(--primary-color);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.85em;
+            margin-right: 8px;
+            margin-top: 8px;
+        }
+
+        .tag.new {
+            background: #107c10;
+        }
+
+        .tag.preview {
+            background: #ca5010;
+        }
+
+        footer {
+            background: #f8f8f8;
+            padding: 30px 0;
+            margin-top: 50px;
+            text-align: center;
+            color: #605e5c;
+        }
+
+        .icon {
+            margin-right: 8px;
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.8em;
+            }
+            
+            nav ul {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .cards {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>🚀 Azure Container Apps Resources</h1>
+            <p>Your central hub for all Azure Container Apps documentation, tools, and community resources</p>
+        </div>
+    </header>
+
+    <nav>
+        <div class="container">
+            <ul>
+                <li><a href="#getting-started">Getting Started</a></li>
+                <li><a href="#documentation">Documentation</a></li>
+                <li><a href="#samples">Samples & Demos</a></li>
+                <li><a href="#tools">Tools</a></li>
+                <li><a href="#learning">Learning</a></li>
+                <li><a href="#community">Community</a></li>
+                <li><a href="#updates">Updates</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="container">
+        <!-- Getting Started Section -->
+        <section id="getting-started" class="section">
+            <h2>🎯 Getting Started</h2>
+            <div class="highlight-box">
+                <h4>New to Azure Container Apps?</h4>
+                <p>Azure Container Apps is a fully managed serverless container service that enables you to run microservices and containerized applications on a serverless platform.</p>
+            </div>
+            <div class="cards">
+                <div class="card">
+                    <h4>📖 What is Azure Container Apps?</h4>
+                    <p>Learn the fundamentals and key concepts of Azure Container Apps.</p>
+                    <a href="https://learn.microsoft.com/azure/container-apps/overview" target="_blank">Read Overview →</a>
+                </div>
+                <div class="card">
+                    <h4>⚡ Quickstart</h4>
+                    <p>Deploy your first container app in minutes using Azure Portal, CLI, or Visual Studio Code.</p>
+                    <a href="https://learn.microsoft.com/azure/container-apps/quickstart-portal" target="_blank">Start Building →</a>
+                </div>
+                <div class="card">
+                    <h4>🎓 Tutorial Series</h4>
+                    <p>Step-by-step tutorials to help you master Azure Container Apps.</p>
+                    <a href="https://learn.microsoft.com/azure/container-apps/tutorial-deploy-first-app-cli" target="_blank">Explore Tutorials →</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Documentation Section -->
+        <section id="documentation" class="section">
+            <h2>📚 Documentation</h2>
+            
+            <h3>Core Concepts</h3>
+            <div class="list-section">
+                <ul>
+                    <li><a href="https://learn.microsoft.com/azure/container-apps/environment" target="_blank">Environments</a> - Secure boundaries around groups of container apps</li>
+                    <li><a href="https://learn.microsoft.com/azure/container-apps/containers" target="_blank">Containers</a> - Container configuration and management</li>
+                    <li><a href="https://learn.microsoft.com/azure/container-apps/revisions" target="_blank">Revisions</a> - Immutable snapshots of container app versions</li>
+                    <li><a href="https://learn.microsoft.com/azure/container-apps/scale-app" target="_blank">Scaling</a> - KEDA-based autoscaling and manual scaling</li>
+                    <li><a href="https://learn.microsoft.com/azure/container-apps/ingress" target="_blank">Ingress</a> - HTTP and TCP ingress configuration</li>
+                    <li><a href="https://learn.microsoft.com/azure/container-apps/observability" target="_blank">Observability</a> - Logging, monitoring, and distributed tracing</li>
+                </ul>
+            </div>
+
+            <h3>Advanced Features</h3>
+            <div class="cards">
+                <div class="card">
+                    <h4>Microservices with Dapr</h4>
+                    <p>Build resilient, cloud-native microservices using Distributed Application Runtime.</p>
+                    <a href="https://learn.microsoft.com/azure/container-apps/dapr-overview" target="_blank">Learn More →</a>
+                </div>
+                <div class="card">
+                    <h4>Jobs</h4>
+                    <p>Run scheduled and event-driven batch workloads.</p>
+                    <span class="tag new">New</span>
+                    <a href="https://learn.microsoft.com/azure/container-apps/jobs" target="_blank">Explore Jobs →</a>
+                </div>
+                <div class="card">
+                    <h4>Networking</h4>
+                    <p>Virtual network integration, custom domains, and private endpoints.</p>
+                    <a href="https://learn.microsoft.com/azure/container-apps/networking" target="_blank">Configure Network →</a>
+                </div>
+                <div class="card">
+                    <h4>Authentication</h4>
+                    <p>Built-in authentication and authorization with identity providers.</p>
+                    <a href="https://learn.microsoft.com/azure/container-apps/authentication" target="_blank">Set Up Auth →</a>
+                </div>
+                <div class="card">
+                    <h4>Storage</h4>
+                    <p>Mount Azure Files and ephemeral volumes to your containers.</p>
+                    <a href="https://learn.microsoft.com/azure/container-apps/storage-mounts" target="_blank">Add Storage →</a>
+                </div>
+                <div class="card">
+                    <h4>Secrets Management</h4>
+                    <p>Securely manage and reference secrets in your container apps.</p>
+                    <a href="https://learn.microsoft.com/azure/container-apps/manage-secrets" target="_blank">Manage Secrets →</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Samples & Demos Section -->
+        <section id="samples" class="section">
+            <h2>💡 Samples & Demos</h2>
+            <div class="cards">
+                <div class="card">
+                    <h4>Awesome Azure Container Apps</h4>
+                    <p>Community-curated list of samples, tools, and resources.</p>
+                    <a href="https://github.com/stuartleeks/awesome-azure-container-apps" target="_blank">View Repository →</a>
+                </div>
+                <div class="card">
+                    <h4>Official Samples</h4>
+                    <p>Microsoft-provided code samples and reference architectures.</p>
+                    <a href="https://github.com/Azure-Samples?q=container-apps" target="_blank">Browse Samples →</a>
+                </div>
+                <div class="card">
+                    <h4>Microservices with Dapr</h4>
+                    <p>End-to-end microservices application samples using Dapr.</p>
+                    <a href="https://github.com/Azure-Samples/containerapps-albumapi-csharp" target="_blank">Explore Demo →</a>
+                </div>
+                <div class="card">
+                    <h4>GitHub Actions</h4>
+                    <p>CI/CD workflows for deploying to Azure Container Apps.</p>
+                    <a href="https://learn.microsoft.com/azure/container-apps/github-actions" target="_blank">View Workflows →</a>
+                </div>
+                <div class="card">
+                    <h4>Azure DevOps</h4>
+                    <p>Deployment pipelines using Azure DevOps.</p>
+                    <a href="https://learn.microsoft.com/azure/container-apps/azure-pipelines" target="_blank">Set Up Pipeline →</a>
+                </div>
+                <div class="card">
+                    <h4>Terraform</h4>
+                    <p>Infrastructure as Code samples using Terraform.</p>
+                    <a href="https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/container_app" target="_blank">Terraform Docs →</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tools Section -->
+        <section id="tools" class="section">
+            <h2>🛠️ Tools & Extensions</h2>
+            <div class="cards">
+                <div class="card">
+                    <h4>Azure CLI</h4>
+                    <p>Command-line interface for managing Azure Container Apps.</p>
+                    <a href="https://learn.microsoft.com/cli/azure/containerapp" target="_blank">CLI Reference →</a>
+                </div>
+                <div class="card">
+                    <h4>VS Code Extension</h4>
+                    <p>Azure Container Apps extension for Visual Studio Code.</p>
+                    <a href="https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-azurecontainerapps" target="_blank">Install Extension →</a>
+                </div>
+                <div class="card">
+                    <h4>Azure PowerShell</h4>
+                    <p>PowerShell cmdlets for Azure Container Apps management.</p>
+                    <a href="https://learn.microsoft.com/powershell/module/az.app" target="_blank">PowerShell Docs →</a>
+                </div>
+                <div class="card">
+                    <h4>Azure Developer CLI (azd)</h4>
+                    <p>Accelerate your journey from local development to Azure.</p>
+                    <a href="https://learn.microsoft.com/azure/developer/azure-developer-cli/overview" target="_blank">Get Started →</a>
+                </div>
+                <div class="card">
+                    <h4>REST API</h4>
+                    <p>Comprehensive REST API reference for programmatic access.</p>
+                    <a href="https://learn.microsoft.com/rest/api/containerapps/" target="_blank">API Reference →</a>
+                </div>
+                <div class="card">
+                    <h4>Bicep & ARM Templates</h4>
+                    <p>Infrastructure as Code templates for deployment.</p>
+                    <a href="https://learn.microsoft.com/azure/templates/microsoft.app/containerapps" target="_blank">Template Reference →</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Learning Resources Section -->
+        <section id="learning" class="section">
+            <h2>🎓 Learning Resources</h2>
+            <div class="cards">
+                <div class="card">
+                    <h4>Microsoft Learn</h4>
+                    <p>Free, interactive learning paths and modules.</p>
+                    <a href="https://learn.microsoft.com/training/browse/?products=azure-container-apps" target="_blank">Start Learning →</a>
+                </div>
+                <div class="card">
+                    <h4>Azure Architecture Center</h4>
+                    <p>Reference architectures and best practices.</p>
+                    <a href="https://learn.microsoft.com/azure/architecture/browse/?products=azure-container-apps" target="_blank">Explore Architectures →</a>
+                </div>
+                <div class="card">
+                    <h4>Well-Architected Framework</h4>
+                    <p>Design principles and best practices for Container Apps.</p>
+                    <a href="https://learn.microsoft.com/azure/well-architected/service-guides/azure-container-apps" target="_blank">Best Practices →</a>
+                </div>
+                <div class="card">
+                    <h4>Azure Friday</h4>
+                    <p>Video series featuring Azure Container Apps demos and discussions.</p>
+                    <a href="https://learn.microsoft.com/shows/azure-friday/?terms=container%20apps" target="_blank">Watch Videos →</a>
+                </div>
+                <div class="card">
+                    <h4>Azure Updates</h4>
+                    <p>Stay informed about new features and announcements.</p>
+                    <a href="https://azure.microsoft.com/updates/?query=container%20apps" target="_blank">View Updates →</a>
+                </div>
+                <div class="card">
+                    <h4>Tech Community Blog</h4>
+                    <p>Articles, tutorials, and insights from the community.</p>
+                    <a href="https://techcommunity.microsoft.com/t5/apps-on-azure-blog/bg-p/AppsonAzureBlog/label-name/Azure%20Container%20Apps" target="_blank">Read Blog →</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Community Section -->
+        <section id="community" class="section">
+            <h2>👥 Community & Support</h2>
+            <div class="cards">
+                <div class="card">
+                    <h4>GitHub Discussions</h4>
+                    <p>Join the conversation, ask questions, and share ideas.</p>
+                    <a href="https://github.com/microsoft/azure-container-apps/discussions" target="_blank">Join Discussion →</a>
+                </div>
+                <div class="card">
+                    <h4>Stack Overflow</h4>
+                    <p>Get answers from the developer community.</p>
+                    <a href="https://stackoverflow.com/questions/tagged/azure-container-apps" target="_blank">Browse Questions →</a>
+                </div>
+                <div class="card">
+                    <h4>Microsoft Q&A</h4>
+                    <p>Ask technical questions and get answers from experts.</p>
+                    <a href="https://learn.microsoft.com/answers/tags/495/azure-container-apps" target="_blank">Ask a Question →</a>
+                </div>
+                <div class="card">
+                    <h4>Submit Feedback</h4>
+                    <p>Report issues, request features, and provide feedback.</p>
+                    <a href="https://github.com/microsoft/azure-container-apps/issues" target="_blank">Submit Issue →</a>
+                </div>
+                <div class="card">
+                    <h4>Azure Support</h4>
+                    <p>Get professional support from Microsoft Azure experts.</p>
+                    <a href="https://azure.microsoft.com/support/options/" target="_blank">Contact Support →</a>
+                </div>
+                <div class="card">
+                    <h4>Twitter/X</h4>
+                    <p>Follow for the latest updates and announcements.</p>
+                    <a href="https://twitter.com/search?q=%23AzureContainerApps" target="_blank">Follow Updates →</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Recent Updates Section -->
+        <section id="updates" class="section">
+            <h2>🆕 Recent Updates & What's New</h2>
+            <div class="highlight-box">
+                <h4>Latest Features</h4>
+                <ul style="padding-left: 20px; margin-top: 15px;">
+                    <li><strong>Container Apps Jobs</strong> - Run scheduled and event-driven batch workloads <span class="tag new">New</span></li>
+                    <li><strong>Java Metrics</strong> - Enhanced observability for Java applications <span class="tag new">New</span></li>
+                    <li><strong>Dedicated Workload Profiles</strong> - Run containerized apps on dedicated hardware</li>
+                    <li><strong>Custom Domains with Free Managed Certificates</strong> - Simplified HTTPS configuration</li>
+                    <li><strong>Azure OpenAI Integration</strong> - Build AI-powered applications</li>
+                    <li><strong>Improved Scaling</strong> - Enhanced KEDA scalers and custom metrics</li>
+                    <li><strong>Init Containers</strong> - Run initialization logic before app containers start</li>
+                    <li><strong>Session Affinity</strong> - Sticky sessions for stateful applications</li>
+                </ul>
+            </div>
+            <div class="cards">
+                <div class="card">
+                    <h4>Roadmap</h4>
+                    <p>See what features are planned for Azure Container Apps.</p>
+                    <a href="https://github.com/microsoft/azure-container-apps/projects" target="_blank">View Roadmap →</a>
+                </div>
+                <div class="card">
+                    <h4>Release Notes</h4>
+                    <p>Detailed release notes and changelog.</p>
+                    <a href="https://azure.microsoft.com/updates/?query=container%20apps" target="_blank">Read Notes →</a>
+                </div>
+                <div class="card">
+                    <h4>Preview Features</h4>
+                    <p>Try out upcoming features in public preview.</p>
+                    <span class="tag preview">Preview</span>
+                    <a href="https://learn.microsoft.com/azure/container-apps/whats-new" target="_blank">Explore Preview →</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Pricing & SLA Section -->
+        <section id="pricing" class="section">
+            <h2>💰 Pricing & SLA</h2>
+            <div class="cards">
+                <div class="card">
+                    <h4>Pricing Details</h4>
+                    <p>Understand the consumption-based pricing model for Azure Container Apps.</p>
+                    <a href="https://azure.microsoft.com/pricing/details/container-apps/" target="_blank">View Pricing →</a>
+                </div>
+                <div class="card">
+                    <h4>Pricing Calculator</h4>
+                    <p>Estimate your monthly costs with the Azure pricing calculator.</p>
+                    <a href="https://azure.microsoft.com/pricing/calculator/?service=container-apps" target="_blank">Calculate Cost →</a>
+                </div>
+                <div class="card">
+                    <h4>Service Level Agreement</h4>
+                    <p>Review the SLA and uptime guarantees for Azure Container Apps.</p>
+                    <a href="https://azure.microsoft.com/support/legal/sla/container-apps/" target="_blank">Read SLA →</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Quick Links Section -->
+        <section id="quick-links" class="section">
+            <h2>🔗 Quick Links</h2>
+            <div class="list-section">
+                <ul>
+                    <li><a href="https://portal.azure.com/#create/Microsoft.ContainerApp" target="_blank">🚀 Create Container App (Azure Portal)</a></li>
+                    <li><a href="https://learn.microsoft.com/azure/container-apps/" target="_blank">📖 Official Documentation</a></li>
+                    <li><a href="https://github.com/microsoft/azure-container-apps" target="_blank">💻 GitHub Repository</a></li>
+                    <li><a href="https://learn.microsoft.com/azure/container-apps/compare-options" target="_blank">⚖️ Compare Container Hosting Options</a></li>
+                    <li><a href="https://learn.microsoft.com/azure/container-apps/faq" target="_blank">❓ Frequently Asked Questions</a></li>
+                    <li><a href="https://azure.microsoft.com/products/container-apps/" target="_blank">🏠 Product Page</a></li>
+                </ul>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>© 2026 Microsoft Corporation. Azure Container Apps Resources</p>
+            <p style="margin-top: 10px;">
+                <a href="https://privacy.microsoft.com/privacystatement" target="_blank" style="color: var(--primary-color); margin: 0 15px;">Privacy</a> |
+                <a href="https://www.microsoft.com/legal/terms-of-use" target="_blank" style="color: var(--primary-color); margin: 0 15px;">Terms of Use</a> |
+                <a href="https://www.microsoft.com/trademarks" target="_blank" style="color: var(--primary-color); margin: 0 15px;">Trademarks</a>
+            </p>
+            <p style="margin-top: 15px; font-size: 0.9em;">
+                Last updated: February 2026 | 
+                <a href="https://github.com/microsoft/azure-container-apps" target="_blank" style="color: var(--primary-color);">Contribute on GitHub</a>
+            </p>
+        </div>
+    </footer>
+</body>
+</html>

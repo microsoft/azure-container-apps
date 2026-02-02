@@ -1,0 +1,89 @@
+name: Resource Suggestion
+description: Suggest a new resource to be added to the page
+title: "[Resource]: "
+labels: ["enhancement", "resource-suggestion"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for suggesting a resource! Please fill out the information below.
+
+  - type: input
+    id: title
+    attributes:
+      label: Resource Title
+      description: The title of the resource
+      placeholder: e.g., "Azure Container Apps Workshop"
+    validations:
+      required: true
+
+  - type: input
+    id: url
+    attributes:
+      label: Resource URL
+      description: The link to the resource
+      placeholder: https://
+    validations:
+      required: true
+
+  - type: dropdown
+    id: section
+    attributes:
+      label: Section
+      description: Where should this resource be added?
+      options:
+        - Getting Started
+        - Documentation
+        - Samples & Demos
+        - Tools & Extensions
+        - Learning Resources
+        - Community & Support
+        - Recent Updates
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: Brief description of the resource (1-2 sentences)
+      placeholder: What does this resource offer?
+    validations:
+      required: true
+
+  - type: textarea
+    id: why
+    attributes:
+      label: Why This Resource?
+      description: Explain why this resource would be valuable to the community
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: resource-type
+    attributes:
+      label: Resource Type
+      description: What type of resource is this?
+      options:
+        - label: Official Microsoft documentation
+        - label: Code sample/demo
+        - label: Tool or extension
+        - label: Blog post or article
+        - label: Video tutorial
+        - label: Community project
+        - label: Other
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Checklist
+      options:
+        - label: I have verified the link works
+          required: true
+        - label: The resource is directly related to Azure Container Apps
+          required: true
+        - label: This is not a duplicate of an existing resource
+          required: true
+        - label: The content is current and accurate
+          required: true
