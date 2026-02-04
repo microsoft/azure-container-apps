@@ -32,24 +32,18 @@ After the PR is merged, deploy the updated container:
 ```bash
 cd url-redirects
 
-# First-time setup: Create the Container App Environment (skip if already exists)
-az containerapp env create \
-  --name url-redirects-env \
-  --resource-group prodish-stuff \
-  --location centralus
-
 # Deploy (or update) the Container App
 az containerapp up \
-  --name url-redirects \
+  --name redirector \
   --resource-group prodish-stuff \
-  --environment url-redirects-env \
+  --environment prodish-aca-env-donot-delete \
   --source . \
   --ingress external \
   --target-port 80
 
 # Get the FQDN for DNS setup
 az containerapp show \
-  --name url-redirects \
+  --name redirector \
   --resource-group prodish-stuff \
   --query "properties.configuration.ingress.fqdn" \
   --output tsv
@@ -67,7 +61,7 @@ For new hostnames, an admin needs to:
 2. **Add Custom Domain to Container App**
    ```bash
    az containerapp hostname add \
-     --name url-redirects \
+     --name redirector \
      --resource-group prodish-stuff \
      --hostname your-subdomain.containerapps.io
    ```
@@ -78,7 +72,7 @@ For new hostnames, an admin needs to:
      --name url-redirects \
      --resource-group prodish-stuff \
      --hostname your-subdomain.containerapps.io \
-     --environment url-redirects-env \
+     --environment prodish-aca-env-donot-delete \
      --validation-method CNAME
    ```
 
@@ -127,8 +121,8 @@ curl http://localhost:8080/health
 
 - **Resource Group:** `prodish-stuff`
 - **Region:** Central US
-- **Container App:** `url-redirects`
-- **Container App Environment:** `url-redirects-env`
+- **Container App:** `redirector`
+- **Container App Environment:** `prodish-aca-env-donot-delete`
 
 ## Troubleshooting
 
