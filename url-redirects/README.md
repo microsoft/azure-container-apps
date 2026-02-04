@@ -6,7 +6,7 @@ This directory contains a lightweight NGINX-based redirect service deployed on A
 
 1. **redirects.yaml** - Simple configuration file listing all redirects
 2. **Dockerfile** - Builds an NGINX container that reads the config
-3. **GitHub Actions** - Automatically deploys on changes to `main`
+3. **Manual deployment** - Deploy to Azure Container Apps using `az containerapp up`
 
 ## Adding a New Redirect
 
@@ -25,9 +25,39 @@ redirects:
 
 Submit a PR with your changes. The PR will be reviewed and merged.
 
-### Step 3: Post-Merge Manual Steps
+### Step 3: Deploy the Container
 
-After the PR is merged and deployed, an admin needs to:
+After the PR is merged, deploy the updated container:
+
+```bash
+cd url-redirects
+
+# First-time setup: Create the Container App Environment (skip if already exists)
+az containerapp env create \
+  --name url-redirects-env \
+  --resource-group prodish-stuff \
+  --location centralus
+
+# Deploy (or update) the Container App
+az containerapp up \
+  --name url-redirects \
+  --resource-group prodish-stuff \
+  --environment url-redirects-env \
+  --source . \
+  --ingress external \
+  --target-port 80
+
+# Get the FQDN for DNS setup
+az containerapp show \
+  --name url-redirects \
+  --resource-group prodish-stuff \
+  --query "properties.configuration.ingress.fqdn" \
+  --output tsv
+```
+
+### Step 4: Configure DNS and Custom Domain (new hostnames only)
+
+For new hostnames, an admin needs to:
 
 1. **Create DNS CNAME Record**
    ```
@@ -48,7 +78,7 @@ After the PR is merged and deployed, an admin needs to:
      --name url-redirects \
      --resource-group prodish-stuff \
      --hostname your-subdomain.containerapps.io \
-     --environment <env-name> \
+     --environment url-redirects-env \
      --validation-method CNAME
    ```
 
@@ -98,7 +128,7 @@ curl http://localhost:8080/health
 - **Resource Group:** `prodish-stuff`
 - **Region:** Central US
 - **Container App:** `url-redirects`
-- **Container Registry:** Azure Container Registry (configured in GitHub Actions)
+- **Container App Environment:** `url-redirects-env`
 
 ## Troubleshooting
 
