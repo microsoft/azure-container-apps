@@ -1,0 +1,23 @@
+# URL Redirects Configuration
+# 
+# This file defines HTTP redirects for containerapps.io subdomains.
+# To add a new redirect:
+#   1. Add a new entry under 'redirects'
+#   2. Create a PR with your changes
+#   3. After merge, create the CNAME record and custom domain binding (see README.md)
+#
+# Format:
+#   - host: the subdomain (e.g., start.containerapps.io)
+#     target: the destination URL (full URL including https://)
+#     preserve_path: (optional) if true, appends the request path to target (default: false)
+
+redirects:
+  # Primary getting started redirect
+  - host: start.containerapps.io
+    target: https://microsoft.github.io/azure-container-apps/aca-getting-started/
+    preserve_path: false
+
+  # Example: Uncomment and modify to add another redirect
+  # - host: learn.containerapps.io
+  #   target: https://learn.microsoft.com/azure/container-apps/
+  #   preserve_path: true
