@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Azure Container Apps - Region feature availability matrix">
+    <title>Azure Container Apps — Region Availability</title>
+    <style>
+        :root {
+            --primary-color: #0078d4;
+            --secondary-color: #106ebe;
+            --accent-color: #50e6ff;
+            --text-color: #323130;
+            --bg-color: #ffffff;
+            --border-color: #edebe9;
+            --hover-bg: #f3f2f1;
+            --success-color: #107c10;
+            --error-color: #d13438;
+            --warning-color: #ca5010;
+            --muted-color: #a19f9d;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--bg-color);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 40px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            font-size: 1.2em;
+            opacity: 0.95;
+        }
+
+        nav {
+            background-color: #f8f8f8;
+            padding: 15px 0;
+            border-bottom: 2px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+        }
+
+        nav a {
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        nav a:hover, nav a.active {
+            color: var(--primary-color);
+        }
+
+        /* Controls */
+        .controls {
+            padding: 30px 0 20px;
+        }
+
+        .search-row {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 250px;
+            position: relative;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 10px 15px 10px 40px;
+            border: 2px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 1em;
+            font-family: inherit;
+            transition: border-color 0.3s;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .search-box::before {
+            content: '🔍';
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1em;
+        }
+
+        .stats {
+            font-size: 0.9em;
+            color: #605e5c;
+            white-space: nowrap;
+        }
+
+        .filter-groups {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .filter-btn {
+            padding: 6px 16px;
+            border: 2px solid var(--border-color);
+            border-radius: 20px;
+            background: white;
+            font-family: inherit;
+            font-size: 0.85em;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: var(--text-color);
+        }
+
+        .filter-btn:hover {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        .filter-btn.active {
+            background: var(--primary-color);
+            border-color: var(--primary-color);
+            color: white;
+        }
+
+        .filter-btn .count {
+            display: inline-block;
+            background: rgba(0,0,0,0.1);
+            padding: 1px 6px;
+            border-radius: 10px;
+            font-size: 0.85em;
+            margin-left: 4px;
+        }
+
+        .filter-btn.active .count {
+            background: rgba(255,255,255,0.3);
+        }
+
+        /* Table */
+        .table-wrapper {
+            overflow-x: auto;
+            margin: 0 -20px;
+            padding: 0 20px 30px;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        table {
+            border-collapse: separate;
+            border-spacing: 0;
+            width: 100%;
+            font-size: 0.85em;
+        }
+
+        thead {
+            position: sticky;
+            top: 56px;
+            z-index: 50;
+        }
+
+        th {
+            background: #f8f8f8;
+            border-bottom: 2px solid var(--primary-color);
+            padding: 8px 10px;
+            text-align: center;
+            font-weight: 600;
+            white-space: nowrap;
+            cursor: pointer;
+            user-select: none;
+            transition: background 0.2s;
+        }
+
+        th:hover {
+            background: #eee;
+        }
+
+        th.region-col {
+            text-align: left;
+            position: sticky;
+            left: 0;
+            z-index: 60;
+            background: #f8f8f8;
+            min-width: 180px;
+        }
+
+        th .sort-arrow {
+            opacity: 0.3;
+            margin-left: 4px;
+            font-size: 0.8em;
+        }
+
+        th.sorted .sort-arrow {
+            opacity: 1;
+        }
+
+        /* Group header row */
+        .group-header th {
+            background: var(--primary-color);
+            color: white;
+            font-size: 0.9em;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            padding: 6px 10px;
+            border-bottom: none;
+            cursor: default;
+        }
+
+        .group-header th:hover {
+            background: var(--primary-color);
+        }
+
+        .group-header th.region-col {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        td {
+            padding: 7px 10px;
+            text-align: center;
+            border-bottom: 1px solid var(--border-color);
+            white-space: nowrap;
+        }
+
+        td.region-cell {
+            text-align: left;
+            font-weight: 500;
+            position: sticky;
+            left: 0;
+            background: white;
+            z-index: 10;
+        }
+
+        td.region-cell .slug {
+            display: block;
+            font-size: 0.8em;
+            color: var(--muted-color);
+            font-weight: 400;
+        }
+
+        tr:hover td {
+            background-color: var(--hover-bg);
+        }
+
+        tr:hover td.region-cell {
+            background-color: var(--hover-bg);
+        }
+
+        .check {
+            color: var(--success-color);
+            font-weight: 700;
+            font-size: 1.1em;
+        }
+
+        .cross {
+            color: var(--muted-color);
+            font-size: 1.1em;
+        }
+
+        .unknown {
+            color: var(--warning-color);
+            font-size: 0.9em;
+        }
+
+        /* Summary cards */
+        .summary-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .summary-card {
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .summary-card .number {
+            font-size: 2em;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .summary-card .label {
+            color: #605e5c;
+            font-size: 0.9em;
+        }
+
+        /* Legend */
+        .legend {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            font-size: 0.85em;
+            color: #605e5c;
+            margin-bottom: 10px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        /* Footer */
+        footer {
+            background: #f8f8f8;
+            padding: 30px 0;
+            margin-top: 50px;
+            text-align: center;
+            color: #605e5c;
+        }
+
+        footer a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Loading / Error */
+        .loading {
+            text-align: center;
+            padding: 60px 20px;
+            color: #605e5c;
+        }
+
+        .loading .spinner {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--border-color);
+            border-top-color: var(--primary-color);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-bottom: 15px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .error-box {
+            background: #fde7e9;
+            border-left: 4px solid var(--error-color);
+            padding: 20px;
+            border-radius: 4px;
+            margin: 30px 0;
+            color: var(--error-color);
+        }
+
+        /* No results */
+        .no-results {
+            text-align: center;
+            padding: 40px;
+            color: #605e5c;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.8em;
+            }
+
+            nav ul {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .summary-cards {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .search-row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .stats {
+                text-align: center;
+            }
+
+            table { font-size: 0.78em; }
+
+            th.region-col, td.region-cell {
+                min-width: 140px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>🌍 Azure Container Apps — Region Availability</h1>
+            <p>Feature availability across Azure regions — updated daily</p>
+        </div>
+    </header>
+
+    <nav>
+        <div class="container">
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="region-availability.html" class="active">Region Availability</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="container">
+        <div id="app">
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <div>Loading region availability data…</div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>Data sourced from the Azure Resource Manager API.
+                <a href="https://github.com/microsoft/azure-container-apps/tree/main/scripts/region-discovery" target="_blank">View Script Source</a>
+            </p>
+            <p style="margin-top:8px; font-size:0.85em;" id="footer-timestamp"></p>
+            <p style="margin-top:12px;">
+                <a href="https://github.com/microsoft/azure-container-apps" target="_blank">GitHub</a> ·
+                <a href="https://learn.microsoft.com/azure/container-apps/" target="_blank">Documentation</a> ·
+                <a href="https://azure.microsoft.com/products/container-apps/" target="_blank">Azure Portal</a>
+            </p>
+        </div>
+    </footer>
+
+    <script>
+    (function() {
+        'use strict';
+
+        const DATA_URL = 'data/region-features.json';
+        const app = document.getElementById('app');
+        const loading = document.getElementById('loading');
+
+        let data = null;
+        let searchTerm = '';
+        let activeGroups = new Set();
+        let sortCol = null;
+        let sortAsc = true;
+
+        // ── Fetch Data ────────────────────────────────────────────
+        async function init() {
+            try {
+                const resp = await fetch(DATA_URL);
+                if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+                data = await resp.json();
+
+                // Activate all groups by default
+                const groups = [...new Set(data.features.map(f => f.group))];
+                groups.forEach(g => activeGroups.add(g));
+
+                render();
+            } catch (err) {
+                loading.remove();
+                app.innerHTML = `<div class="error-box">
+                    <strong>Failed to load data</strong><br>
+                    ${err.message}. Please try refreshing the page.
+                </div>`;
+            }
+        }
+
+        // ── Render ────────────────────────────────────────────────
+        function render() {
+            loading.remove();
+
+            const groups = [...new Set(data.features.map(f => f.group))];
+            const visibleFeatures = data.features.filter(f => activeGroups.has(f.group));
+
+            // Filter regions
+            let regions = data.regions;
+            if (searchTerm) {
+                const q = searchTerm.toLowerCase();
+                regions = regions.filter(r =>
+                    r.slug.includes(q) || r.display_name.toLowerCase().includes(q)
+                );
+            }
+
+            // Sort
+            if (sortCol === 'region') {
+                regions = [...regions].sort((a, b) =>
+                    sortAsc ? a.display_name.localeCompare(b.display_name) : b.display_name.localeCompare(a.display_name)
+                );
+            } else if (sortCol) {
+                regions = [...regions].sort((a, b) => {
+                    const av = a.features[sortCol] === true ? 1 : 0;
+                    const bv = b.features[sortCol] === true ? 1 : 0;
+                    return sortAsc ? av - bv : bv - av;
+                });
+            }
+
+            // Count total features available per column
+            const featureCounts = {};
+            visibleFeatures.forEach(f => {
+                featureCounts[f.key] = data.regions.filter(r => r.features[f.key] === true).length;
+            });
+
+            // Summary
+            const totalRegions = data.regions.length;
+            const regionsWithACA = data.regions.filter(r =>
+                r.features['rt:managedEnvironments'] === true
+            ).length;
+            const regionsWithGPU = data.regions.filter(r =>
+                data.features.some(f => f.category === 'gpu' && r.features[f.key] === true)
+            ).length;
+            const regionsWithAZ = data.regions.filter(r =>
+                r.features['az:AvailabilityZones'] === true
+            ).length;
+
+            // Group counts for filter buttons
+            const groupCounts = {};
+            groups.forEach(g => {
+                groupCounts[g] = data.features.filter(f => f.group === g).length;
+            });
+
+            let html = '';
+
+            // Summary cards
+            html += `<div class="summary-cards">
+                <div class="summary-card"><div class="number">${regionsWithACA}</div><div class="label">Regions with ACA</div></div>
+                <div class="summary-card"><div class="number">${data.feature_count}</div><div class="label">Features Tracked</div></div>
+                <div class="summary-card"><div class="number">${regionsWithGPU}</div><div class="label">Regions with GPU</div></div>
+                <div class="summary-card"><div class="number">${regionsWithAZ}</div><div class="label">Regions with AZ</div></div>
+            </div>`;
+
+            // Controls
+            html += `<div class="controls">
+                <div class="search-row">
+                    <div class="search-box">
+                        <input type="text" id="search" placeholder="Search regions…" value="${escapeHtml(searchTerm)}">
+                    </div>
+                    <div class="stats">Showing ${regions.length} of ${totalRegions} regions · ${visibleFeatures.length} features</div>
+                </div>
+                <div class="filter-groups">
+                    ${groups.map(g => `<button class="filter-btn ${activeGroups.has(g) ? 'active' : ''}" data-group="${escapeHtml(g)}">
+                        ${escapeHtml(g)}<span class="count">${groupCounts[g]}</span>
+                    </button>`).join('')}
+                </div>
+                <div class="legend">
+                    <div class="legend-item"><span class="check">✓</span> Available</div>
+                    <div class="legend-item"><span class="cross">✗</span> Not available</div>
+                    <div class="legend-item"><span class="unknown">?</span> Unknown</div>
+                </div>
+            </div>`;
+
+            if (regions.length === 0) {
+                html += `<div class="no-results">No regions match your search.</div>`;
+            } else {
+                // Build table
+                html += `<div class="table-wrapper"><table>`;
+
+                // Group header row
+                const groupOrder = groups.filter(g => activeGroups.has(g));
+                html += `<thead><tr class="group-header"><th class="region-col"></th>`;
+                groupOrder.forEach(g => {
+                    const cols = visibleFeatures.filter(f => f.group === g).length;
+                    if (cols > 0) {
+                        html += `<th colspan="${cols}">${escapeHtml(g)}</th>`;
+                    }
+                });
+                html += `</tr>`;
+
+                // Feature header row
+                const regionSorted = sortCol === 'region';
+                html += `<tr><th class="region-col ${regionSorted ? 'sorted' : ''}" data-sort="region">
+                    Region <span class="sort-arrow">${regionSorted ? (sortAsc ? '▲' : '▼') : '▲'}</span>
+                </th>`;
+                visibleFeatures.forEach(f => {
+                    const isSorted = sortCol === f.key;
+                    html += `<th class="${isSorted ? 'sorted' : ''}" data-sort="${escapeHtml(f.key)}" title="${escapeHtml(f.display_name)} — available in ${featureCounts[f.key]} region(s)">
+                        ${escapeHtml(f.display_name)} <span class="sort-arrow">${isSorted ? (sortAsc ? '▲' : '▼') : '▲'}</span>
+                    </th>`;
+                });
+                html += `</tr></thead>`;
+
+                // Body
+                html += `<tbody>`;
+                regions.forEach(r => {
+                    html += `<tr><td class="region-cell">${escapeHtml(r.display_name)}<span class="slug">${escapeHtml(r.slug)}</span></td>`;
+                    visibleFeatures.forEach(f => {
+                        const v = r.features[f.key];
+                        if (v === true) {
+                            html += `<td><span class="check" title="Available">✓</span></td>`;
+                        } else if (v === false) {
+                            html += `<td><span class="cross" title="Not available">✗</span></td>`;
+                        } else {
+                            html += `<td><span class="unknown" title="Unknown">?</span></td>`;
+                        }
+                    });
+                    html += `</tr>`;
+                });
+                html += `</tbody></table></div>`;
+            }
+
+            app.innerHTML = html;
+
+            // Footer timestamp
+            const ts = document.getElementById('footer-timestamp');
+            if (ts && data.generated_at) {
+                const d = new Date(data.generated_at);
+                ts.textContent = `Last updated: ${d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', timeZoneName: 'short' })}`;
+            }
+
+            // Bind events
+            bindEvents();
+        }
+
+        // ── Events ────────────────────────────────────────────────
+        function bindEvents() {
+            const searchInput = document.getElementById('search');
+            if (searchInput) {
+                searchInput.addEventListener('input', e => {
+                    searchTerm = e.target.value;
+                    render();
+                    // Re-focus and restore cursor
+                    const newInput = document.getElementById('search');
+                    if (newInput) {
+                        newInput.focus();
+                        newInput.setSelectionRange(newInput.value.length, newInput.value.length);
+                    }
+                });
+            }
+
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const group = btn.dataset.group;
+                    if (activeGroups.has(group)) {
+                        activeGroups.delete(group);
+                    } else {
+                        activeGroups.add(group);
+                    }
+                    render();
+                });
+            });
+
+            document.querySelectorAll('th[data-sort]').forEach(th => {
+                th.addEventListener('click', () => {
+                    const col = th.dataset.sort;
+                    if (sortCol === col) {
+                        sortAsc = !sortAsc;
+                    } else {
+                        sortCol = col;
+                        sortAsc = col === 'region';
+                    }
+                    render();
+                });
+            });
+        }
+
+        // ── Util ──────────────────────────────────────────────────
+        function escapeHtml(str) {
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
+
+        // ── Start ─────────────────────────────────────────────────
+        init();
+    })();
+    </script>
+</body>
+</html>
