@@ -17,9 +17,13 @@ concurrency:
 jobs:
   discover:
     runs-on: ubuntu-latest
+    outputs:
+      data_changed: ${{ steps.commit.outputs.data_changed }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          ref: main
 
       - name: Azure Login (OIDC)
         uses: azure/login@v2
@@ -52,29 +56,37 @@ jobs:
             --output-dir ../../aca-getting-started/data
 
       - name: Commit updated data
+        id: commit
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add aca-getting-started/data/region-features.json
           if git diff --cached --quiet; then
             echo "No changes to commit"
+            echo "data_changed=false" >> "$GITHUB_OUTPUT"
           else
             git commit -m "chore: update region availability data
 
           Automated daily refresh of ACA region feature matrix.
 
           Co-authored-by: github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
+            git pull --rebase origin main
             git push
+            echo "data_changed=true" >> "$GITHUB_OUTPUT"
           fi
 
   deploy-pages:
     needs: discover
+    if: needs.discover.outputs.data_changed == 'true'
     runs-on: ubuntu-latest
+    concurrency:
+      group: pages
+      cancel-in-progress: false
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - name: Checkout
+      - name: Checkout latest main
         uses: actions/checkout@v4
         with:
           ref: main
