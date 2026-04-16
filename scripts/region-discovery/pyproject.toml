@@ -1,0 +1,13 @@
+[project]
+name = "aca-region-discovery"
+version = "0.1.0"
+description = "Discover Azure Container Apps feature availability across Azure regions"
+requires-python = ">=3.12"
+dependencies = [
+    "azure-identity>=1.25.2",
+    "azure-mgmt-resource>=25.0.0",
+    "requests>=2.32.0",
+]
+
+[project.scripts]
+aca-discover = "discover:main"
