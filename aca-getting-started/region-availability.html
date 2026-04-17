@@ -327,6 +327,13 @@
             font-size: 0.9em;
         }
 
+        .last-refreshed {
+            text-align: right;
+            color: #605e5c;
+            font-size: 0.85em;
+            margin-bottom: 12px;
+        }
+
         /* Legend */
         .legend {
             display: flex;
@@ -485,7 +492,7 @@
         let sortCol = null;
         let sortAsc = true;
 
-        // ── Fetch Data ────────────────────────────────────────────
+        // ── Fetch Data ──────────────���──────────────���──────────────
         async function init() {
             try {
                 const resp = await fetch(DATA_URL);
@@ -506,7 +513,7 @@
             }
         }
 
-        // ── Render ────────────────────────────────────────────────
+        // ── Render ────��──────────────��──────────────��─────────────
         function render() {
             loading.remove();
 
@@ -568,6 +575,14 @@
                 <div class="summary-card"><div class="number">${regionsWithGPU}</div><div class="label">Regions with GPU</div></div>
                 <div class="summary-card"><div class="number">${regionsWithAZ}</div><div class="label">Regions with AZ</div></div>
             </div>`;
+
+            // Last refreshed timestamp
+            const refreshed = data.generated_at ? new Date(data.generated_at) : null;
+            const refreshedStr = refreshed
+                ? refreshed.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })
+                  + ' at ' + refreshed.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit', timeZoneName: 'short' })
+                : 'Unknown';
+            html += `<div class="last-refreshed">Data last refreshed: ${refreshedStr}</div>`;
 
             // Controls
             html += `<div class="controls">
@@ -651,7 +666,7 @@
             bindEvents();
         }
 
-        // ── Events ────────────────────────────────────────────────
+        // ── Events ───��──────────────��──────────────��──────────────
         function bindEvents() {
             const searchInput = document.getElementById('search');
             if (searchInput) {
@@ -693,14 +708,14 @@
             });
         }
 
-        // ── Util ──────────────────────────────────────────────────
+        // ── Util ���──────────────���──────────────���──────────────���────
         function escapeHtml(str) {
             const div = document.createElement('div');
             div.textContent = str;
             return div.innerHTML;
         }
 
-        // ── Start ─────────────────────────────────────────────────
+        // ── Start ─────���──────────────���──────────────���─────────────
         init();
     })();
     </script>
