@@ -17,6 +17,7 @@ concurrency:
 jobs:
   discover:
     runs-on: ubuntu-latest
+    environment: region-discovery
     outputs:
       data_changed: ${{ steps.commit.outputs.data_changed }}
     steps:
