@@ -9,6 +9,7 @@ permissions:
   contents: write
   id-token: write
   pages: write
+  pull-requests: write
 
 concurrency:
   group: region-discovery
@@ -56,7 +57,7 @@ jobs:
             --output-format json \
             --output-dir ../../aca-getting-started/data
 
-      - name: Commit updated data
+      - name: Commit and push updated data
         id: commit
         run: |
           git config user.name "github-actions[bot]"
@@ -66,15 +67,27 @@ jobs:
             echo "No changes to commit"
             echo "data_changed=false" >> "$GITHUB_OUTPUT"
           else
+            BRANCH="auto/region-data-update"
+            git checkout -b "$BRANCH"
             git commit -m "chore: update region availability data
 
           Automated daily refresh of ACA region feature matrix.
 
           Co-authored-by: github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
-            git pull --rebase origin main
-            git push
+            git push --force origin "$BRANCH"
+            # Create or update pull request
+            EXISTING_PR=$(gh pr list --head "$BRANCH" --json number --jq '.[0].number')
+            if [ -z "$EXISTING_PR" ]; then
+              gh pr create \
+                --title "chore: update region availability data" \
+                --body "Automated daily refresh of ACA region feature matrix." \
+                --head "$BRANCH" \
+                --base main
+            fi
             echo "data_changed=true" >> "$GITHUB_OUTPUT"
           fi
+        env:
+          GH_TOKEN: ${{ github.token }}
 
   deploy-pages:
     needs: discover
