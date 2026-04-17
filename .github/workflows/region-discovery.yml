@@ -75,16 +75,19 @@ jobs:
 
           Co-authored-by: github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
             git push --force origin "$BRANCH"
-            # Create or update pull request
-            EXISTING_PR=$(gh pr list --head "$BRANCH" --json number --jq '.[0].number')
+            echo "data_changed=true" >> "$GITHUB_OUTPUT"
+
+            # Create PR if one doesn't already exist (best-effort)
+            EXISTING_PR=$(gh pr list --head "$BRANCH" --json number --jq '.[0].number' || true)
             if [ -z "$EXISTING_PR" ]; then
               gh pr create \
                 --title "chore: update region availability data" \
                 --body "Automated daily refresh of ACA region feature matrix." \
                 --head "$BRANCH" \
-                --base main
+                --base main || echo "::warning::Could not create PR automatically. Please create one from branch $BRANCH."
+            else
+              echo "PR #$EXISTING_PR already exists"
             fi
-            echo "data_changed=true" >> "$GITHUB_OUTPUT"
           fi
         env:
           GH_TOKEN: ${{ github.token }}
