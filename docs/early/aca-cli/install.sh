@@ -3,7 +3,7 @@ set -e
 
 # TODO: Change to "main" once merged
 REPO="microsoft/azure-container-apps"
-BRANCH="aca-cli-preview"
+BRANCH="main"
 BINARY_NAME="aca"
 INSTALL_DIR="/usr/local/bin"
 
