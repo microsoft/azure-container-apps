@@ -1,4 +1,4 @@
-# ACA CLI (Early Access)
+# ACA Sandboxes CLI (Early Access)
 
 Command-line interface for Azure Container Apps Sandboxes (Early Access).
 
