@@ -1,481 +1,180 @@
-# Azure Container Apps Sandboxes Overview [Private Preview]
-
-Azure Container Apps Sandboxes is a new first-class resource type (`Microsoft.App/SandboxGroups`) that provides fast, secure, ephemeral compute environments with built-in suspend and resume capabilities. Sandboxes join Container Apps alongside Apps, Jobs, and Dynamic Sessions as a foundational compute primitive.
-
-Key characteristics:
-
-- **Sub-second startup** — sandboxes are provisioned from prewarmed pools.
-- **Strong isolation** — each sandbox runs in its own secure boundary, safe for untrusted code.
-- **Scale to zero** — pay nothing when idle.
-- **Massive scale-out** — burst to thousands of concurrent sandboxes.
-- **OCI container image support** — bring your own image.
-- **Suspend and resume** — snapshot full state (memory + disk), resume later in sub-second time.
-
-## Prerequisites
-
-- An Azure account with an active subscription. [Create one for free](https://azure.microsoft.com/pricing/purchase-options/azure-account).
-- A **Microsoft Entra ID** account. Personal Microsoft accounts are not supported.
-- Install the [Azure CLI](/cli/azure/install-azure-cli).
-
-```azurecli
-az extension update --name containerapp
-```
-
-> [!NOTE]
-> You need version **1.3.0b4** or later of the `containerapp` extension. [ASSUMPTION]
-
-## Use Cases
-
-| Scenario | How Sandboxes Help |
-|---|---|
-| **AI code execution** | Safely run LLM-generated code in isolated environments with instant startup |
-| **Development environments** | On-demand, suspendable dev environments that preserve state across sessions |
-| **CI/CD pipelines** | Ephemeral build and test environments that scale to zero when idle |
-| **Interactive user sessions** | Each user gets their own isolated compute environment |
-| **Secure multi-tenant compute** | Strong isolation for running untrusted workloads from multiple tenants |
-| **Burst workloads** | Scale from zero to thousands of sandboxes on demand |
-| **Agent workflows** | Give AI agents persistent, isolated workspaces that survive across task boundaries |
-
-## Quickstart: Create via Portal
-
-1. Navigate to [containerapps.azure.com](https://containerapps.azure.com/).
-2. Select **Sandbox Groups** from the navigation.
-3. Click **Create Sandbox Group**.
-4. Fill in Subscription, Resource Group, Region, and Name.
-5. Optionally expand **Sandbox Defaults** to set default CPU, memory, disk, and timeout.
-6. Click **Create Sandbox Group**.
-
-## Quickstart: Create via CLI
-
-```azurecli
-# Create a resource group
-az group create --name <RESOURCE_GROUP> --location westcentralus
-
-# Create a sandbox group [ASSUMPTION: exact CLI syntax]
-az containerapp sandbox-group create \
-  --name <SANDBOX_GROUP_NAME> \
-  --resource-group <RESOURCE_GROUP> \
-  --location westcentralus
-
-# Create a sandbox from a public disk image
-az containerapp sandbox create \
-  --sandbox-group <SANDBOX_GROUP_NAME> \
-  --resource-group <RESOURCE_GROUP> \
-  --image ubuntu-22.04
-```
-
+﻿---
+title: Azure Container Apps Sandboxes overview
+description: Learn about Azure Container Apps Sandboxes, a first-class resource type for fast, secure, ephemeral compute environments with suspend and resume capabilities.
+ms.topic: concept-article
+ms.service: azure-container-apps
+ms.date: 05/06/2026
 ---
 
-## Create Sandbox Group — Portal Form
+# Azure Container Apps Sandboxes overview
 
-URL: `https://containerapps.azure.com/sandbox-groups/create`
+Azure Container Apps Sandboxes provide fast, secure, ephemeral compute environments with built-in suspend and resume capabilities. Sandboxes are a first-class resource type (`Microsoft.App/SandboxGroups`) in Container Apps, alongside apps, jobs, and dynamic sessions.
 
-### Basics
+Where [dynamic sessions](../dynamic-sessions/overview.md) provide a managed execution experience that abstracts away infrastructure, Sandboxes give you direct, programmable control over isolated compute environments. You manage the full sandbox lifecycle, including state snapshots, persistent storage, and networking policies.
 
-| Field | Type | Required | Options / Notes |
+Inside a sandbox you can run full terminal shells. The following screenshot shows how you can run GitHub Copilot in a sandbox.
+
+![Screenshot of a terminal running in a sandbox.](media/sandboxes/azure-container-apps-sandboxes-shell.png)
+
+> **Note:** Azure Container Apps Sandboxes are currently in private preview. Contact your Microsoft representative for access.
+
+## Key characteristics
+
+- **Sub-second startup**: Sandboxes are provisioned from prewarmed pools for near-instant availability.
+- **Strong isolation**: Each sandbox runs in its own secure boundary, safe for untrusted code execution.
+- **Scale to zero**: Pay nothing when sandboxes are idle.
+- **Massive scale-out**: Burst to thousands of concurrent sandboxes on demand.
+- **OCI container image support**: Bring your own container images as sandbox root filesystems.
+- **Suspend and resume**: Snapshot full state including memory and disk, and resume later with sub-second restore times.
+
+## When to use Sandboxes
+
+Sandboxes are a good fit when you need isolated compute environments with explicit lifecycle control, persistent state, or programmable access through SDKs.
+
+| Scenario | Use Sandboxes? | Why |
+|---|---|---|
+| AI code execution with state preservation | Yes | Suspend between tasks, resume with full context intact |
+| Development environments | Yes | On-demand, suspendable environments that preserve state across sessions |
+| Agent workflows | Yes | Give AI agents persistent, isolated workspaces across task boundaries |
+| Interactive user sessions | Yes | Each user gets their own isolated compute environment |
+| Secure multi-tenant compute | Yes | Strong isolation for running untrusted workloads from multiple tenants |
+| Burst workloads | Yes | Scale from zero to thousands of sandboxes on demand |
+| CI/CD pipelines | Yes | Ephemeral build and test environments that scale to zero when idle |
+
+### Choose the right Container Apps compute option
+
+Use the following table to select the Container Apps compute type that fits your workload.
+
+| Compute type | Best for | Lifecycle | State |
 |---|---|---|---|
-| Subscription | Dropdown | Yes | Lists all Azure subscriptions |
-| Resource Group | Dropdown | Yes | Lists resource groups in selected subscription |
-| Region | Dropdown | Yes | See [Region Availability](#region-availability) |
-| Name | Text input | Yes | Lowercase, e.g. `my-sandbox-group` |
+| **Apps** | Long-running services, APIs, web apps | Continuous | Stateless (external state stores) |
+| **Jobs** | Run-to-completion tasks, batch processing | Start → run → complete | Stateless |
+| **Dynamic Sessions** | Managed code execution, LLM-generated scripts | Managed by session pool | Ephemeral |
+| **Sandboxes** | Programmable isolated compute with lifecycle control | You manage: create, suspend, resume, delete | Stateful (snapshots, volumes) |
 
-### Networking
+## Key concepts
 
-> Early preview. Available in the UI only with `sandboxGroupCustomVNet` feature flag enabled.
+### Sandbox groups
 
-| Field | Type | Required | Options / Notes |
-|---|---|---|---|
-| Use Custom VNet | Toggle | No | Default: off |
-| VNet | Radio + Dropdown | Conditional | **New** (name + address prefix, e.g. `10.0.0.0/16`) or **Existing** (select from subscription) |
-| Subnet | Radio + Dropdown | Conditional | **New** (name + address prefix, e.g. `10.0.0.0/23`) or **Existing** (select from VNet) |
+A sandbox group is the top-level management boundary for sandboxes. It's an Azure Resource Manager (ARM) resource that you create in a resource group and region. All sandboxes, disk images, snapshots, volumes, and secrets are scoped to a sandbox group.
 
-### Sandbox Defaults (collapsible, optional)
+Use sandbox groups to organize sandboxes by application, team, or environment.
 
-| Field | Type | Default | Options |
-|---|---|---|---|
-| Default CPU | Dropdown | Not set | `0.5`, `1`, `2`, `4` vCPU |
-| Default Memory | Dropdown | Not set | `1Gi`, `2Gi`, `4Gi`, `8Gi` |
-| Default Disk | Dropdown | Not set | `10Gi`, `20Gi`, `50Gi` |
-| Max Sandbox Count | Number input | Not set | Minimum: 1 |
-| Default Timeout (seconds) | Number input | Not set | Minimum: 1 |
+### Sandboxes
 
----
+A sandbox is an individual isolated compute instance within a sandbox group. Each sandbox runs from a disk image or snapshot and has its own CPU, memory, disk, and network boundary.
 
-## Sandbox Group Overview
+You interact with sandboxes by executing commands, managing files, exposing ports, and controlling lifecycle state.
 
-URL: `https://containerapps.azure.com/sandbox-groups/<rg>/<name>/overview`
+### Disk images
 
-After creation, the overview page displays read-only properties.
+Disk images are OCI container images converted for use as sandbox root filesystems. You can use public images or create private images from your own container registries.
 
-### Overview Card
+You can build disk images from:
 
-| Property | Description |
+- **Public images**: Prebuilt images available to all sandbox groups.
+- **Container registry images**: Pull from public or private registries with optional authentication.
+- **Dockerfiles**: Build custom images with a Dockerfile.
+
+### Snapshots
+
+Snapshots capture the full state of a running sandbox, including memory and disk. Use snapshots to:
+
+- **Suspend and resume**: Pause a sandbox and restore it later with all processes and data intact.
+- **Clone environments**: Create new sandboxes from a known-good state.
+- **Share baselines**: Distribute preconfigured environments across your team.
+
+### Volumes
+
+Volumes provide persistent storage that you can mount into sandboxes. Two volume types are available:
+
+| Volume type | Description |
 |---|---|
-| Name | Sandbox group name |
-| Subscription | Subscription ID |
-| Resource Group | Resource group name |
-| Location | Azure region |
-| Provisioning State | Current state (e.g. `Succeeded`) |
+| **Azure Blob** | Cloud object storage with file explorer, upload, and download support |
+| **Data Disk** | Block storage that attaches directly to a sandbox |
 
-### Configuration Card
+### Lifecycle states
 
-| Property | Description |
-|---|---|
-| Default CPU | Default vCPU for new sandboxes, or "Not set" |
-| Default Memory | Default memory allocation, or "Not set" |
-| Default Disk | Default disk allocation, or "Not set" |
-| Max Sandbox Count | Maximum sandboxes allowed, or "Not set" |
-| Default Timeout | Default timeout in seconds, or "Not set" |
-
-### Networking Card
-> Early preview. Available in the UI only with `sandboxGroupCustomVNet` feature flag enabled.
-
-
-| Property | Description |
-|---|---|
-| Use Custom VNet | Yes / No |
-| Virtual Network | VNet name (if custom VNet enabled) |
-| Subnet | Subnet name (if custom VNet enabled) |
-
-### Tags Card
-
-Displays resource tags as key-value pairs. Only shown if tags exist.
-
-**Actions**: Refresh, Delete sandbox group.
-
----
-
-## Sandboxes
-
-URL: `https://containerapps.azure.com/sandbox-groups/<rg>/<name>/sandboxes`
-
-Lists all sandboxes in the group with search by ID or labels.
-
-### Sandbox States
+Sandboxes transition through the following states:
 
 | State | Description |
 |---|---|
 | Running | Actively executing |
+| Suspended | Auto-suspended with full state preserved (memory and disk) |
+| Idle | System-suspended, can auto-resume on demand |
 | Stopped | User-initiated stop |
-| Suspended | Auto-suspended; full state preserved |
-| Idle | System-suspended; can auto-resume |
-| Resuming | Waking from suspended/idle |
+| Resuming | Waking from suspended or idle state |
+| Creating | Provisioning in progress |
 | Stopping | Shutdown in progress |
-| Creating | Provisioning |
 | Deleting | Teardown in progress |
 
-### Create Sandbox
+You can configure automatic lifecycle policies for each sandbox:
 
-URL: `https://containerapps.azure.com/sandbox-groups/<rg>/<name>/sandboxes/create`
+- **Auto-suspend**: Suspend idle sandboxes after a configurable timeout. Choose between memory mode (full snapshot) or disk mode (preserve disk only).
+- **Auto-delete**: Automatically delete sandboxes after a specified number of days.
 
-The portal offers multiple creation paths via a dropdown menu:
+## Architecture
 
-- **Standard Sandbox** — full configuration options (described below)
-- **GitHub Copilot Sandbox** — pre-configured for Copilot
-- **Claude Sandbox** — Claude CLI pre-installed
-- **OpenClaw Sandbox** — OpenClaw AI agent pre-installed
+Sandboxes use a two-plane architecture:
 
-#### Card 1: Source
-
-| Field | Type | Required | Options / Notes |
-|---|---|---|---|
-| Source Type | Radio buttons | Yes | **Public Disk Image**, **Disk Image**, **Snapshot** |
-| Public Disk Image | Dropdown | If selected | Lists available public images |
-| Disk Image | Dropdown | If selected | Lists private disk images in the group |
-| Snapshot | Dropdown | If selected | Lists snapshots in the group |
-
-#### Card 2: Additional Details (collapsible)
-
-| Field | Type | Required | Notes |
-|---|---|---|---|
-| Labels | Key-value editor | No | Add key-value pairs |
-| Entrypoint | Text input | No | Space-separated or JSON array. Not available for snapshot source. |
-| Command | Text input | No | Space-separated or JSON array. Not available for snapshot source. |
-| Environment Variables | Key-value editor | No | Name-value pairs. Not available for snapshot source. |
-| Connections | Accumulator dropdown | No | Select from available ready connections; shown as removable chips |
-
-#### Card 3: Ports (collapsible)
-
-| Field | Type | Notes |
+| Plane | Endpoint | Operations |
 |---|---|---|
-| Port | Number | Port number to expose |
-| Protocol | Dropdown | `Http`, `Http2` |
-| Activation Mode | Dropdown | `Manual`, `Auto` |
-| Auth Mode | Dropdown | `EntraId`, `GitHub`, `None` |
+| **ARM control plane** | `management.azure.com` | Create, update, delete, and list sandbox groups. Manage VNet connections. |
+| **ADC data plane** | `management.azuredevcompute.io` | Manage sandboxes, disk images, snapshots, files, volumes, secrets, ports, and egress policies. |
 
-#### Card 4: Volumes (collapsible)
+You create and manage sandbox groups through the ARM control plane. All operations on individual sandboxes and their resources go through the ADC data plane, scoped to a specific sandbox group.
 
-| Field | Type | Notes |
-|---|---|---|
-| Volume | Dropdown | Select from group volumes |
-| Mount path | Text input | e.g. `/mnt/data` |
-| Read-only | Checkbox | Default: off |
+## SDK support
 
-#### Card 5: Lifecycle Policy (collapsible)
+You can manage sandboxes programmatically using dedicated SDKs. SDK capabilities vary by language.
 
-| Field | Type | Default | Options |
+| SDK | Language | Scope | Authentication |
 |---|---|---|---|
-| Enable auto-suspend | Checkbox | On | — |
-| Idle timeout (seconds) | Number input | 300 | `60`, `120`, `300`, `600`, `1800`, `3600` |
-| Suspend Mode | Dropdown | Memory | **Memory** (full snapshot with memory state), **Disk** (preserve disk only, VM restarts fresh) |
-| Enable auto-delete | Checkbox | Off | — |
-| Delete after (days) | Number input | 1 | Minimum: 0 |
+| `Microsoft.Adc.Arm.Client` | C# | ARM control plane and data plane | Microsoft Entra ID via `Azure.Identity` |
+| `adc` | Python | Data plane only | API key or bearer token |
 
-#### Card 6: Network Egress Policy (collapsible)
+> **Note:** SDK capabilities currently differ by language. The C# SDK supports both control plane and data plane operations, while the Python SDK supports data plane operations only.
 
-| Field | Type | Notes |
-|---|---|---|
-| Default Action | Radio | `Allow` or `Deny` |
-| Host Rules | Editor | Domain patterns with allow/deny actions |
-| Custom Rules | Editor | Network CIDR rules with actions |
-| Skip Egress Proxy | Checkbox | When on, outbound traffic bypasses egress proxy |
+## Resource tiers
 
-#### Card 7: Content Packages (collapsible)
-
-| Field | Type | Notes |
-|---|---|---|
-| Content Package | Dropdown | Select from available packages |
-| Target Path | Text input | Path inside sandbox |
-| Action | Dropdown | `Download`, `Mount` |
-
-#### Card 8: Resources
-
-| Field | Type | Default | Notes |
-|---|---|---|---|
-| Resource Tier | Dropdown | M | See table below. Inherited from snapshot when source is snapshot (read-only). |
-
-**Resource Tiers**
+Each sandbox is assigned a resource tier that determines its CPU, memory, and disk allocation.
 
 | Tier | CPU | Memory | Disk |
 |---|---|---|---|
-| XS | 0.25 cores (250m) | 0.5 GB (512Mi) | 20 GB (20Gi) |
-| S | 0.5 cores (500m) | 1 GB (1Gi) | 20 GB (20Gi) |
-| M (default) | 1 core (1000m) | 2 GB (2Gi) | 20 GB (20Gi) |
-| L | 2 cores (2000m) | 4 GB (4Gi) | 40 GB (40Gi) |
+| XS | 0.25 cores | 0.5 GB | 20 GB |
+| S | 0.5 cores | 1 GB | 20 GB |
+| M (default) | 1 core | 2 GB | 20 GB |
+| L | 2 cores | 4 GB | 40 GB |
 
-### Sandbox Detail Page
+## Region availability
 
-URL: `https://containerapps.azure.com/sandbox-groups/<rg>/<name>/sandboxes/<id>`
+During the preview, sandboxes are available in the **West Central US** region.
 
-IDE-style layout with terminal (top ~65%) and tabbed panels (bottom ~35%).
+## Considerations
 
-**Actions toolbar:**
+Keep the following points in mind when working with sandboxes:
 
-| Action | Description |
-|---|---|
-| Resume | Wake a suspended/stopped sandbox |
-| Stop | Gracefully stop a running sandbox |
-| Snapshot | Capture current state (memory + disk) as a snapshot |
-| Commit | Save current disk state as a new disk image |
-| Delete | Permanently delete the sandbox |
-| Add Port | Expose a new port |
-| Details | Open side panel with full properties |
+- **Entra ID required**: Only Microsoft Entra ID accounts can access sandboxes. Personal Microsoft accounts aren't supported.
+- **Preview feature availability**: Some capabilities, such as custom VNet integration and managed identity for image pull, require feature flags during the preview period.
+- **Networking controls**: You can configure egress policies to control outbound traffic from sandboxes, including domain-based allow or deny rules and CIDR-based network rules.
 
-**Tabbed panels:**
+## Sandboxes vs. dynamic sessions
 
-| Tab | Description |
-|---|---|
-| Network Audit | Egress traffic log — allowed and denied requests |
-| Monitor | Real-time CPU, memory, disk, network stats |
-| Processes | Running process list |
-| Files | File explorer / directory browser |
-| Log Stream | Streaming container logs |
-| Connections | Attached connections with "Add" action |
-| Volumes | Mounted volumes with "Add" action |
+Sandboxes and [dynamic sessions](../dynamic-sessions/overview.md) both provide isolated compute environments in Container Apps, but they serve different needs.
 
-**Details side panel** shows: ID, State, Created timestamp, CPU, Memory, Disk, Source (image/snapshot), Port mappings, Labels, Lifecycle policies, Connections, Volumes.
-
----
-
-## Disk Images
-
-URL: `https://containerapps.azure.com/sandbox-groups/<rg>/<name>/disk-images`
-
-Disk images are OCI container images converted for use as sandbox root filesystems. The page has two tabs: **Private** and **Public**.
-
-**Actions**: Create Disk Image, Refresh.
-
-### Create Disk Image
-
-URL: `https://containerapps.azure.com/sandbox-groups/<rg>/<name>/disk-images/create`
-
-#### Image Configuration
-
-| Field | Type | Required | Notes |
-|---|---|---|---|
-| Base Image URL | Text input | Yes | OCI image ref, e.g. `mcr.microsoft.com/devcontainers/base:ubuntu` |
-| Entrypoint | Text input | No | Comma-separated, e.g. `/bin/bash, -c` |
-| Command | Text input | No | Comma-separated, e.g. `sleep, infinity` |
-
-#### Registry Authentication
-
-| Option | Fields | Notes |
+| | Dynamic sessions | Sandboxes |
 |---|---|---|
-| No authentication | — | Default; for public registries |
-| Username and token | Username (text), Token/Password (password) | For private registries |
-| Managed identity (for ACR) | User-assigned identity (dropdown) | Feature-flagged (`diskImageManagedIdentity`). Requires identity assigned on Identity page. |
+| **Access pattern** | HTTP request routing through a session pool management endpoint | Direct SDK and CLI control over individual sandboxes |
+| **State** | Ephemeral, destroyed after cooldown | Stateful with suspend, resume, and snapshots |
+| **Developer control** | Pool manages allocation and lifecycle | You manage sandbox lifecycle, files, ports, and policies |
+| **Image model** | Code interpreter (built-in) or custom container | Disk images (OCI), snapshots, content packages |
+| **Persistent storage** | Not available | Volumes (Azure Blob, Data Disk) |
+| **Networking** | Basic isolation | Egress policies, VNet integration, port management |
+| **SDKs** | REST API through pool endpoint | Dedicated SDKs (C#, Python) |
 
-#### Labels
+Choose dynamic sessions when you need a managed execution experience that abstracts infrastructure. Choose Sandboxes when you need programmable control over isolated compute with state persistence.
 
-Key-value editor for optional labels.
+## Related content
 
-### Disk Image Detail
-
-| Property | Description |
-|---|---|
-| ID | Unique image identifier |
-| Name | Display name (optional) |
-| Base Image | OCI image reference |
-| Entrypoint | Container entrypoint args |
-| Command | Container command args |
-| State | Building, Ready, Failed |
-| Error | Error message (if failed) |
-| Created / Updated | Timestamps |
-| Labels | Key-value pairs |
-| Dockerfile | Dockerfile content (if applicable) |
-
-**Actions**: Create Sandbox from this image, Refresh, Delete.
-
----
-
-## Snapshots
-
-URL: `https://containerapps.azure.com/sandbox-groups/<rg>/<name>/snapshots`
-
-Snapshots capture full sandbox state (memory + disk). Create a snapshot by suspending a sandbox or using the Snapshot action on the sandbox detail page.
-
-**Actions**: Refresh.
-
-### Snapshot Detail
-
-| Property | Description |
-|---|---|
-| ID | Unique snapshot identifier |
-| Source Sandbox | ID of the sandbox this snapshot was taken from |
-| VMM Type | Virtualization type (e.g. `CloudHypervisor`) |
-| Labels | Key-value pairs |
-| CPU | CPU allocation at time of snapshot |
-| Memory | Memory allocation at time of snapshot |
-| Disk | Disk allocation at time of snapshot |
-| GPU SKU / Quantity | GPU info (if applicable) |
-| Source Pod Containers | Container names and disk image IDs |
-| Created | Timestamp |
-
-**Actions**: Create Sandbox from snapshot, Refresh, Delete.
-
----
-
-## Volumes
-
-URL: `https://containerapps.azure.com/sandbox-groups/<rg>/<name>/volumes`
-
-Persistent storage that can be mounted into sandboxes.
-
-**Actions**: Create Volume, Search, Bulk delete (when items selected).
-
-### Create Volume
-
-| Field | Type | Required | Options |
-|---|---|---|---|
-| Volume Name | Text input | Yes | e.g. `my-volume` |
-| Volume Type | Radio buttons | Yes | **Azure Blob** (default), **Data Disk** |
-| Size | Text input | If Data Disk | e.g. `1Gi`, `10Gi` |
-
-### Volume Types
-
-| Type | Description | Features |
-|---|---|---|
-| **Azure Blob** | Cloud object storage | File explorer with upload/download/delete, storage usage stats, blob count |
-| **Data Disk** | Block storage | Size display, attached/available state, mounted sandboxes list |
-
-### Volume Detail — Azure Blob
-
-| Section | Properties |
-|---|---|
-| Usage | Storage bytes used, Blob count |
-| File Explorer | Browse, upload, download, create folder, delete files. Drag-and-drop upload. Overwrite toggle. |
-| Mounted Sandboxes | List of sandboxes using this volume |
-
-### Volume Detail — Data Disk
-
-| Section | Properties |
-|---|---|
-| Data Disk Info | Size, State (Attached / Available) |
-| Mounted Sandboxes | List of sandboxes using this volume |
-
-**Actions**: Details panel, Delete.
-
----
-
-## Secrets
-
-URL: `https://containerapps.azure.com/sandbox-groups/<rg>/<name>/secrets`
-
-Key-value secrets scoped to the sandbox group.
-
-**Actions**: Add secret, Search by ID.
-
-### Secrets Table
-
-| Column | Description |
-|---|---|
-| Name / ID | Secret identifier |
-| Created / Updated | Timestamps |
-| Actions | Edit, Delete |
-
-### Create / Edit Secret Dialog
-
-| Field | Type | Required | Notes |
-|---|---|---|---|
-| Secret ID | Text input | Yes (create) | Read-only on edit |
-| Key-Value Pairs | Dynamic list | Yes | Key (text) + Value (text). Add/remove pairs. |
-
----
-
-## Identity
-
-URL: `https://containerapps.azure.com/sandbox-groups/<rg>/<name>/identity`
-
-Manage managed identities for the sandbox group.
-
-### System-Assigned Identity
-
-| Field | Type | Notes |
-|---|---|---|
-| Status | Toggle | Enable or disable system-assigned identity |
-| Principal ID | Read-only | Displayed when enabled |
-| Role Assignments | Table | Role Name, Scope, Actions (Add/Remove) |
-
-### User-Assigned Identities
-
-| Column | Description |
-|---|---|
-| Identity Name | Name of the user-assigned managed identity |
-| Resource ID | Full ARM resource ID |
-| Actions | Manage Roles, Remove |
-
-**Add User-Assigned Identity**: Select from available identities in the subscription via a dropdown dialog.
-
-**Add Role Assignment** dialog:
-
-| Field | Type | Notes |
-|---|---|---|
-| Scope | Text | ARM resource scope |
-| Role Definition | Dropdown | Available RBAC role definitions |
-
-### Identity Types
-
-| Type | Value |
-|---|---|
-| None | No managed identity |
-| SystemAssigned | System-assigned only |
-| UserAssigned | User-assigned only |
-| SystemAssigned,UserAssigned | Both |
-
----
-
-## Filing Issues
-
-If you encounter issues during the private preview, file an issue on the [Azure Container Apps GitHub repository](https://github.com/microsoft/azure-container-apps/). Start the issue title with **[SPP]** to identify it as a Sandboxes Private Preview issue. 
-
-Example: `[SPP] Snapshot creation fails for large memory sandboxes`
+- [Snapshots and state management for sandboxes](sandboxes-snapshots-state-management.md)
+- [Egress policies and network controls for sandboxes](sandboxes-egress-policies.md)
