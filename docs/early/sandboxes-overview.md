@@ -18,7 +18,7 @@ Inside a sandbox you can run full terminal shells. The following screenshot show
 
 - **Scale to zero**: Pay nothing when sandboxes are idle.
 
-- **Scale-out**: Burst to thousands of concurrent sandboxes on demand.
+- **Scale-out**: Burst to hundreds of concurrent sandboxes on demand.
 
 - **OCI container image support**: Bring your own container images as sandbox root filesystems.
 
@@ -26,7 +26,7 @@ Inside a sandbox you can run full terminal shells. The following screenshot show
 
 ## When to use sandboxes
 
-Sandboxes are a good fit when you need isolated compute environments with explicit lifecycle control, persistent state, or programmable access through SDKs.
+Sandboxes are a good fit when you need isolated compute environments with explicit lifecycle control, persistent state, or programmable access through SDKs (coming soon).
 
 | Scenario | Use sandboxes? | Why |
 |---|---|---|
@@ -87,8 +87,8 @@ Volumes are Microsoft-managed and provide persistent storage that you can mount 
 
 | Volume type | Description |
 |---|---|
-| **Azure Blob** | Cloud object storage with file explorer, upload, and download support |
-| **Data Disk** | Block storage that attaches directly to a sandbox |
+| **Azure Blob** | Share data across sandboxes (uploads/downloads, persistent artifacts). Mountable to multiple sandboxes at once. |
+| **Data Disk** | High-performance volume for databases, build caches, and large working sets. Mountable to only one sandbox at a time. |
 
 ### Lifecycle states
 
