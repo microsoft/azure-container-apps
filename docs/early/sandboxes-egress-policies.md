@@ -1,12 +1,4 @@
-﻿---
-title: Egress policies and network controls for Azure Container Apps sandboxes (preview)
-description: Learn how to control outbound traffic from Azure Container Apps sandboxes using egress policies, host rules, and per-rule actions.
-ms.topic: concept-article
-ms.service: azure-container-apps
-ms.date: 05/11/2026
----
-
-# Egress policies and network controls for Azure Container Apps sandboxes (preview)
+﻿# Egress policies and network controls for Azure Container Apps sandboxes (preview)
 
 Azure Container Apps sandboxes execute arbitrary workloads, including AI-generated code, agent toolchains, and untrusted user input. Controlling what those workloads can reach on the network is a foundational security control. This article describes the egress policy model, how policies are evaluated, and how to apply them through the SDK.
 
@@ -17,6 +9,7 @@ Azure Container Apps sandboxes execute arbitrary workloads, including AI-generat
 An egress policy answers two questions for every outbound request a sandbox makes:
 
 1. Should this request be allowed?
+
 1. Should this request be transformed (for example, by injecting an authentication header or rewriting the destination)?
 
 A policy has the following shape:
@@ -35,6 +28,7 @@ The recommended starting posture for any sandbox that runs untrusted code is `de
 You can apply egress policies at two scopes:
 
 - **At create time**: Set on the request that creates the sandbox, so the workload starts under the policy.
+
 - **At runtime**: Update on a running sandbox via the SDK. The new policy takes effect for subsequent requests.
 
 The SDK exposes both shapes:
@@ -77,7 +71,9 @@ await sandbox.set_egress_policy(EgressPolicy(
 Egress decisions follow a predictable order:
 
 1. **Rich rules** are evaluated first, in the order they appear in the `rules` list. The first rule whose `match` (host, path, method) matches the request wins. The action attached to that rule is applied.
+
 1. **Host rules** are evaluated next when no rich rule matches. Host patterns support a leading wildcard (for example, `*.example.com`).
+
 1. **Default action** is applied when no rule matches.
 
 Order rich rules from most specific to most general. A `Deny` rule on `api.example.com/admin` placed before an `Allow` rule on `api.example.com` blocks the admin path while permitting the rest of the API.
@@ -100,7 +96,9 @@ Rules support four action types:
 For workloads that call authenticated upstream APIs, `Transform` actions can attach headers from one of three sources:
 
 - **Static value**: A literal string baked into the rule.
+
 - **Secret reference**: Pulled from the sandbox group's Secrets store. Use a format string like `Bearer {value}` to combine the secret with a constant prefix.
+
 - **Managed identity reference**: A token acquired on demand from a managed identity for a specified resource URI.
 
 The Python model exposes these through `EgressPolicyHeaderTransform`, `EgressPolicySecretRef`, and `EgressPolicyManagedIdentityRef`. The C# SDK exposes equivalent types under the `EgressPolicy` namespace.

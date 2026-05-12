@@ -1,37 +1,34 @@
-﻿---
-title: Azure Container Apps Sandboxes overview
-description: Learn about Azure Container Apps Sandboxes, a first-class resource type for fast, secure, ephemeral compute environments with suspend and resume capabilities.
-ms.topic: concept-article
-ms.service: azure-container-apps
-ms.date: 05/06/2026
----
+﻿# Azure Container Apps Sandboxes overview (preview)
 
-# Azure Container Apps Sandboxes overview
+Azure Container Apps sandboxes provide fast, secure, ephemeral compute environments with built-in suspend and resume capabilities. Sandboxes are a first-class resource type (`Microsoft.App/SandboxGroups`) in Container Apps, alongside apps, jobs, and dynamic sessions.
 
-Azure Container Apps Sandboxes provide fast, secure, ephemeral compute environments with built-in suspend and resume capabilities. Sandboxes are a first-class resource type (`Microsoft.App/SandboxGroups`) in Container Apps, alongside apps, jobs, and dynamic sessions.
-
-Where [dynamic sessions](../dynamic-sessions/overview.md) provide a managed execution experience that abstracts away infrastructure, Sandboxes give you direct, programmable control over isolated compute environments. You manage the full sandbox lifecycle, including state snapshots, persistent storage, and networking policies.
+Where [dynamic sessions](https://learn.microsoft.com/en-us/azure/container-apps/sessions) provide a managed execution experience that abstracts away infrastructure, sandboxes give you direct, programmable control over isolated compute environments. You manage the full sandbox lifecycle, including state snapshots, persistent storage, and networking policies.
 
 Inside a sandbox you can run full terminal shells. The following screenshot shows how you can run GitHub Copilot in a sandbox.
 
 ![Screenshot of a terminal running in a sandbox.](media/sandboxes/azure-container-apps-sandboxes-shell.png)
 
-> **Note:** Azure Container Apps Sandboxes are currently in private preview. Contact your Microsoft representative for access.
+> **Note:** Azure Container Apps sandboxes are currently in private preview. Contact your Microsoft representative for access.
 
 ## Key characteristics
 
 - **Sub-second startup**: Sandboxes are provisioned from prewarmed pools for near-instant availability.
+
 - **Strong isolation**: Each sandbox runs in its own secure boundary, safe for untrusted code execution.
+
 - **Scale to zero**: Pay nothing when sandboxes are idle.
+
 - **Massive scale-out**: Burst to thousands of concurrent sandboxes on demand.
+
 - **OCI container image support**: Bring your own container images as sandbox root filesystems.
+
 - **Suspend and resume**: Snapshot full state including memory and disk, and resume later with sub-second restore times.
 
-## When to use Sandboxes
+## When to use sandboxes
 
 Sandboxes are a good fit when you need isolated compute environments with explicit lifecycle control, persistent state, or programmable access through SDKs.
 
-| Scenario | Use Sandboxes? | Why |
+| Scenario | Use sandboxes? | Why |
 |---|---|---|
 | AI code execution with state preservation | Yes | Suspend between tasks, resume with full context intact |
 | Development environments | Yes | On-demand, suspendable environments that preserve state across sessions |
@@ -49,7 +46,7 @@ Use the following table to select the Container Apps compute type that fits your
 |---|---|---|---|
 | **Apps** | Long-running services, APIs, web apps | Continuous | Stateless (external state stores) |
 | **Jobs** | Run-to-completion tasks, batch processing | Start → run → complete | Stateless |
-| **Dynamic Sessions** | Managed code execution, LLM-generated scripts | Managed by session pool | Ephemeral |
+| **Dynamic sessions** | Managed code execution, LLM-generated scripts | Managed by session pool | Ephemeral |
 | **Sandboxes** | Programmable isolated compute with lifecycle control | You manage: create, suspend, resume, delete | Stateful (snapshots, volumes) |
 
 ## Key concepts
@@ -111,6 +108,7 @@ Sandboxes transition through the following states:
 You can configure automatic lifecycle policies for each sandbox:
 
 - **Auto-suspend**: Suspend idle sandboxes after a configurable timeout. Choose between memory mode (full snapshot) or disk mode (preserve disk only).
+
 - **Auto-delete**: Automatically delete sandboxes after a specified number of days.
 
 ## Architecture
@@ -155,12 +153,14 @@ During the preview, sandboxes are available in the **West Central US** region.
 Keep the following points in mind when working with sandboxes:
 
 - **Entra ID required**: Only Microsoft Entra ID accounts can access sandboxes. Personal Microsoft accounts aren't supported.
+
 - **Preview feature availability**: Some capabilities, such as custom VNet integration and managed identity for image pull, require feature flags during the preview period.
+
 - **Networking controls**: You can configure egress policies to control outbound traffic from sandboxes, including domain-based allow or deny rules and CIDR-based network rules.
 
 ## Sandboxes vs. dynamic sessions
 
-Sandboxes and [dynamic sessions](../dynamic-sessions/overview.md) both provide isolated compute environments in Container Apps, but they serve different needs.
+Sandboxes and [dynamic sessions](https://learn.microsoft.com/azure/container-apps/sessions) both provide isolated compute environments in Container Apps, but they serve different needs.
 
 | | Dynamic sessions | Sandboxes |
 |---|---|---|
