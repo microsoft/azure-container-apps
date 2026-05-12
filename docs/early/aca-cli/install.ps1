@@ -8,7 +8,7 @@ param(
 $ErrorActionPreference = "Stop"
 # TODO: Change branch to "main" once merged
 $Repo = "microsoft/azure-container-apps"
-$Branch = "aca-cli-preview"
+$Branch = "main"
 $BinaryName = "aca"
 
 function Uninstall-Aca {
