@@ -1,7 +1,6 @@
 #!/bin/sh
 set -e
 
-# TODO: Change to "main" once merged
 REPO="microsoft/azure-container-apps"
 BRANCH="main"
 BINARY_NAME="aca"
@@ -21,7 +20,11 @@ detect_platform() {
     esac
 
     case "$ARCH" in
-        x86_64|amd64)  ARCH_TAG="x64" ;;
+        x86_64|amd64)
+            if [ "$OS_TAG" = "osx" ]; then
+                echo "Error: macOS x64 (Intel) is not supported. Only macOS ARM64 (Apple Silicon) is available."; exit 1
+            fi
+            ARCH_TAG="x64" ;;
         aarch64|arm64) ARCH_TAG="arm64" ;;
         *)             echo "Error: Unsupported architecture: $ARCH"; exit 1 ;;
     esac

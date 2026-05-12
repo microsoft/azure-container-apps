@@ -6,7 +6,6 @@ param(
 )
 
 $ErrorActionPreference = "Stop"
-# TODO: Change branch to "main" once merged
 $Repo = "microsoft/azure-container-apps"
 $Branch = "main"
 $BinaryName = "aca"

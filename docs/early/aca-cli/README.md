@@ -18,7 +18,7 @@ curl -fsSL https://raw.githubusercontent.com/microsoft/azure-container-apps/main
 To install a specific version:
 
 ```sh
-ACA_VERSION=aca-cli-v0.1.0-early-access curl -fsSL https://raw.githubusercontent.com/microsoft/azure-container-apps/main/docs/early/aca-cli/install.sh | sh
+curl -fsSL https://raw.githubusercontent.com/microsoft/azure-container-apps/main/docs/early/aca-cli/install.sh | ACA_VERSION=aca-cli-v0.1.0-early-access sh
 ```
 
 ### Windows (PowerShell)
