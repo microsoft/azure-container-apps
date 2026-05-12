@@ -1,6 +1,6 @@
-# ACA CLI
+# ACA CLI (Early Access)
 
-Command-line interface for Azure Container Apps.
+Command-line interface for Azure Container Apps Sandboxes (Early Access).
 
 ## Prerequisites
 
@@ -12,25 +12,25 @@ Command-line interface for Azure Container Apps.
 ### Linux / macOS
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/microsoft/azure-container-apps/aca-cli-preview/docs/early/aca-cli/install.sh | sh
+curl -fsSL https://raw.githubusercontent.com/microsoft/azure-container-apps/main/docs/early/aca-cli/install.sh | sh
 ```
 
 To install a specific version:
 
 ```sh
-ACA_VERSION=aca-cli-v0.1.0-early-access curl -fsSL https://raw.githubusercontent.com/microsoft/azure-container-apps/aca-cli-preview/docs/early/aca-cli/install.sh | sh
+ACA_VERSION=aca-cli-v0.1.0-early-access curl -fsSL https://raw.githubusercontent.com/microsoft/azure-container-apps/main/docs/early/aca-cli/install.sh | sh
 ```
 
 ### Windows (PowerShell)
 
 ```powershell
-irm https://raw.githubusercontent.com/microsoft/azure-container-apps/aca-cli-preview/docs/early/aca-cli/install.ps1 | iex
+irm https://raw.githubusercontent.com/microsoft/azure-container-apps/main/docs/early/aca-cli/install.ps1 | iex
 ```
 
 To install a specific version:
 
 ```powershell
-& ([scriptblock]::Create((irm https://raw.githubusercontent.com/microsoft/azure-container-apps/aca-cli-preview/docs/early/aca-cli/install.ps1))) -Version aca-cli-v0.1.0-early-access
+& ([scriptblock]::Create((irm https://raw.githubusercontent.com/microsoft/azure-container-apps/main/docs/early/aca-cli/install.ps1))) -Version aca-cli-v0.1.0-early-access
 ```
 
 ## Uninstall
@@ -38,13 +38,13 @@ To install a specific version:
 ### Linux / macOS
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/microsoft/azure-container-apps/aca-cli-preview/docs/early/aca-cli/install.sh | sh -s -- --uninstall
+curl -fsSL https://raw.githubusercontent.com/microsoft/azure-container-apps/main/docs/early/aca-cli/install.sh | sh -s -- --uninstall
 ```
 
 ### Windows (PowerShell)
 
 ```powershell
-& ([scriptblock]::Create((irm https://raw.githubusercontent.com/microsoft/azure-container-apps/aca-cli-preview/docs/early/aca-cli/install.ps1))) -Uninstall
+& ([scriptblock]::Create((irm https://raw.githubusercontent.com/microsoft/azure-container-apps/main/docs/early/aca-cli/install.ps1))) -Uninstall
 ```
 
 ## Supported Platforms
