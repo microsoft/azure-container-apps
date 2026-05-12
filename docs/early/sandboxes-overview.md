@@ -1,4 +1,4 @@
-﻿# Azure Container Apps Sandboxes overview (preview)
+﻿# Azure Container Apps sandboxes overview (early access)
 
 Azure Container Apps sandboxes provide fast, secure, ephemeral compute environments with built-in suspend and resume capabilities. Sandboxes are a first-class resource type (`Microsoft.App/SandboxGroups`) in Container Apps, alongside apps, jobs, and dynamic sessions.
 
@@ -8,7 +8,7 @@ Inside a sandbox you can run full terminal shells. The following screenshot show
 
 ![Screenshot of a terminal running in a sandbox.](media/sandboxes/azure-container-apps-sandboxes-shell.png)
 
-> **Note:** Azure Container Apps sandboxes are currently in private preview. Contact your Microsoft representative for access.
+> **Note:** Azure Container Apps sandboxes are currently in early access. Contact your Microsoft representative for access.
 
 ## Key characteristics
 
@@ -18,7 +18,7 @@ Inside a sandbox you can run full terminal shells. The following screenshot show
 
 - **Scale to zero**: Pay nothing when sandboxes are idle.
 
-- **Massive scale-out**: Burst to thousands of concurrent sandboxes on demand.
+- **Scale-out**: Burst to thousands of concurrent sandboxes on demand.
 
 - **OCI container image support**: Bring your own container images as sandbox root filesystems.
 
@@ -35,7 +35,7 @@ Sandboxes are a good fit when you need isolated compute environments with explic
 | Agent workflows | Yes | Give AI agents persistent, isolated workspaces across task boundaries |
 | Interactive user sessions | Yes | Each user gets their own isolated compute environment |
 | Secure multi-tenant compute | Yes | Strong isolation for running untrusted workloads from multiple tenants |
-| Burst workloads | Yes | Scale from zero to thousands of sandboxes on demand |
+| Burst workloads | Yes | Scale from zero to hundreds of sandboxes on demand |
 | CI/CD pipelines | Yes | Ephemeral build and test environments that scale to zero when idle |
 
 ### Choose the right Container Apps compute option
@@ -83,7 +83,7 @@ Snapshots capture the full state of a running sandbox, including memory and disk
 
 ### Volumes
 
-Volumes provide persistent storage that you can mount into sandboxes. Two volume types are available:
+Volumes are Microsoft-managed and provide persistent storage that you can mount into sandboxes. Two volume types are available:
 
 | Volume type | Description |
 |---|---|
@@ -122,17 +122,6 @@ Sandboxes use a two-plane architecture:
 
 You create and manage sandbox groups through the ARM control plane. All operations on individual sandboxes and their resources go through the ADC data plane, scoped to a specific sandbox group.
 
-## SDK support
-
-You can manage sandboxes programmatically using dedicated SDKs. SDK capabilities vary by language.
-
-| SDK | Language | Scope | Authentication |
-|---|---|---|---|
-| `Microsoft.Adc.Arm.Client` | C# | ARM control plane and data plane | Microsoft Entra ID via `Azure.Identity` |
-| `adc` | Python | Data plane only | API key or bearer token |
-
-> **Note:** SDK capabilities currently differ by language. The C# SDK supports both control plane and data plane operations, while the Python SDK supports data plane operations only.
-
 ## Resource tiers
 
 Each sandbox is assigned a resource tier that determines its CPU, memory, and disk allocation.
@@ -143,10 +132,6 @@ Each sandbox is assigned a resource tier that determines its CPU, memory, and di
 | S | 0.5 cores | 1 GB | 20 GB |
 | M (default) | 1 core | 2 GB | 20 GB |
 | L | 2 cores | 4 GB | 40 GB |
-
-## Region availability
-
-During the preview, sandboxes are available in the **West Central US** region.
 
 ## Considerations
 
@@ -170,7 +155,7 @@ Sandboxes and [dynamic sessions](https://learn.microsoft.com/azure/container-app
 | **Image model** | Code interpreter (built-in) or custom container | Disk images (OCI), snapshots, content packages |
 | **Persistent storage** | Not available | Volumes (Azure Blob, Data Disk) |
 | **Networking** | Basic isolation | Egress policies, VNet integration, port management |
-| **SDKs** | REST API through pool endpoint | Dedicated SDKs (C#, Python) |
+| **SDKs** | REST API through pool endpoint | Coming soon: dedicated SDKs (C#, Python) |
 
 Choose dynamic sessions when you need a managed execution experience that abstracts infrastructure. Choose Sandboxes when you need programmable control over isolated compute with state persistence.
 

@@ -1,8 +1,6 @@
-﻿# Egress policies and network controls for Azure Container Apps sandboxes (preview)
+﻿# Egress policies and network controls for Azure Container Apps sandboxes (early access)
 
-Azure Container Apps sandboxes execute arbitrary workloads, including AI-generated code, agent toolchains, and untrusted user input. Controlling what those workloads can reach on the network is a foundational security control. This article describes the egress policy model, how policies are evaluated, and how to apply them through the SDK.
-
-> **Note:** Azure Container Apps sandboxes are currently in private preview. Contact your Microsoft representative for access.
+Azure Container Apps sandboxes execute arbitrary workloads, including AI-generated code, agent toolchains, and untrusted user input. Controlling what those workloads can reach on the network is a foundational security control. This article describes the egress policy model, and how policies are evaluated.
 
 ## The egress policy model
 
@@ -30,41 +28,6 @@ You can apply egress policies at two scopes:
 - **At create time**: Set on the request that creates the sandbox, so the workload starts under the policy.
 
 - **At runtime**: Update on a running sandbox via the SDK. The new policy takes effect for subsequent requests.
-
-The SDK exposes both shapes:
-
-### C#
-
-```csharp
-// Apply a policy to a running sandbox
-await scope.Sandboxes.SetEgressPolicyAsync(sandbox.Id, new EgressPolicy
-{
-    DefaultAction = EgressAction.Deny,
-    HostRules =
-    [
-        new EgressHostRule { Pattern = "*.github.com", Action = EgressAction.Allow },
-        new EgressHostRule { Pattern = "github.com", Action = EgressAction.Allow }
-    ]
-});
-```
-
-### Python
-
-```python
-from adc.models.sandbox import (
-    EgressPolicy,
-    EgressPolicyAction,
-    EgressHostRule,
-)
-
-await sandbox.set_egress_policy(EgressPolicy(
-    default_action=EgressPolicyAction.DENY,
-    host_rules=[
-        EgressHostRule(pattern="*.github.com", action=EgressPolicyAction.ALLOW),
-        EgressHostRule(pattern="github.com", action=EgressPolicyAction.ALLOW),
-    ],
-))
-```
 
 ## Rule evaluation order
 
@@ -101,8 +64,6 @@ For workloads that call authenticated upstream APIs, `Transform` actions can att
 
 - **Managed identity reference**: A token acquired on demand from a managed identity for a specified resource URI.
 
-The Python model exposes these through `EgressPolicyHeaderTransform`, `EgressPolicySecretRef`, and `EgressPolicyManagedIdentityRef`. The C# SDK exposes equivalent types under the `EgressPolicy` namespace.
-
 This pattern is especially useful for AI agent scenarios where the agent needs to call an LLM API, but you don't want the agent code to handle the API key directly.
 
 ## Traffic inspection
@@ -117,33 +78,6 @@ The egress proxy supports several inspection modes:
 | **None** | Outbound traffic bypasses the egress proxy entirely. |
 
 Choose `Partial` or `Full` to use rich rules. Set inspection to `None` (or use the per-sandbox `skip_egress_proxy` flag at creation time) only when latency matters more than control and you trust the destination.
-
-## Observability
-
-The platform records every egress decision the proxy makes so you can audit what the sandbox attempted and what was allowed or blocked.
-
-### C#
-
-```csharp
-var decisions = await scope.Sandboxes.GetEgressDecisionsAsync(sandbox.Id);
-
-Console.WriteLine($"Allowed: {decisions.NetworkEgress.Allowed.Count}");
-Console.WriteLine($"Denied:  {decisions.NetworkEgress.Denied.Count}");
-```
-
-### Python
-
-```python
-decisions = await sandbox.get_egress_decisions()
-
-allowed = [d for d in decisions if d.action == "Allow"]
-denied = [d for d in decisions if d.action == "Deny"]
-
-print(f"Allowed: {len(allowed)}")
-print(f"Denied:  {len(denied)}")
-```
-
-Use the decisions log to validate that a new policy denies what you expect before you push it to production, and to audit attempted exfiltration in workloads you don't fully trust.
 
 ## Considerations
 

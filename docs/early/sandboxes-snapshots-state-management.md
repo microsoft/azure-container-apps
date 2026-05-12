@@ -1,8 +1,6 @@
-﻿# Snapshots and state management for Azure Container Apps sandboxes (preview)
+﻿# Snapshots and state management for Azure Container Apps sandboxes (early access)
 
 Azure Container Apps sandboxes are isolated, lightweight VMs designed for short interactive sessions and long-running agentic workloads. Both types need a way to pause work and resume it later without losing in-memory progress. This article explains the state model, how snapshots fit into it, and how to choose between the implicit (auto-suspend) and explicit (snapshot) paths to preserving state.
-
-> **Note:** Azure Container Apps sandboxes are currently in private preview. Contact your Microsoft representative for access.
 
 ## What "state" means in a sandbox
 
@@ -51,21 +49,6 @@ A snapshot is a captured copy of a sandbox's full state at a point in time. Unli
 
 - Use snapshots to move a workload from one sandbox to another after the original has been deleted.
 
-## What a snapshot captures
-
-Each snapshot records the following properties:
-
-| Property | Description |
-|---|---|
-| **ID** | Unique snapshot identifier. |
-| **Source sandbox** | ID of the sandbox the snapshot was captured from. |
-| **VMM type** | Virtualization type used when the snapshot was taken (for example, `CloudHypervisor`). |
-| **CPU / memory / disk** | Resource allocation at the moment of capture. These values become the resource tier of any sandbox restored from the snapshot. |
-| **GPU SKU and quantity** | GPU information if the source sandbox had GPU resources. |
-| **Source pod containers** | Container names and disk image IDs that made up the source sandbox. |
-| **Labels** | User-defined key-value pairs for discovery and filtering. |
-| **Created** | Timestamp of capture. |
-
 ## Choosing between Memory and Disk suspend modes
 
 When auto-suspend fires (or you call suspend explicitly), the platform preserves state according to the configured suspend mode:
@@ -98,16 +81,6 @@ A few patterns make snapshots easier to operate at scale:
 - **Audit snapshot count.** Periodically list snapshots and report on count and label distribution. Storage costs grow with snapshot count.
 
 - **Treat snapshots as immutable.** A snapshot is a point-in-time capture. To "update" a snapshot, capture a new one and delete the old one once consumers have moved over.
-
-## When *not* to snapshot
-
-Snapshots have a cost and aren't always the right tool:
-
-- **Stateless, short-lived sandboxes**: a sandbox that runs for 30 seconds and writes nothing back doesn't benefit from snapshotting. Let it complete and delete it.
-
-- **State that already lives elsewhere**: if your sandbox writes results to attached volumes, blob storage, a database, or a queue, the state is already durable. A snapshot adds storage cost without preserving anything new.
-
-- **Frequent writes to large files**: large rapidly-changing disks make snapshots expensive. Move the data to an attached volume and snapshot only the smaller, slower-changing portion of state if needed.
 
 ## Related content
 
