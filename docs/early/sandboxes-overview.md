@@ -1,6 +1,8 @@
-﻿# Azure Container Apps sandboxes overview (early access)
+﻿# Azure Container Apps sandboxes overview (Early Access)
 
 Azure Container Apps sandboxes provide fast, secure, ephemeral compute environments with built-in suspend and resume capabilities. Sandboxes are a first-class resource type (`Microsoft.App/SandboxGroups`) in Container Apps, alongside apps, jobs, and dynamic sessions.
+
+> **Important:** Sandbox resources created during Early Access may not be compatible with future Public Preview release and might need to be recreated. 
 
 Where [dynamic sessions](https://learn.microsoft.com/en-us/azure/container-apps/sessions) provide a managed execution experience that abstracts away infrastructure, sandboxes give you direct, programmable control over isolated compute environments. You manage the full sandbox lifecycle, including state snapshots, persistent storage, and networking policies.
 
@@ -50,6 +52,17 @@ Use the following table to select the Container Apps compute type that fits your
 | **Sandboxes** | Programmable isolated compute with lifecycle control | You manage: create, suspend, resume, delete | Stateful (snapshots, volumes) |
 
 ## Key concepts
+
+### Prerequisites
+
+To create or manage sandboxes, the user needs the Azure role assignment "Container Apps SandboxGroup Data Owner". Without this role, the user can't perform sandbox operations. This role can be assigned at the desired scope (Azure Subscription or Azure Resource Group) in the Azure portal or by using the Azure CLI:
+
+```azurecli
+az role assignment create \
+  --assignee "<user-email-or-object-id>" \
+  --role "Container Apps SandboxGroup Data Owner" \
+  --scope "/subscriptions/<subscription-id>/resourceGroups/<resource-group-name>"
+```
 
 ### Sandbox groups
 
@@ -110,6 +123,10 @@ You can configure automatic lifecycle policies for each sandbox:
 - **Auto-suspend**: Suspend idle sandboxes after a configurable timeout. Choose between memory mode (full snapshot) or disk mode (preserve disk only).
 
 - **Auto-delete**: Automatically delete sandboxes after a specified number of days.
+
+## ACA Sandboxes CLI (Early Access)
+
+The `aca` CLI is a command-line interface for managing Azure Container Apps sandboxes. For installation instructions and usage details, see the [ACA Sandboxes CLI README](aca-cli/README.md).
 
 ## Architecture
 
