@@ -58,6 +58,9 @@ curl -fsSL https://raw.githubusercontent.com/microsoft/azure-container-apps/main
 ## Quick Start
 
 ```bash
+# 0. Login to Azure
+az login
+
 # 1. Create a resource group (skip if you have one)
 az group create --name my-rg --location eastus2
 
@@ -75,6 +78,7 @@ aca doctor
 # 5. Create a sandbox
 aca sandbox create --disk ubuntu
 # Created sandbox: a1b2c3d4-...
+# Run 'aca sandboxgroup disk list-public' for more options
 
 # 6. Run a command
 aca sandbox exec --id <sandbox-id> -c "echo hello world && uname -a"
