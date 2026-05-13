@@ -1,6 +1,6 @@
 # Azure Container Apps
 
-Azure Container Apps is a developer-frist, serverless platform that allows you to maintain less infrastructure and save costs while running containerized applications. It scales from zero to hyperscale and instead of worrying about server configuration, container orchestration, and deployment details, Container Apps provides all the up-to-date server resources required to keep your applications stable and secure.
+Azure Container Apps is a developer-first, serverless platform that allows you to maintain less infrastructure and save costs while running containerized applications. It scales from zero to hyperscale and instead of worrying about server configuration, container orchestration, and deployment details, Container Apps provides all the up-to-date server resources required to keep your applications stable and secure.
 
 With Azure Container Apps, you can:
 
@@ -8,7 +8,7 @@ With Azure Container Apps, you can:
 - **Autoscale** your apps based on any KEDA-supported scale trigger — most applications can scale to zero
 - **Split traffic** across multiple versions of an application for Blue/Green deployments and A/B testing
 - **Use internal ingress and service discovery** for secure internal-only endpoints with built-in DNS-based service discovery
-- **Run applictions on servless or reserved CPU and GPU**
+- **Run applications on serverless or reserved CPU and GPU**
 
 
 ## Get Started
