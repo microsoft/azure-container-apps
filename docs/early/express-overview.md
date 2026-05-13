@@ -1,4 +1,4 @@
-# Azure Container Apps Express Overview [Private Preview]
+# Azure Container Apps Express Overview [Public Preview]
 
 Azure Container Apps express gives you the fastest way to deploy containerized web applications to Azure. With opinionated defaults and a minimal configuration surface, express is a developer-first and agent-first platform designed to get your web apps running in the cloud as fast as possible. Rapid provisioning and scale-from-zero make express an ideal host for AI-powered applications and agent backends.
 
