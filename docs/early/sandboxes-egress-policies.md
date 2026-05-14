@@ -1,6 +1,10 @@
 ﻿# Egress policies and network controls for Azure Container Apps sandboxes (early access)
 
-Azure Container Apps sandboxes execute arbitrary workloads, including AI-generated code, agent toolchains, and untrusted user input. Controlling what those workloads can reach on the network is a foundational security control. This article describes the egress policy model, and how policies are evaluated.
+Azure Container Apps sandboxes are built to run code you don't fully trust — AI-generated scripts, agent tool calls, and arbitrary user input. The network is where that code can do the most damage, so every sandbox ships with a built-in egress policy engine that decides what outbound traffic is allowed, blocked, or transformed.
+
+You define the egress policy as part of the sandbox create request, alongside the disk image and resource tier, so the policy is in effect from the moment the sandbox starts. You can also update the policy on a running sandbox; subsequent outbound requests are evaluated against the updated policy.
+
+This article walks through the policy model, how rules are evaluated, and the patterns we recommend for running untrusted workloads safely.
 
 ## The egress policy model
 
@@ -15,9 +19,8 @@ A policy has the following shape:
 | Field | Description |
 |---|---|
 | **Default action** | `Allow` or `Deny`. Applied to any request that doesn't match a more specific rule. |
-| **Host rules** | Pattern-matched rules keyed on hostname (for example, `*.github.com`). Each rule has its own `Allow` or `Deny` action. |
-| **Rules** | Richer rules that match on host, path, and HTTP method, and support `Allow`, `Deny`, `Transform`, and `Rewrite` actions. |
-| **Traffic inspection** | Controls how the egress proxy inspects traffic (`Legacy`, `Partial`, `Full`, or `None`). |
+| **Rules** | Rules that match on host, path, and HTTP method, and support `Allow`, `Deny`, `Transform`, and `Rewrite` actions. |
+| **Traffic inspection** | Controls how the egress proxy inspects traffic (`Partial`, `Full`, `None`). |
 
 The recommended starting posture for any sandbox that runs untrusted code is `default_action = Deny` plus an explicit allow list of the destinations the workload genuinely needs.
 
@@ -33,13 +36,11 @@ You can apply egress policies at two scopes:
 
 Egress decisions follow a predictable order:
 
-1. **Rich rules** are evaluated first, in the order they appear in the `rules` list. The first rule whose `match` (host, path, method) matches the request wins. The action attached to that rule is applied.
-
-1. **Host rules** are evaluated next when no rich rule matches. Host patterns support a leading wildcard (for example, `*.example.com`).
+1. **Rules** are evaluated in the order they appear in the `rules` list. The first rule whose `match` (host, path, method) matches the request wins. The action attached to that rule is applied.
 
 1. **Default action** is applied when no rule matches.
 
-Order rich rules from most specific to most general. A `Deny` rule on `api.example.com/admin` placed before an `Allow` rule on `api.example.com` blocks the admin path while permitting the rest of the API.
+Order rules from most specific to most general. A `Deny` rule on `api.example.com/admin` placed before an `Allow` rule on `api.example.com` blocks the admin path while permitting the rest of the API.
 
 ## Rule actions
 
@@ -72,23 +73,22 @@ The egress proxy supports several inspection modes:
 
 | Mode | Behavior |
 |---|---|
-| **Legacy** | Default for backward compatibility. Legacy host-based filtering only. |
-| **Partial** | Inspects request lines and headers; rich rules and transforms apply. |
-| **Full** | Full inspection including body for the rules and transforms that need it. |
-| **None** | Outbound traffic bypasses the egress proxy entirely. |
+| **Full** | All traffic is inspected. `Deny` rules are enforced and non-HTTP traffic is blocked. |
+| **Partial** | Only traffic that matches a rule is inspected. Non-HTTP traffic is allowed. |
+| **None** | No egress rules are applied. |
+| **Legacy** | All traffic is inspected. Non-HTTP traffic is allowed. |
 
-Choose `Partial` or `Full` to use rich rules. Set inspection to `None` (or use the per-sandbox `skip_egress_proxy` flag at creation time) only when latency matters more than control and you trust the destination.
+Choose `Partial` or `Full` to use rules. Set inspection to `None` only when latency matters more than control and you trust the destination.
 
 ## Considerations
 
 | Area | Detail |
 |---|---|
 | **Default-deny posture** | Workloads that execute untrusted code should default to `Deny` and add narrow allow rules for the destinations they need. |
-| **Layered rules** | Use `rules` for path- or method-specific decisions and `host_rules` for whole-domain decisions. Keep host rules short; promote anything that needs path matching into a rich rule. |
 | **Policy lifecycle** | Policies are mutable on running sandboxes. Updates apply to subsequent requests; in-flight requests aren't reevaluated. |
 | **Per-environment policies** | Maintain separate policies for development, staging, and production. Devs can iterate against a permissive policy while production stays locked down. |
 | **Audit cadence** | Pull egress decisions periodically from long-running sandboxes and review denied counts. A spike usually indicates a workload misconfiguration or an exfiltration attempt. |
-| **Skip the proxy carefully** | `skip_egress_proxy` (or traffic inspection `None`) trades safety for latency. Only enable it for sandboxes that don't run untrusted code and only for trusted destinations. |
+| **Skip the proxy carefully** | Traffic inspection `None` trades safety for latency. Only set it for sandboxes that don't run untrusted code and only for trusted destinations. |
 
 ## Related content
 
