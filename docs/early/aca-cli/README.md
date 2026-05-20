@@ -49,7 +49,7 @@ curl -fsSL https://raw.githubusercontent.com/microsoft/azure-container-apps/main
 
 | Platform | Architecture |
 |----------|-------------|
-| Linux    | x64, ARM64  |
+| Linux    | x64         |
 | macOS    | ARM64       |
 | Windows  | x64         |
 
@@ -182,6 +182,9 @@ aca sandbox fs cat --id <id> --path /etc/os-release
 
 # Upload a local file
 aca sandbox fs write --id <id> --path /tmp/myfile.txt --file ./local-file.txt
+
+# Copy files between local machine and sandbox
+aca sandbox fs cp --id <id> --src ./local-dir --dest /app/
 ```
 
 ### Port Management
@@ -604,8 +607,8 @@ Every command accepts these flags:
 | `--group` | | Sandbox group (on sandbox subcommands) |
 | `--region` | | Data plane region |
 | `--output` | `-o` | Output format: `table` (default), `json` |
-| `--verbose` | | Verbose logging |
-| `--debug` | | Debug logging |
+| `--verbose` | | Enable verbose output (HTTP traces and resolved config) |
+| `--debug` | | Enable debug output (verbose + transport-level details) |
 | `--managed-identity` | | Use managed identity auth |
 | `--help` | `-h` | Show help |
 
@@ -651,6 +654,7 @@ aca sandbox list -o json | jq '.[].id'
 | Removing non-existent port | Fails with 404 |
 | `--sandbox-group` vs `--group` | Top-level commands use `--sandbox-group`; sandbox subcommands use `--group` |
 | MI role grant immediately after identity assign | May fail with 400 — **wait a few seconds** for propagation |
+| `--debug` flag | May log sensitive data (tokens, headers) — **do not share output without review** |
 
 ### Available Roles
 
@@ -717,7 +721,7 @@ aca
 │   │   └── remove                    Remove managed identity
 │   └── role
 │       ├── list                      List available roles
-│       └── assign                    Assign a role
+│       └── create                    Create a role assignment
 ├── sandbox
 │   ├── create                        Create a sandbox
 │   ├── list                          List sandboxes
@@ -755,7 +759,8 @@ aca
 │       ├── write                     Write a file into sandbox
 │       ├── rm                        Delete a file or directory
 │       ├── mkdir                     Create a directory
-│       └── stat                      Show file metadata
+│       ├── stat                      Show file metadata
+│       └── cp                        Copy files between local and sandbox
 ├── version                           Show CLI version
 └── doctor                            Check system prerequisites
 ```
