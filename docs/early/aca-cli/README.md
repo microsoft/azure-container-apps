@@ -49,7 +49,7 @@ curl -fsSL https://raw.githubusercontent.com/microsoft/azure-container-apps/main
 
 | Platform | Architecture |
 |----------|-------------|
-| Linux    | x64, ARM64  |
+| Linux    | x64         |
 | macOS    | ARM64       |
 | Windows  | x64         |
 

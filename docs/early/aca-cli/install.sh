@@ -25,7 +25,11 @@ detect_platform() {
                 echo "Error: macOS x64 (Intel) is not supported. Only macOS ARM64 (Apple Silicon) is available."; exit 1
             fi
             ARCH_TAG="x64" ;;
-        aarch64|arm64) ARCH_TAG="arm64" ;;
+        aarch64|arm64)
+            if [ "$OS_TAG" = "linux" ]; then
+                echo "Error: Linux ARM64 is not currently supported. Only Linux x64 is available."; exit 1
+            fi
+            ARCH_TAG="arm64" ;;
         *)             echo "Error: Unsupported architecture: $ARCH"; exit 1 ;;
     esac
 
