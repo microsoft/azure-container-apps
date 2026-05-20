@@ -607,8 +607,8 @@ Every command accepts these flags:
 | `--group` | | Sandbox group (on sandbox subcommands) |
 | `--region` | | Data plane region |
 | `--output` | `-o` | Output format: `table` (default), `json` |
-| `--verbose` | | Verbose logging |
-| `--debug` | | Debug logging |
+| `--verbose` | | Enable verbose output (HTTP traces and resolved config) |
+| `--debug` | | Enable debug output (verbose + transport-level details) |
 | `--managed-identity` | | Use managed identity auth |
 | `--help` | `-h` | Show help |
 
@@ -654,6 +654,7 @@ aca sandbox list -o json | jq '.[].id'
 | Removing non-existent port | Fails with 404 |
 | `--sandbox-group` vs `--group` | Top-level commands use `--sandbox-group`; sandbox subcommands use `--group` |
 | MI role grant immediately after identity assign | May fail with 400 — **wait a few seconds** for propagation |
+| `--debug` flag | May log sensitive data (tokens, headers) — **do not share output without review** |
 
 ### Available Roles
 
