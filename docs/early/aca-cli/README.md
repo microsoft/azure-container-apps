@@ -182,6 +182,9 @@ aca sandbox fs cat --id <id> --path /etc/os-release
 
 # Upload a local file
 aca sandbox fs write --id <id> --path /tmp/myfile.txt --file ./local-file.txt
+
+# Copy files between local machine and sandbox
+aca sandbox fs cp --id <id> --src ./local-dir --dest /app/
 ```
 
 ### Port Management
@@ -717,7 +720,7 @@ aca
 │   │   └── remove                    Remove managed identity
 │   └── role
 │       ├── list                      List available roles
-│       └── assign                    Assign a role
+│       └── create                    Create a role assignment
 ├── sandbox
 │   ├── create                        Create a sandbox
 │   ├── list                          List sandboxes
@@ -755,7 +758,8 @@ aca
 │       ├── write                     Write a file into sandbox
 │       ├── rm                        Delete a file or directory
 │       ├── mkdir                     Create a directory
-│       └── stat                      Show file metadata
+│       ├── stat                      Show file metadata
+│       └── cp                        Copy files between local and sandbox
 ├── version                           Show CLI version
 └── doctor                            Check system prerequisites
 ```
