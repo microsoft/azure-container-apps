@@ -444,11 +444,11 @@ A powerful pattern: run the `aca` CLI **inside** a sandbox to create and manage 
 
 ```bash
 aca sandbox create --disk ubuntu \
-  --env AZURE_SUBSCRIPTION_ID=<subscription-id> \
+  --env ACA_SUBSCRIPTION=<subscription-id> \
   --env ACA_RESOURCE_GROUP=<resource-group> \
   --env ACA_SANDBOX_GROUP=<sandbox-group> \
-  --env ACA_SANDBOXGROUP_REGION=eastus2 \
-  --env ACA_MANAGED_IDENTITY=true
+  --env ACA_REGION=eastus2 \
+  --env ACA_SANDBOX_MANAGED_IDENTITY=system
 ```
 
 **Step 2: Install aca inside the sandbox**
@@ -560,7 +560,7 @@ lifecycle:
     deleteIntervalInSeconds: 86400  # 24 hours
 ```
 
-When `auto_resume` is enabled in config (`aca config set --auto-resume true`), suspended sandboxes automatically resume when you exec into them.
+When `auto_resume` is enabled in config (`aca config sandbox set --auto-resume true`), suspended sandboxes automatically resume when you exec into them.
 
 ### Concurrent Operations
 
@@ -588,12 +588,11 @@ wait
 
 | Variable | Description | Equivalent Flag |
 |----------|-------------|----------------|
-| `AZURE_SUBSCRIPTION_ID` | Azure subscription ID | `-s`, `--subscription` |
+| `ACA_SUBSCRIPTION` | Azure subscription ID | `-s`, `--subscription` |
 | `ACA_RESOURCE_GROUP` | Default resource group | `-g`, `--resource-group` |
 | `ACA_SANDBOX_GROUP` | Default sandbox group | `--sandbox-group` |
-| `ACA_SANDBOXGROUP_REGION` | Region for data plane | `--region` |
-| `ACA_MANAGED_IDENTITY` | Use managed identity (`true`) | `--managed-identity` |
-| `ACA_MANAGED_IDENTITY_CLIENT_ID` | Client ID for user-assigned MI | `--managed-identity-client-id` |
+| `ACA_REGION` | Region for data plane | `--region` |
+| `ACA_SANDBOX_MANAGED_IDENTITY` | Use managed identity (`system` or client-id UUID) | `--managed-identity` |
 
 ### Global Flags
 
@@ -609,7 +608,7 @@ Every command accepts these flags:
 | `--output` | `-o` | Output format: `table` (default), `json` |
 | `--verbose` | | Enable verbose output (HTTP traces and resolved config) |
 | `--debug` | | Enable debug output (verbose + transport-level details) |
-| `--managed-identity` | | Use managed identity auth |
+| `--managed-identity` | | Use managed identity auth (`system` or client-id UUID) |
 | `--help` | `-h` | Show help |
 
 > **Note:** Some commands use `--group` while top-level commands use `--sandbox-group`. Both refer to the sandbox group name.
@@ -624,10 +623,10 @@ aca config show
 aca config set -s <sub> -g <rg> --sandbox-group <group> --region eastus2
 
 # Set auto-resume behavior
-aca config set --auto-resume true
+aca config sandbox set --auto-resume true
 
 # Set managed identity mode
-aca config set --managed-identity true
+aca config set --managed-identity system
 ```
 
 ### Output Formats
@@ -687,8 +686,11 @@ aca
 │   ├── login                         Log in to Azure (delegates to az login)
 │   └── status                        Show current Azure login status
 ├── config
-│   ├── set                           Set a configuration value
-│   └── show                          Show current configuration
+│   ├── set                           Set shared configuration defaults
+│   ├── show                          Show all configuration
+│   └── sandbox
+│       ├── set                       Set sandbox-specific configuration
+│       └── show                      Show sandbox configuration
 ├── sandboxgroup
 │   ├── create                        Create a sandbox group
 │   ├── list                          List sandbox groups
