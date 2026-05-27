@@ -42,6 +42,20 @@ Deploy AI agents, MCP servers, web apps, and background tasks to **ACA Sandboxes
   - [`microsoft/azure-container-apps/docs/early/`](https://github.com/microsoft/azure-container-apps/tree/main/docs/early) — markdown reference in this repo.
   - [`sandboxes.azure.com/docs/sandboxes/`](https://sandboxes.azure.com/docs/sandboxes/) — portal-hosted product docs (sandbox groups, sandboxes, sandbox detail, connectors).
 
+## When **NOT** to use this skill (hard reject + redirect)
+
+If the user's task is **not about ACA Sandboxes**, refuse and redirect in one short reply — do not run any commands, do not walk through options, do not ask clarifying questions about the out-of-scope tool. The skill activated by mistake; bow out cleanly.
+
+| User asks about… | Reply pattern |
+|---|---|
+| `azd init`, `azd up`, `azd deploy`, project scaffolding | "That's the Azure Developer CLI (`azd`), not ACA Sandboxes. The **azure-prepare** / **azure-deploy** skills (or the official [azd docs](https://learn.microsoft.com/azure/developer/azure-developer-cli/)) own that flow. ACA Sandboxes doesn't have an `init`/`up`/`deploy` command and isn't a project bootstrapper." |
+| `az acr build`, `docker build`, registry pushes | "That's Azure Container Registry / Docker, not ACA Sandboxes. Use the **azure-prepare** or **azure-deploy** skills, or the [`az acr` docs](https://learn.microsoft.com/cli/azure/acr). Sandboxes consume disk images, not container images." |
+| Cosmos DB queries, SQL queries, data plane queries to other Azure services | "That's an Azure Cosmos DB (or other data service) query — not ACA Sandboxes. Use the **azure-cosmos** skill, Azure Data Explorer, or the Cosmos data explorer in the portal." |
+| Listing Kubernetes pods, AKS cluster ops, `kubectl` | "That's AKS / Kubernetes, not ACA Sandboxes. Use **azure-kubernetes** or `kubectl` directly. Sandboxes are individual microVMs, not a Kubernetes cluster." |
+| Deploying a Function App, App Service site, full Container App | "That's Azure Functions / App Service / Container Apps (apps and jobs), not Sandboxes. Use **azure-prepare** / **azure-deploy**." |
+
+**Never** start running the out-of-scope tool's commands "just to help." A one-paragraph redirect is the correct, complete answer.
+
 ## When to use this skill
 
 | The user asks… | Skill action |
@@ -71,15 +85,18 @@ Only after the user picks an option, proceed with the relevant flow below. Do **
 
 ## Install the `aca` CLI (macOS, Linux, Windows)
 
-Minimum version: **1.0.0-beta.1**. After install, ALWAYS run `aca doctor` (expect **8/8 checks pass**) and `aca auth login` (delegates to `az login`). The install + verify + auth flow is three commands — present all three.
+Minimum version: **1.0.0-beta.1**. The install + verify + auth flow is three commands — present all three, every OS.
 
 ```bash
 # macOS (Apple Silicon or Intel) + Linux x64 — Bash one-liner
+# (this same one-liner is also the install path used INSIDE a sandbox or
+#  container for agent-driven self-installs — no extra steps, no package manager)
 curl -fsSL https://raw.githubusercontent.com/microsoft/azure-container-apps/main/docs/early/aca-cli/install.sh | bash
 ```
 
 ```powershell
 # Windows x64 — PowerShell one-liner
+# (same install used inside Windows sandboxes / containers for agent-driven installs)
 iwr -useb https://raw.githubusercontent.com/microsoft/azure-container-apps/main/docs/early/aca-cli/install.ps1 | iex
 ```
 
@@ -89,8 +106,6 @@ aca doctor           # expect 8/8 checks pass
 aca auth login       # delegates to `az login` (NOTE: the verb is `aca auth login`, NOT `aca login`)
 aca auth status      # ARM + data-plane status
 ```
-
-> **Always tell the user (for every install OS — macOS, Linux, Windows):** the **same** `curl … install.sh | bash` / `iwr … install.ps1 | iex` one-liner is **also the path used inside a sandbox or container** for agent-driven self-installs (e.g., a CI runner, or an agent inside an `ubuntu` sandbox bootstrapping the `aca` CLI to manage sibling sandboxes). No extra steps, no separate package.
 
 > There is **no** `brew install aca`, `winget install aca`, `npm i -g aca`, `pip install aca`, or top-level `aca login`. Always use the official curl/iwr one-liners above and the `aca auth login` verb. See [references/quickstart.md](references/quickstart.md).
 
@@ -146,28 +161,37 @@ aca sandbox commit -l name=<sb> --name my-disk-v1
 The YAML/declarative path is the **recommended flow for CI/CD and reproducibility** — check `sandbox.yaml` into source control, replay it in any environment. Parallel to the imperative `aca sandbox create` flow above. Always walk the user through the full 3-command flow (don't just mention `init`):
 
 ```bash
-aca sandbox init > sandbox.yaml          # 1. scaffold a starter manifest
-$EDITOR sandbox.yaml                     # 2. edit fields (see list below)
-aca sandbox schema                       # (optional) dump the full JSON Schema for editor autocomplete
-aca sandbox validate --file sandbox.yaml # 3a. schema + policy check (catch errors early)
-aca sandbox apply    --file sandbox.yaml # 3b. provision (idempotent — re-apply is safe)
+# 1. Scaffold a starter manifest. (Proactive rule: if no sandbox.yaml exists
+#    in the working dir, RUN `aca sandbox init` first — don't ask the user
+#    for a path.) The generated manifest covers these fields, all of which
+#    you should mention when you scaffold or explain a manifest:
+#      group       — parent sandbox group name
+#      id / labels — `labels.name: <friendly>` lets you use -l name= selectors
+#      disk        — base image (ubuntu, node-24, python-3.13, claude, copilot, …)
+#      resources   — cpu (e.g. 1000m) / memory (e.g. 2048Mi)
+#      ports[]     — port exposure with auth: anonymous OR auth: entra + email:
+#      env         — environment variables
+#      lifecycle.autoSuspendPolicy — idle-suspend rules
+#      egressPolicy — defaultAction Deny/Allow + per-domain allow-list
+aca sandbox init > sandbox.yaml
+
+# 2. Edit the manifest. For full JSON-Schema autocomplete in your editor,
+#    dump the schema and point your editor at it:
+aca sandbox schema > sandbox.schema.json
+$EDITOR sandbox.yaml
+
+# 3a. Validate against the schema + policy (catch errors before apply).
+#     NOTE: the only spelling is `--file`. There is NO `-f` short flag.
+aca sandbox validate --file sandbox.yaml
+
+# 3b. Apply (provision). Idempotent — re-apply is safe; converges to manifest state.
+#     This declarative path is the RECOMMENDED workflow for CI/CD and reproducibility,
+#     in contrast to the imperative `aca sandbox create` flow above (which is fine
+#     for one-off experiments but doesn't give you source-controllable diffs).
+aca sandbox apply --file sandbox.yaml
 ```
 
-**The generated `sandbox.yaml` covers these fields** (always enumerate them when you scaffold or explain a manifest):
-- `group` — parent sandbox group name
-- `disk` (or `diskId`) — base image (e.g. `ubuntu`, `node-24`, `python-3.13`, `claude`, `copilot`)
-- `resources.cpu` / `resources.memory` — sizing (e.g. `1000m` / `2048Mi`)
-- `ports[]` — declared port exposure (with `auth: anonymous` or `auth: entra` + `email:`)
-- `env` — environment variables
-- `labels` — including `name: <friendly-name>` so you can use `-l name=` selectors later
-- `lifecycle.autoSuspendPolicy` — idle-suspend rules
-- `egressPolicy` — `defaultAction: Deny/Allow` + per-domain allow-list
-
-Also run **`aca sandbox schema`** to dump the full JSON Schema — point your editor at it for autocomplete/validation. There is **no `-f` short flag** on `validate` or `apply`; use `--file`.
-
-> **Proactive `init` rule:** when a user says "apply my sandbox manifest" / "deploy from yaml" / "use my sandbox.yaml" and no manifest file is provided or visible in the working directory, **proactively offer `aca sandbox init > sandbox.yaml`** as step 1 of the canonical 3-command flow — do not just ask the user for a file path.
-
-**Why the manifest pattern over imperative `aca sandbox create`?**
+**Why the manifest pattern over imperative `aca sandbox create`?** Always cite these when recommending it:
 - **Source-controllable & reviewable:** diffs show what changed.
 - **Reproducible:** identical sandbox in dev / CI / prod.
 - **Idempotent:** `apply` is safe to re-run; converges to the manifest's state.
