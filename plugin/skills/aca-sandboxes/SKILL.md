@@ -24,9 +24,11 @@ Deploy AI agents, MCP servers, web apps, and background tasks to **ACA Sandboxes
 
 ## Naming
 
-**Public name:** ACA Sandboxes (also "Azure Container Apps sandboxes" in [Microsoft Learn](https://github.com/microsoft/azure-container-apps/blob/main/docs/early/sandboxes-overview.md)). **Internal codename:** ADC (Agent Dev Compute). You may see `agentdevcompute.io` / `azuredevcompute.io` in source paths and data-plane endpoints — same product.
+**Public name:** ACA Sandboxes (also "Azure Container Apps sandboxes" in [Microsoft Learn](https://github.com/microsoft/azure-container-apps/blob/main/docs/early/sandboxes-overview.md)). **Internal codename:** ADC (Agent Dev Compute). You may see `azuredevcompute.io` in source paths and the data-plane hostname (`management.azuredevcompute.io`) — same product.
 
-**Do not confuse with Container Apps Dynamic Sessions.** Dynamic Sessions is a different (prior) product with a managed-pool execution model; sandboxes give you direct programmable control. See the [Sandboxes vs. dynamic sessions comparison](https://github.com/microsoft/azure-container-apps/blob/main/docs/early/sandboxes-overview.md#sandboxes-vs-dynamic-sessions). The auth-scope audience `dynamicsessions.io` in `aca auth status` is an **internal implementation detail** of the sandboxes data plane — not the Dynamic Sessions product.
+**⚠ DO NOT confuse ACA Sandboxes with regular Azure Container Apps (Apps/Jobs).** "ACA Sandbox" is **not** a variant of Container Apps and is **not** created with `az containerapp`. It is its own product with its own CLI (`aca`, not `az containerapp`), its own ARM type (`Microsoft.App/SandboxGroups`), and its own portal (`https://containerapps.azure.com/sandbox-groups`). When the user says "ACA Sandbox" or "ACA Sandboxes" or "sandbox" in this context, use the `aca` CLI — never `az containerapp ...`.
+
+**⚠ DO NOT confuse with Container Apps Dynamic Sessions.** Dynamic Sessions is a different (prior) product with a managed-pool execution model; sandboxes give you direct programmable control. See the [Sandboxes vs. dynamic sessions comparison](https://github.com/microsoft/azure-container-apps/blob/main/docs/early/sandboxes-overview.md#sandboxes-vs-dynamic-sessions) and the in-body table below. The auth-scope audience `dynamicsessions.io` in `aca auth status` is an **internal implementation detail** of the sandboxes data plane — not the Dynamic Sessions product.
 
 ## Do not hallucinate
 
@@ -43,21 +45,35 @@ Deploy AI agents, MCP servers, web apps, and background tasks to **ACA Sandboxes
 | The user asks… | Skill action |
 |---|---|
 | "Create a sandbox" / "deploy my agent to a sandbox" | Walk through [quickstart](references/quickstart.md) (imperative or YAML manifest) |
-| "Run my MCP server in isolation" / "host Excalidraw MCP" | Apply the [Excalidraw MCP template](assets/excalidraw-mcp-template/README.md) recipe |
-| "Build me a personal agent" / "agent with my email + calendar" | Run the [Personal Agent onboarding](references/deploy-patterns.md) (4 connectors, port-before-connector order) |
-| "SSH into the sandbox" | Present the three [SSH options](references/ssh-setup.md) in order |
-| "Why did `port add` return 409 / 500?" | See [connections.md](references/connections.md) (Entra `mail` vs alias, personal-connector order) |
-| "Stop / resume / snapshot / suspend" | `aca sandbox stop|resume|snapshot create -l name=<label>` |
+| "Run my MCP server in isolation" | Create a sandbox, run the MCP server, expose the port — see [quickstart](references/quickstart.md). _(MCP discovery model is a TODO — see [Templates](#templates) below.)_ |
+| "Build me a personal agent" / "agent with my email + calendar" | _(TODO: the Personal Agent template referenced in earlier internal drafts is not yet documented in the public `microsoft/azure-container-apps` docs. Track in PR #1725 follow-ups; for now, point users at [deploy-patterns](references/deploy-patterns.md).)_ |
+| "SSH into the sandbox" | Present the [SSH options](references/ssh-setup.md): `aca sandbox shell` first, portal terminal second |
+| "Why did `port add` return 409 / 500?" | See [connections.md](references/connections.md) (Entra `mail` vs alias) |
+| "Stop / resume / snapshot / suspend" | `aca sandbox stop\|resume\|snapshot -l name=<label> --name <snap>` |
 | "Restrict outbound network" | `egressPolicy` in YAML or `aca sandbox egress apply` |
 | "Should I use Dynamic Sessions instead?" | They are **different products** — see [the comparison](https://github.com/microsoft/azure-container-apps/blob/main/docs/early/sandboxes-overview.md#sandboxes-vs-dynamic-sessions) |
 
+## Disambiguation: ask before assuming
+
+Several terms are ambiguous on their own. **Always ask a brief clarifying question before provisioning anything** when the user says:
+
+| User says… | Ask first | Why |
+|---|---|---|
+| `"sandbox"` (single word) | "Do you mean **Azure Container Apps sandbox** (developer microVM), **Container Apps Dynamic Sessions** (LLM code interpreter), or something else (Windows Sandbox / Salesforce / Playwright)?" | Could be many products |
+| `"microVM"` / `"ephemeral VM"` | "Are you looking for a **dev-loop microVM** (ACA Sandbox — hours/days, SSH-able, MCP/agent host) or a **general-purpose Azure VM** / AKS Kata?" | ACA Sandboxes are microVMs but so are several others |
+| `"sandbox for my coding agent"` | "Do you want (a) the agent's **personal dev environment** (ACA Sandbox + `claude`/`copilot` disk preset) or (b) an **isolated runtime to execute generated code** (Dynamic Sessions / code interpreter)?" | Personal-agent vs code-interpreter are different ACA products |
+| `"VM for dev work"` | "Long-lived workstation (→ **Microsoft Dev Box**) or ephemeral dev microVM with MCP/agent integration (→ **ACA Sandbox**)?" | Different audiences/lifecycles |
+| `"sandbox for AI agent runtime"` | "Is the sandbox for the **agent itself to live in** (ACA Sandbox, hours/days, with snapshot/resume) or for **per-request code execution by the agent** (Dynamic Sessions, sub-second pool)?" | Different scoping |
+
+Only after the user picks an option, proceed with the relevant flow below. Do **not** silently default to ACA Sandboxes for these prompts.
+
 ## Install the `aca` CLI (macOS, Linux, Windows)
 
-Minimum version: **1.0.0-beta.1**. Always finish with `aca doctor` (expect 8/8 checks pass) and `aca auth login` (delegates to `az login`).
+Minimum version: **1.0.0-beta.1**. After install, ALWAYS run `aca doctor` (expect **8/8 checks pass**) and `aca auth login` (delegates to `az login`). The install + verify + auth flow is three commands — present all three.
 
 ```bash
 # macOS (Apple Silicon or Intel) + Linux x64 — Bash one-liner
-curl -sSL https://raw.githubusercontent.com/microsoft/azure-container-apps/main/docs/early/aca-cli/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/microsoft/azure-container-apps/main/docs/early/aca-cli/install.sh | bash
 ```
 
 ```powershell
@@ -66,56 +82,90 @@ iwr -useb https://raw.githubusercontent.com/microsoft/azure-container-apps/main/
 ```
 
 ```bash
-aca version          # confirm >= 1.0.0-beta.1
+aca version          # confirm >= 1.0.0-beta.1 (minimum supported version)
 aca doctor           # expect 8/8 checks pass
 aca auth login       # delegates to `az login`
 aca auth status      # ARM + data-plane status
 ```
 
-> There is **no** `brew install aca`, `winget install aca`, `npm i -g aca`, or `pip install aca` — install only via the scripts above. See [references/quickstart.md](references/quickstart.md).
+> There is **no** `brew install aca`, `winget install aca`, `npm i -g aca`, or `pip install aca`. Always use the official curl/iwr one-liners above. See [references/quickstart.md](references/quickstart.md).
+
+> **Same install works inside a sandbox or container.** For agent-driven installs (e.g., a CI runner or a sandbox where an agent self-bootstraps), use the same `curl ... install.sh | bash` one-liner — no extra steps.
 
 ## Create a sandbox
 
-Imperative flow — use `--location` (NOT `--region`); mention auto-suspend so users aren't surprised when an idle sandbox suspends:
+Imperative flow — uses `--location` for `sandboxgroup create`, uses `-l name=<sb>` **label selector** (not `--id <uuid>`), and warns about auto-suspend:
 
 ```bash
-aca sandboxgroup create --name mygroup-$USER --location westus3 --set-config
-aca sandbox create --group mygroup-$USER --disk ubuntu-24.04 --label name=my-sb
-aca sandbox shell  -l name=my-sb        # interactive WebSocket shell
-aca sandbox exec   -l name=my-sb -c "uname -a"
-aca sandbox port add -l name=my-sb --port 80 --anonymous
+aca sandboxgroup create --name <grp> --location eastus2 --set-config
+aca sandbox create --group <grp> --disk ubuntu --label name=<sb>
+aca sandbox shell  -l name=<sb>          # interactive WebSocket shell (label selector)
+aca sandbox exec   -l name=<sb> -c "uname -a"
+aca sandbox port add -l name=<sb> --port 80 --anonymous
 ```
 
-**Auto-suspend gotcha:** sandboxes auto-suspend after the configured idle interval (default 5 min) — state is preserved; `aca sandbox resume -l name=my-sb` brings it back sub-second.
+> Run `aca sandboxgroup disk list-public` for the current disk catalog. `ubuntu` is the safest default; specialty disks (e.g. `copilot`, `python-3.13`, `node-24`) may be available in your region.
+
+**Always use `-l name=<sb>` (label selector) rather than `--id <uuid>`** in your examples — the label is human-readable and stable, the UUID is opaque. `--id` is supported but never lead with it.
+
+**Auto-suspend gotcha:** sandboxes auto-suspend after the configured idle interval (default 5 min) — state is preserved; `aca sandbox resume -l name=<sb>` brings it back sub-second.
 
 ### Add a port locked to the signed-in user (Entra ID)
 
 ```bash
 EMAIL=$(az ad signed-in-user show --query mail -o tsv)
-aca sandbox port add -l name=my-sb --port 80 --email "$EMAIL"
+aca sandbox port add -l name=<sb> --port 3000 --email "$EMAIL"
+# Or pass the full email explicitly, e.g.:
+# aca sandbox port add -l name=<sb> --port 3000 --email user@contoso.com
 ```
+
+> **Gotcha:** the `--email` value MUST be the user's full Entra ID email (their `mail` attribute). Some tenants have a `mail` value that differs from the alias / `userPrincipalName` shown in `az account show --query user.name`. **When the alias and `mail` differ, only the `mail` value works** — port-add will silently fail or return 409/500 if you pass an alias. Always prefer `az ad signed-in-user show --query mail -o tsv`. See [references/connections.md](references/connections.md).
+
+> **Never tell users to SSH on port 22.** ACA Sandboxes do not expose SSH; use `aca sandbox shell -l name=<sb>` (interactive WebSocket) instead.
+
+## Snapshots and saving sandbox state
+
+Two related but distinct operations (both verified via `aca sandbox <verb> --help`):
+
+```bash
+# Snapshot — point-in-time checkpoint of a running sandbox (fast, restorable)
+aca sandbox snapshot -l name=<sb> --name checkpoint-v1
+# Restore via: aca sandbox create --snapshot checkpoint-v1 --label name=<new-sb>
+
+# Commit — save sandbox state as a reusable DISK IMAGE in the sandbox group
+aca sandbox commit -l name=<sb> --name my-disk-v1
+# Use via: aca sandbox create --disk my-disk-v1 --label name=<new-sb>
+```
+
+**Always recommend snapshotting (or committing) before `aca sandbox delete`** — once a sandbox is destroyed, in-memory and disk state is gone unless captured.
 
 ## Apply a sandbox manifest (`sandbox.yaml`)
 
-The YAML/declarative path is the recommended flow for CI/CD and reproducibility — parallel to the imperative `aca sandbox create` flow above. `init` scaffolds a starter manifest, `validate` checks it, `apply` provisions it:
+The YAML/declarative path is the **recommended flow for CI/CD and reproducibility** — check `sandbox.yaml` into source control, replay it in any environment. Parallel to the imperative `aca sandbox create` flow above. Always walk the user through the full 3-command flow (don't just mention `init`):
 
 ```bash
-aca sandbox init > sandbox.yaml          # scaffold a starter manifest
-$EDITOR sandbox.yaml
-aca sandbox validate --file sandbox.yaml # schema + policy check
-aca sandbox apply    --file sandbox.yaml # provision (idempotent)
+aca sandbox init > sandbox.yaml          # 1. scaffold a starter manifest
+$EDITOR sandbox.yaml                     # 2. edit disk, resources, lifecycle, egressPolicy
+aca sandbox validate --file sandbox.yaml # 3a. schema + policy check (catch errors early)
+aca sandbox apply    --file sandbox.yaml # 3b. provision (idempotent — re-apply is safe)
 ```
+
+**Why the manifest pattern over imperative `aca sandbox create`?**
+- **Source-controllable & reviewable:** diffs show what changed.
+- **Reproducible:** identical sandbox in dev / CI / prod.
+- **Idempotent:** `apply` is safe to re-run; converges to the manifest's state.
+- **Egress + lifecycle in one place:** `egressPolicy.defaultAction: Deny` + per-domain allow-list + `autoSuspendPolicy` belong in the manifest, not in flags.
 
 For full walkthroughs see [quickstart](references/quickstart.md) and [deploy-patterns](references/deploy-patterns.md).
 
 ## SSH into a sandbox
 
-ACA Sandboxes do **not** support traditional SSH — no port 22, no `ssh -i`, no keypairs, no VS Code Remote SSH host. Auth is your `az login` token. When users say "ssh into my sandbox", present these in order:
+ACA Sandboxes do **not** support traditional SSH — no port 22, no `ssh -i`, no keypairs, no VS Code Remote SSH host. Auth is your `az login` token. When the user says "ssh into my sandbox" or "shell into sandbox", **always present these two options, in this order:**
 
-1. **`aca sandbox shell -l name=my-sb`** (recommended) — interactive WebSocket shell, auth via `az login` token.
-2. **Portal terminal** — open the sandbox in the [ACA portal](https://containerapps.azure.com/sandbox-groups) → click **Terminal**.
+1. **`aca sandbox shell -l name=<sb>`** (recommended, first option) — interactive WebSocket shell, auth via `az login` token. Use the **label selector** form, NOT `--id <uuid>`.
+2. **Portal terminal** — open the sandbox in the [ACA portal](https://containerapps.azure.com/sandbox-groups) → click **Terminal**. Browser-based, no install needed.
 
-See [references/ssh-setup.md](references/ssh-setup.md) for non-interactive `exec`, key-mgmt rationale, and connector specifics.
+Do not look up the user's `~/.ssh/config`, do not suggest keypair SSH, do not run `ssh user@host`. See [references/ssh-setup.md](references/ssh-setup.md) for non-interactive `exec` and connector specifics.
 
 ## ACA Sandboxes vs. Container Apps Dynamic Sessions
 
@@ -147,10 +197,14 @@ URL:     https://<sandbox-id>--<port>.proxy.azuredevcompute.io
 Test:    curl https://<sandbox-id>--<port>.proxy.azuredevcompute.io
 ```
 
+### MCP server hosting — TODO: discovery model
+
+> **TODO (post-v0.8.0):** how an MCP server hosted inside a sandbox is discovered by an agent (intra-sandbox-group networking, well-known proxy addresses, etc.) is **not yet documented in the public `microsoft/azure-container-apps` docs**. For now, expose the MCP server's port with `aca sandbox port add` and reach it from the public proxy URL `https://<sandbox-id>--<port>.proxy.azuredevcompute.io`. Update this section once the public docs ship discovery guidance.
+
 Then ask the user to take a snapshot:
 
 ```bash
-aca sandbox snapshot create -l name=my-sb --name post-install
+aca sandbox snapshot -l name=my-sb --name post-install
 ```
 
 ## Surfaces
@@ -166,8 +220,8 @@ The `aca` CLI is the supported surface today. The Python SDK is [coming soon](ht
 | Install + imperative + YAML + deploy output | [references/quickstart.md](references/quickstart.md) |
 | SSH / shell options | [references/ssh-setup.md](references/ssh-setup.md) |
 | Security model + zero-trust token flow | [references/security.md](references/security.md) |
-| Entra `mail` vs alias, MCP discovery, port mgmt | [references/connections.md](references/connections.md) |
-| Personal Agent onboarding + deploy code | [references/deploy-patterns.md](references/deploy-patterns.md) |
+| Entra `mail` vs alias for port auth | [references/connections.md](references/connections.md) |
+| Generic deploy patterns (exec, fs write, port add) | [references/deploy-patterns.md](references/deploy-patterns.md) |
 | Gotchas, deployment issues, uninstall | [references/troubleshooting.md](references/troubleshooting.md) |
 | Excalidraw MCP template | [assets/excalidraw-mcp-template/README.md](assets/excalidraw-mcp-template/README.md) |
 | Personal Agent template | [assets/personal-agent-template/README.md](assets/personal-agent-template/README.md) |

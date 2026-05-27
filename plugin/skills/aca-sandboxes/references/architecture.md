@@ -23,12 +23,15 @@ The `aca` CLI is the supported surface today. Drives all human and agent workflo
 | Validate manifest | `aca sandbox validate --file sandbox.yaml` |
 | Exec a one-off command | `aca sandbox exec -l name=my-sb -c "cmd"` |
 | Open an interactive shell | `aca sandbox shell -l name=my-sb` |
-| Upload a file | `aca sandbox fs put -l name=my-sb --src ./app.js --dest /home/user/app.js` |
-| Download a file | `aca sandbox fs get -l name=my-sb --src /path --dest ./out.txt` |
+| Write a file | `aca sandbox fs write -l name=my-sb --file ./app.js --path /home/user/app.js` |
+| Read a file | `aca sandbox fs cat -l name=my-sb --path /home/user/app.js` |
+| List files | `aca sandbox fs ls -l name=my-sb --path /home/user` |
 | Add port (anonymous) | `aca sandbox port add -l name=my-sb --port 80 --anonymous` |
 | Add port (Entra ID) | `aca sandbox port add -l name=my-sb --port 80 --email you@company.com` |
 | Apply egress policy | `aca sandbox egress apply -l name=my-sb --file egress.yaml` |
-| Snapshot | `aca sandbox snapshot create -l name=my-sb --name mysnap` |
+| Snapshot | `aca sandbox snapshot -l name=my-sb --name mysnap` |
+| List snapshots | `aca sandboxgroup snapshot list` |
+| Commit as disk image | `aca sandbox commit -l name=my-sb --name my-disk-v1` |
 | Stop / Resume | `aca sandbox stop -l name=my-sb` / `aca sandbox resume -l name=my-sb` |
 | Disk catalog | `aca sandboxgroup disk list-public` |
 

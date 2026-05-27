@@ -76,7 +76,7 @@ Use the YAML pattern when you want sandbox specs in source control, want repeata
 > *"Everything looks good — want me to take a snapshot so you can restore to this state instantly?"*
 
 ```bash
-aca sandbox snapshot create -l name=my-sb --name post-install
+aca sandbox snapshot -l name=my-sb --name post-install
 ```
 
 ## Deployment output (mandatory)
