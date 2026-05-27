@@ -1,0 +1,11 @@
+{
+  "name": "azure-container-apps",
+  "description": "Microsoft Azure Container Apps plugin — skills for managing Azure Container Apps, including the ACA Sandboxes early-access surface for AI agents, MCP servers, web apps, and APIs.",
+  "version": "0.8.0",
+  "author": { "name": "Microsoft", "url": "https://www.microsoft.com" },
+  "homepage": "https://github.com/microsoft/azure-container-apps",
+  "repository": "https://github.com/microsoft/azure-container-apps",
+  "license": "MIT",
+  "keywords": ["azure", "container-apps", "aca", "sandbox", "microvm", "ai-agent"],
+  "skills": "./skills/"
+}

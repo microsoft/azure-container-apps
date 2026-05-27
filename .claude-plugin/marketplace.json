@@ -1,0 +1,22 @@
+{
+  "name": "azure-container-apps",
+  "metadata": {
+    "description": "Azure Container Apps plugin marketplace — skills for managing Container Apps, including ACA Sandboxes for AI agents, MCP servers, web apps, and APIs.",
+    "version": "0.8.0"
+  },
+  "owner": {
+    "name": "Microsoft",
+    "url": "https://www.microsoft.com"
+  },
+  "plugins": [
+    {
+      "name": "azure-container-apps",
+      "source": "./plugin",
+      "description": "ACA Sandboxes skill — `aca` CLI-driven microVMs for AI agents, MCP servers, web apps, APIs.",
+      "version": "0.8.0",
+      "skills": [
+        "./plugin/skills/aca-sandboxes"
+      ]
+    }
+  ]
+}
