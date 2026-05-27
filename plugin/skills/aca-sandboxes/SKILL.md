@@ -1,14 +1,18 @@
 ---
 name: aca-sandboxes
 description: >-
-  Create and manage Azure Container Apps Sandboxes (ACA Sandboxes) — hardware-isolated
-  microVMs with snapshots and scale-to-zero — using the public `aca` CLI, imperatively
-  or via YAML manifest.
-  USE FOR: sandbox group, sandbox create/apply/exec/shell, expose port, snapshot,
-  suspend/resume, mount volume, egress policy, deploy AI agent / MCP server / web app,
-  personal agent, microVM, `Microsoft.App/SandboxGroups`.
-  DO NOT USE FOR: Container Apps Dynamic Sessions (different product), Azure Functions,
-  Container Apps deploys, AKS pods, App Service, Cosmos, Container Registry.
+  Azure Container Apps Sandboxes (a.k.a. ACA Sandboxes, ADC, Agent Dev Compute)
+  and the public `aca` CLI — hardware-isolated microVMs with snapshots,
+  suspend/resume, scale-to-zero. Use for: create a sandbox, create my first ACA
+  sandbox, install the aca cli on mac/linux/windows, ssh / shell into a sandbox,
+  aca sandbox shell/exec/apply, apply sandbox.yaml manifest, deploy AI agent /
+  MCP server / personal agent / web app to a sandbox, expose port, snapshot,
+  suspend, resume, mount volume, egress policy, sandbox group, microVM,
+  Microsoft.App/SandboxGroups, agentdevcompute, ACA Sandboxes vs Container Apps
+  Dynamic Sessions comparison. DO NOT USE FOR: Container Apps Dynamic Sessions
+  (different product — managed code-interpreter pool), Container Apps app/job
+  deploys, ACR build, Azure Functions, AKS, App Service, Cosmos, Container
+  Registry, generic `az` CLI.
 metadata:
   author: azure-container-apps-team
   version: "0.8.0"
@@ -47,24 +51,42 @@ Deploy AI agents, MCP servers, web apps, and background tasks to **ACA Sandboxes
 | "Restrict outbound network" | `egressPolicy` in YAML or `aca sandbox egress apply` |
 | "Should I use Dynamic Sessions instead?" | They are **different products** — see [the comparison](https://github.com/microsoft/azure-container-apps/blob/main/docs/early/sandboxes-overview.md#sandboxes-vs-dynamic-sessions) |
 
-## Examples
+## Install the `aca` CLI (macOS, Linux, Windows)
 
-### Create + use a sandbox (imperative)
+Minimum version: **1.0.0-beta.1**. Always finish with `aca doctor` (expect 8/8 checks pass) and `aca auth login` (delegates to `az login`).
 
 ```bash
-aca sandboxgroup create --name mygroup --location eastus2 --set-config
-aca sandbox create --group mygroup --disk ubuntu --label name=my-sb
-aca sandbox exec     -l name=my-sb -c "uname -a"
+# macOS (Apple Silicon or Intel) + Linux x64 — Bash one-liner
+curl -sSL https://raw.githubusercontent.com/microsoft/azure-container-apps/main/docs/early/aca-cli/install.sh | bash
+```
+
+```powershell
+# Windows x64 — PowerShell one-liner
+iwr -useb https://raw.githubusercontent.com/microsoft/azure-container-apps/main/docs/early/aca-cli/install.ps1 | iex
+```
+
+```bash
+aca version          # confirm >= 1.0.0-beta.1
+aca doctor           # expect 8/8 checks pass
+aca auth login       # delegates to `az login`
+aca auth status      # ARM + data-plane status
+```
+
+> There is **no** `brew install aca`, `winget install aca`, `npm i -g aca`, or `pip install aca` — install only via the scripts above. See [references/quickstart.md](references/quickstart.md).
+
+## Create a sandbox
+
+Imperative flow — use `--location` (NOT `--region`); mention auto-suspend so users aren't surprised when an idle sandbox suspends:
+
+```bash
+aca sandboxgroup create --name mygroup-$USER --location westus3 --set-config
+aca sandbox create --group mygroup-$USER --disk ubuntu-24.04 --label name=my-sb
+aca sandbox shell  -l name=my-sb        # interactive WebSocket shell
+aca sandbox exec   -l name=my-sb -c "uname -a"
 aca sandbox port add -l name=my-sb --port 80 --anonymous
 ```
 
-### Declarative — YAML manifest
-
-```bash
-aca sandbox init > sandbox.yaml
-aca sandbox validate --file sandbox.yaml
-aca sandbox apply    --file sandbox.yaml
-```
+**Auto-suspend gotcha:** sandboxes auto-suspend after the configured idle interval (default 5 min) — state is preserved; `aca sandbox resume -l name=my-sb` brings it back sub-second.
 
 ### Add a port locked to the signed-in user (Entra ID)
 
@@ -73,7 +95,42 @@ EMAIL=$(az ad signed-in-user show --query mail -o tsv)
 aca sandbox port add -l name=my-sb --port 80 --email "$EMAIL"
 ```
 
+## Apply a sandbox manifest (`sandbox.yaml`)
+
+The YAML/declarative path is the recommended flow for CI/CD and reproducibility — parallel to the imperative `aca sandbox create` flow above. `init` scaffolds a starter manifest, `validate` checks it, `apply` provisions it:
+
+```bash
+aca sandbox init > sandbox.yaml          # scaffold a starter manifest
+$EDITOR sandbox.yaml
+aca sandbox validate --file sandbox.yaml # schema + policy check
+aca sandbox apply    --file sandbox.yaml # provision (idempotent)
+```
+
 For full walkthroughs see [quickstart](references/quickstart.md) and [deploy-patterns](references/deploy-patterns.md).
+
+## SSH into a sandbox
+
+ACA Sandboxes do **not** support traditional SSH — no port 22, no `ssh -i`, no keypairs, no VS Code Remote SSH host. Auth is your `az login` token. When users say "ssh into my sandbox", present these in order:
+
+1. **`aca sandbox shell -l name=my-sb`** (recommended) — interactive WebSocket shell, auth via `az login` token.
+2. **Portal terminal** — open the sandbox in the [ACA portal](https://containerapps.azure.com/sandbox-groups) → click **Terminal**.
+
+See [references/ssh-setup.md](references/ssh-setup.md) for non-interactive `exec`, key-mgmt rationale, and connector specifics.
+
+## ACA Sandboxes vs. Container Apps Dynamic Sessions
+
+**Different products.** Do not conflate them. When asked to compare or pick between them, present this table and explain the choice:
+
+| Dimension | **ACA Sandboxes** | **Container Apps Dynamic Sessions** |
+|---|---|---|
+| Audience | Developer-owned | Managed code-interpreter for LLM tool execution |
+| Lifecycle | Long-lived (hours → days), you create/suspend/resume/delete | Ephemeral (seconds → minutes), managed by session pool |
+| Control | Direct programmable control (CLI + YAML + API) | Pool-managed; you submit code, get a result |
+| Isolation | Hardware-isolated microVM | Hyper-V isolation |
+| Best for | Personal agents, dev loops, MCP servers, interactive shells | Untrusted LLM-generated code execution at request scope |
+| State | Stateful — snapshots, volumes, suspend preserves memory | Stateless / ephemeral |
+
+The auth-scope audience `dynamicsessions.io` you see in `aca auth status` is an **internal sandboxes data-plane implementation detail** — not the Dynamic Sessions product. See the [public comparison](https://github.com/microsoft/azure-container-apps/blob/main/docs/early/sandboxes-overview.md#sandboxes-vs-dynamic-sessions).
 
 ### Deployment output format (mandatory)
 

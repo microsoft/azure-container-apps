@@ -7,10 +7,14 @@
 
 ## 1. Suite
 
-| File | Purpose |
-|------|---------|
-| [`plugin/evals/aca-sandboxes/eval.yaml`](../../evals/aca-sandboxes/eval.yaml) | 6 weighted metrics, copilot-sdk executor, claude-sonnet-4.6 model |
-| [`plugin/evals/aca-sandboxes/tasks/*.yaml`](../../evals/aca-sandboxes/tasks/) | 27 task files (11 pos / 7 neg / 6 syn / 3 compare) |
+The eval suite (eval.yaml + 27 task YAMLs) is **not checked into this repo** to keep the marketplace install slim (per Annaji 5/26: `copilot plugin marketplace add` clones the whole repo). Skill authors run the suite from their own checkout and publish results via PR comments on the change that motivated the run.
+
+| Item | Where |
+|------|-------|
+| `eval.yaml` (6 weighted metrics, copilot-sdk executor, claude-sonnet-4.6 model) | Maintained off-repo by the skill author |
+| 27 task files (11 pos / 7 neg / 6 syn / 3 compare) | Same — see published results for the catalog |
+| Per-run baseline numbers + pass/fail breakdown | Posted as a PR comment on the changing PR |
+| Methodology + ground truth + thresholds | This document |
 
 **Standards compliance** (per [forge-builderskit `SKILL-STANDARDS.md` §1](https://github.com/coreai-microsoft/forge-builderskit/blob/main/docs/SKILL-STANDARDS.md)):
 
@@ -66,16 +70,24 @@ When grading, the prompt grader can reference these authoritative sources:
 
 ### Local run
 
+The suite lives in the skill author's local working directory (not in this repo). Typical layout:
+
 ```bash
-cd /path/to/azure-container-apps
-waza run evals/aca-sandboxes/eval.yaml --parallel --output results/baseline.json
+~/src/aca-sandboxes-evals/
+├── eval.yaml
+└── tasks/*.yaml
 ```
 
-Outputs land in `results/` (gitignored — local only).
+```bash
+cd ~/src/aca-sandboxes-evals
+waza run eval.yaml --parallel --output /tmp/aca-eval/results.json
+```
+
+Raw JSON results stay local — only summary numbers + pass/fail breakdown get published in PR comments.
 
 ### CI run
 
-Not yet wired. Phase 10 follow-up will add a GitHub Action that runs the suite on every PR touching `plugin/skills/aca-sandboxes/` or `evals/aca-sandboxes/`.
+Not wired. Eval results are published manually via PR comments today. A future option is a private GitHub Action in a sibling repo that posts results to PRs touching `plugin/skills/aca-sandboxes/`.
 
 ---
 
