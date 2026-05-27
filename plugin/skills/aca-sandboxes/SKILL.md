@@ -38,7 +38,9 @@ Deploy AI agents, MCP servers, web apps, and background tasks to **ACA Sandboxes
 - **Auth** uses Azure CLI bearer tokens. Ensure `az` is installed and `az login` has been run. `aca auth login` delegates to `az login`; `aca auth status` shows ARM + data-plane status.
 - **Management API** is `https://management.azuredevcompute.io`. The **portal** is `https://containerapps.azure.com/sandbox-groups`. The **proxy** for exposed ports is `<sandbox-id>--<port>.proxy.azuredevcompute.io`. Do not invent other hostnames.
 - **SSH:** no traditional SSH, no `ssh -i`, no keypair. Use `aca sandbox shell` or the portal terminal. See [references/ssh-setup.md](references/ssh-setup.md).
-- Use only the information in this skill and its references. The authoritative public docs live at [`microsoft/azure-container-apps/docs/early/`](https://github.com/microsoft/azure-container-apps/tree/main/docs/early).
+- Use only the information in this skill and its references. The authoritative public sources are:
+  - [`microsoft/azure-container-apps/docs/early/`](https://github.com/microsoft/azure-container-apps/tree/main/docs/early) — markdown reference in this repo.
+  - [`sandboxes.azure.com/docs/sandboxes/`](https://sandboxes.azure.com/docs/sandboxes/) — portal-hosted product docs (sandbox groups, sandboxes, sandbox detail, connectors).
 
 ## When to use this skill
 
@@ -234,4 +236,8 @@ The `aca` CLI is the supported surface today. The Python SDK is [coming soon](ht
 | Egress policies | [docs/early/sandboxes-egress-policies.md](https://github.com/microsoft/azure-container-apps/blob/main/docs/early/sandboxes-egress-policies.md) |
 | Snapshots & state | [docs/early/sandboxes-snapshots-state-management.md](https://github.com/microsoft/azure-container-apps/blob/main/docs/early/sandboxes-snapshots-state-management.md) |
 | `aca` CLI reference | [docs/early/aca-cli/README.md](https://github.com/microsoft/azure-container-apps/blob/main/docs/early/aca-cli/README.md) |
+| Portal docs — Sandboxes (overview) | [sandboxes.azure.com/docs/sandboxes/](https://sandboxes.azure.com/docs/sandboxes/) |
+| Portal docs — Sandbox groups | [sandboxes.azure.com/docs/sandboxes/sandbox-groups](https://sandboxes.azure.com/docs/sandboxes/sandbox-groups) |
+| Portal docs — Sandboxes (create / manage) | [sandboxes.azure.com/docs/sandboxes/sandboxes](https://sandboxes.azure.com/docs/sandboxes/sandboxes) |
+| Portal docs — Sandbox detail page | [sandboxes.azure.com/docs/sandboxes/sandbox-detail](https://sandboxes.azure.com/docs/sandboxes/sandbox-detail) |
 | OpenAPI spec | `https://management.azuredevcompute.io/openapi/v1.json` (requires Entra auth) |
