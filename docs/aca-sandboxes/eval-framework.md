@@ -1,13 +1,12 @@
 # `aca-sandboxes` — Eval Framework
 
 > Baseline + ground truth + human-eval process for the [`aca-sandboxes`](../../skills/aca-sandboxes/SKILL.md) skill.
-> Modeled on [`coreai-microsoft/forge-builderskit/docs/azure-quickstart/eval-framework.md`](https://github.com/coreai-microsoft/forge-builderskit/tree/main/docs/azure-quickstart).
 
 ---
 
 ## 1. Suite
 
-The eval suite (eval.yaml + 27 task YAMLs) is **not checked into this repo** to keep the marketplace install slim (per Annaji 5/26: `copilot plugin marketplace add` clones the whole repo). Skill authors run the suite from their own checkout and publish results via PR comments on the change that motivated the run.
+The eval suite (eval.yaml + 27 task YAMLs) is **not checked into this repo** to keep the marketplace install slim — `copilot plugin marketplace add` clones the whole repo, so eval fixtures bloat every consumer install. Skill authors run the suite from their own checkout and publish results via PR comments on the change that motivated the run.
 
 | Item | Where |
 |------|-------|
@@ -16,7 +15,7 @@ The eval suite (eval.yaml + 27 task YAMLs) is **not checked into this repo** to 
 | Per-run baseline numbers + pass/fail breakdown | Posted as a PR comment on the changing PR |
 | Methodology + ground truth + thresholds | This document |
 
-**Standards compliance** (per [forge-builderskit `SKILL-STANDARDS.md` §1](https://github.com/coreai-microsoft/forge-builderskit/blob/main/docs/SKILL-STANDARDS.md)):
+**Standards compliance** (using the conventional skill-eval task-mix bar — ≥20 tasks, ≥50% positive, ≥20% negative, ≥20% synthetic):
 
 | Bar | Required | Actual |
 |-----|----------|--------|
@@ -99,15 +98,15 @@ Not wired. Eval results are published manually via PR comments today. A future o
 
 | Task | Why it's critical |
 |------|-------------------|
-| `compare-sandbox-vs-dynamic-session` | Highest-stakes naming/product disambiguation per Paul (5/26). |
+| `compare-sandbox-vs-dynamic-session` | Highest-stakes naming/product disambiguation. |
 | `neg-dynamic-session-query` | If skill activates here, we are conflating two distinct products. |
-| `pos-install-aca-windows` | Windows must be a first-class platform — no "Windows unsupported, use WSL" fallback per Paul (5/26). |
+| `pos-install-aca-windows` | Windows must be a first-class platform — no "Windows unsupported, use WSL" fallback. |
 | `pos-create-sandbox` | The Quick Start IS the skill. If this fails, the whole skill fails. |
 | `pos-yaml-apply` | The YAML manifest pattern is the v0.8.0 anchor — it's the recommended path. |
 
 ### 5.1 Baseline run-1 (2026-05-26, commit 8cc45a2)
 
-First baseline against the slim layout (commit `8cc45a2` — evals moved to repo root, JS helpers dropped per Annaji feedback).
+First baseline against the slim layout (commit `8cc45a2` — evals moved out of repo, JS helpers dropped to keep install slim).
 
 | Stat | Value |
 |---|---|
