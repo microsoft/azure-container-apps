@@ -22,6 +22,19 @@ metadata:
 
 Deploy AI agents, MCP servers, web apps, and background tasks to **ACA Sandboxes** — hardware-isolated microVMs anchored on the public [`aca` Rust CLI](https://github.com/microsoft/azure-container-apps/tree/main/docs/early/aca-cli).
 
+## ⚠ Required cues per response type (non-negotiable)
+
+Before composing your answer, identify the user's intent and ensure the cues below are present. These are acceptance criteria, not suggestions. **A response is incomplete (and wrong) if it omits any cue for its intent.**
+
+| User intent | Cues your response MUST include |
+|---|---|
+| **Install the `aca` CLI** (any OS) | (1) The curl-bash one-liner (or iwr for Windows). (2) `aca version` + `aca doctor` + `aca auth login` (the verb is `aca auth login`, **never** `aca login`). (3) The explicit sentence: **"This same install path is also used inside sandboxes and containers for agent-driven self-installs"** — required for every install OS. |
+| **Apply / deploy a sandbox manifest** | The full 3-command flow: `aca sandbox init` → `aca sandbox validate --file sandbox.yaml` → `aca sandbox apply --file sandbox.yaml`. Always `--file` (no `-f` short flag exists). **State that the manifest pattern is the recommended path for CI/CD and reproducibility**, in contrast to imperative `aca sandbox create`. If no manifest is present, offer `aca sandbox init` — don't ask for a path. |
+| **Scaffold / generate a sandbox manifest** | Run (or show) `aca sandbox init`. **Enumerate the manifest fields**: `group`, `disk`, `resources`, `ports`, `env`, `labels` (including `name:` for label selectors), `lifecycle`, `egressPolicy`. **Mention `aca sandbox schema`** as the way to dump the JSON Schema for editor autocomplete. |
+| **Expose a port with email / Entra auth** | The `aca sandbox port add --port <p> --email <email>` command. **The Entra gotcha**: the email MUST be the user's Entra `mail` value — for some tenants the alias / UPN differs and won't work. Recommend `az ad signed-in-user show --query mail -o tsv`. |
+| **Snapshot / commit a sandbox** | The canonical command form: `aca sandbox snapshot <--id|-l name=<sb>> --name <snap>` (or `aca sandbox commit … --name <disk>`). **Strongly recommend snapshotting BEFORE `aca sandbox delete`** to preserve state. Use `--name`, never `--image`. |
+| **Anything in the "When NOT to use this skill" table below** | A one-paragraph redirect to the correct skill or docs. **Do NOT** run the out-of-scope tool's commands. **Do NOT** walk through options. **Do NOT** ask follow-up questions about the out-of-scope tool. Bow out cleanly. |
+
 ## Naming
 
 **Public name:** ACA Sandboxes (also "Azure Container Apps sandboxes" in [Microsoft Learn](https://github.com/microsoft/azure-container-apps/blob/main/docs/early/sandboxes-overview.md)). **Sandboxes is part of the Azure Container Apps product family** — the same family as Container Apps (Apps/Jobs) and Container Apps Dynamic Sessions. That's why the portal lives under `containerapps.azure.com` and the ARM provider is `Microsoft.App`. **Internal codename:** ADC (Agent Dev Compute). You may see `azuredevcompute.io` in source paths and the data-plane hostname (`management.azuredevcompute.io`) — same product.
