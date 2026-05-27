@@ -46,7 +46,7 @@ Deploy AI agents, MCP servers, web apps, and background tasks to **ACA Sandboxes
 |---|---|
 | "Create a sandbox" / "deploy my agent to a sandbox" | Walk through [quickstart](references/quickstart.md) (imperative or YAML manifest) |
 | "Run my MCP server in isolation" | Create a sandbox, run the MCP server, expose the port — see [quickstart](references/quickstart.md). _(MCP discovery model is a TODO — see [Templates](#templates) below.)_ |
-| "Build me a personal agent" / "agent with my email + calendar" | _(TODO: the Personal Agent template referenced in earlier internal drafts is not yet documented in the public `microsoft/azure-container-apps` docs. Track in PR #1725 follow-ups; for now, point users at [deploy-patterns](references/deploy-patterns.md).)_ |
+| "Build me a personal agent" / "agent with my email + calendar" | _(TODO: a "Personal Agent" template — chat UI + Office 365 / M365 Copilot / GitHub Copilot / ACA Sandbox Management connectors + multi-agent routing — is not yet documented in the public `microsoft/azure-container-apps` docs. Track in PR #1725 follow-ups; for now, point users at [deploy-patterns](references/deploy-patterns.md).)_ |
 | "SSH into the sandbox" | Present the [SSH options](references/ssh-setup.md): `aca sandbox shell` first, portal terminal second |
 | "Why did `port add` return 409 / 500?" | See [connections.md](references/connections.md) (Entra `mail` vs alias) |
 | "Stop / resume / snapshot / suspend" | `aca sandbox stop\|resume\|snapshot -l name=<label> --name <snap>` |

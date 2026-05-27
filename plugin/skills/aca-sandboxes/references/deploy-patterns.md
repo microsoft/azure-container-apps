@@ -52,7 +52,7 @@ aca sandbox commit $SB --name my-app-disk-v1
 
 ## Personal Agent / multi-connector scenario
 
-> **TODO (post-v0.8.0):** an end-to-end "Personal Agent" template (chat UI + Office 365 + M365 Copilot + GitHub Copilot + ACA Sandbox Management connectors, multi-agent routing, in-sandbox MCP config) was prototyped in internal drafts but is **not yet documented in the public [`microsoft/azure-container-apps`](https://github.com/microsoft/azure-container-apps/tree/main/docs/early) docs**.
+> **TODO (post-v0.8.0):** an end-to-end "Personal Agent" template (chat UI + Office 365 + M365 Copilot + GitHub Copilot + ACA Sandbox Management connectors, multi-agent routing, in-sandbox MCP config) is **not yet documented in the public [`microsoft/azure-container-apps`](https://github.com/microsoft/azure-container-apps/tree/main/docs/early) docs**.
 >
 > Tracked as a v0.9 follow-up in PR #1725. For now, use the generic deploy pattern above and the public `port add` / `egress` / `snapshot` primitives.
 

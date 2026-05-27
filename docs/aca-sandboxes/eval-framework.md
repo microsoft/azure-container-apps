@@ -51,7 +51,7 @@ When grading, the prompt grader can reference these authoritative sources:
 | [`microsoft/azure-container-apps/docs/early/aca-cli/`](https://github.com/microsoft/azure-container-apps/tree/main/docs/early/aca-cli) | `aca` 1.0.0-beta.1 CLI surface, verb names, flags |
 | [`microsoft/azure-container-apps/docs/early/quickstarts/`](https://github.com/microsoft/azure-container-apps/tree/main/docs/early/quickstarts) | Step ordering for end-to-end sandbox creation |
 | [`microsoft/azure-container-apps/docs/early/python-sdk/`](https://github.com/microsoft/azure-container-apps/tree/main/docs/early/python-sdk) | Python SDK status (currently "coming soon" — graders should NOT expect detailed Python steps) |
-| Phase 0b live-verification log (in tracking issue) | 17-disk catalog including `copilot` + `claude` presets, `aca doctor` 8/8 baseline |
+| Live-verification log against `aca` 1.0.0-beta.1 | 17-disk catalog including `copilot` + `claude` presets, `aca doctor` 8/8 baseline |
 
 ---
 
