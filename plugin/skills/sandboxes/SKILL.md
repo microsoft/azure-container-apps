@@ -2,29 +2,24 @@
 name: sandboxes
 description: |
   Sandboxes — hardware-isolated microVMs on Azure Container Apps for
-  running AI-generated code, coding agents, MCP servers, web apps, and
+  AI-generated code, coding agents, MCP servers, web apps, and
   ephemeral workloads. Snapshot/resume, scale-to-zero, sub-second
-  startup, deny-default egress. Driven by the `aca` CLI (auth delegates
-  to `az login`).
+  startup, deny-default egress. Driven by the `aca` CLI (auth via
+  `az login`).
 
-  Use when the user wants to: create or manage sandbox groups and
-  sandboxes; exec commands or open an interactive shell; read/write
-  files; expose ports; snapshot, stop, resume, commit to a disk, or
-  mount volumes; tighten egress; manage secrets, managed identity,
-  labels; apply YAML specs; or run scenarios like web apps, coding
-  agents, code interpreter, swarms, sandbox inception, computer-use,
-  MCP hosting, data processing, or developer workflows.
+  Use when the user wants to: create/manage sandbox groups and
+  sandboxes; exec or open a shell; read/write files; expose ports;
+  snapshot, stop, resume, commit to disk; mount volumes; tighten
+  egress; manage secrets, identity, labels; apply YAML; or run
+  scenarios like web apps, coding agents, code interpreter, swarms,
+  computer-use, or MCP hosting.
 
   Triggers: "create sandbox", "sandbox group", "aca cli", "aca
-  sandbox", "azure container apps sandbox", "ACA sandbox", "microVM",
-  "isolated VM", "run untrusted code", "exec in sandbox", "sandbox
-  shell", "copy files to sandbox", "sandbox port", "sandbox snapshot",
-  "commit sandbox to disk", "sandbox volume", "mount volume sandbox",
-  "suspend sandbox", "resume sandbox", "sandbox lifecycle",
-  "auto-suspend sandbox", "sandbox secret", "sandbox managed identity",
-  "sandbox labels", "sandbox apply yaml", "egress deny", "egress
-  allow-list", "code interpreter", "agent swarm", "sandbox inception",
-  "coding agent sandbox", "computer use sandbox", "host mcp".
+  sandbox", "microVM", "run untrusted code", "exec in sandbox",
+  "sandbox shell", "sandbox port", "sandbox snapshot", "commit sandbox
+  to disk", "mount volume sandbox", "suspend/resume sandbox", "sandbox
+  secret", "sandbox managed identity", "egress allow-list", "code
+  interpreter", "agent swarm", "coding agent sandbox", "host mcp".
 ---
 
 # Sandboxes
