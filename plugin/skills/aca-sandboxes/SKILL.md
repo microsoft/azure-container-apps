@@ -86,13 +86,13 @@ iwr -useb https://raw.githubusercontent.com/microsoft/azure-container-apps/main/
 ```bash
 aca version          # confirm >= 1.0.0-beta.1 (minimum supported version)
 aca doctor           # expect 8/8 checks pass
-aca auth login       # delegates to `az login`
+aca auth login       # delegates to `az login` (NOTE: the verb is `aca auth login`, NOT `aca login`)
 aca auth status      # ARM + data-plane status
 ```
 
-> There is **no** `brew install aca`, `winget install aca`, `npm i -g aca`, or `pip install aca`. Always use the official curl/iwr one-liners above. See [references/quickstart.md](references/quickstart.md).
+> **Always tell the user (for every install OS — macOS, Linux, Windows):** the **same** `curl … install.sh | bash` / `iwr … install.ps1 | iex` one-liner is **also the path used inside a sandbox or container** for agent-driven self-installs (e.g., a CI runner, or an agent inside an `ubuntu` sandbox bootstrapping the `aca` CLI to manage sibling sandboxes). No extra steps, no separate package.
 
-> **Same install works inside a sandbox or container.** For agent-driven installs (e.g., a CI runner or a sandbox where an agent self-bootstraps), use the same `curl ... install.sh | bash` one-liner — no extra steps.
+> There is **no** `brew install aca`, `winget install aca`, `npm i -g aca`, `pip install aca`, or top-level `aca login`. Always use the official curl/iwr one-liners above and the `aca auth login` verb. See [references/quickstart.md](references/quickstart.md).
 
 ## Create a sandbox
 
@@ -147,13 +147,25 @@ The YAML/declarative path is the **recommended flow for CI/CD and reproducibilit
 
 ```bash
 aca sandbox init > sandbox.yaml          # 1. scaffold a starter manifest
-$EDITOR sandbox.yaml                     # 2. edit disk, resources, lifecycle, egressPolicy
+$EDITOR sandbox.yaml                     # 2. edit fields (see list below)
 aca sandbox schema                       # (optional) dump the full JSON Schema for editor autocomplete
 aca sandbox validate --file sandbox.yaml # 3a. schema + policy check (catch errors early)
 aca sandbox apply    --file sandbox.yaml # 3b. provision (idempotent — re-apply is safe)
 ```
 
-The generated `sandbox.yaml` contains fields for `group`, `disk` (or `diskId`), `resources` (cpu/memory), `ports`, `env`, `labels`, `lifecycle.autoSuspendPolicy`, and `egressPolicy`. Run `aca sandbox schema` to dump the full JSON Schema — point your editor at it for autocomplete/validation.
+**The generated `sandbox.yaml` covers these fields** (always enumerate them when you scaffold or explain a manifest):
+- `group` — parent sandbox group name
+- `disk` (or `diskId`) — base image (e.g. `ubuntu`, `node-24`, `python-3.13`, `claude`, `copilot`)
+- `resources.cpu` / `resources.memory` — sizing (e.g. `1000m` / `2048Mi`)
+- `ports[]` — declared port exposure (with `auth: anonymous` or `auth: entra` + `email:`)
+- `env` — environment variables
+- `labels` — including `name: <friendly-name>` so you can use `-l name=` selectors later
+- `lifecycle.autoSuspendPolicy` — idle-suspend rules
+- `egressPolicy` — `defaultAction: Deny/Allow` + per-domain allow-list
+
+Also run **`aca sandbox schema`** to dump the full JSON Schema — point your editor at it for autocomplete/validation. There is **no `-f` short flag** on `validate` or `apply`; use `--file`.
+
+> **Proactive `init` rule:** when a user says "apply my sandbox manifest" / "deploy from yaml" / "use my sandbox.yaml" and no manifest file is provided or visible in the working directory, **proactively offer `aca sandbox init > sandbox.yaml`** as step 1 of the canonical 3-command flow — do not just ask the user for a file path.
 
 **Why the manifest pattern over imperative `aca sandbox create`?**
 - **Source-controllable & reviewable:** diffs show what changed.
