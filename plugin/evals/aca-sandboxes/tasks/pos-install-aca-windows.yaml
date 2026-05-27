@@ -1,0 +1,31 @@
+id: pos-install-aca-windows
+name: Install aca CLI on Windows
+description: Skill activates. Provides the Windows PowerShell install one-liner (NOT brew/winget — those
+  are not supported). Windows is fully supported via the aca CLI; if the model says Windows is unsupported
+  or falls back to Linux/WSL, that is a FAIL. Then `aca doctor` and `aca login`.
+tags:
+- positive
+- install
+- windows
+- cli
+inputs:
+  prompt: Install the aca CLI on Windows
+expected:
+  should_trigger: true
+graders:
+- type: prompt
+  name: behavior-pos-install-aca-windows
+  config:
+    prompt: 'The user asked: "Install the aca CLI on Windows"
+
+
+      Skill activates. Provides the Windows PowerShell install one-liner (NOT brew/winget — those are
+      not supported). Windows is fully supported via the aca CLI; if the model says Windows is unsupported
+      or falls back to Linux/WSL, that is a FAIL. Then `aca doctor` and `aca login`.
+
+
+      If the response follows the expected behavior described above, call set_waza_grade_pass.
+
+
+      If it fails to meet the expected behavior, call set_waza_grade_fail.'
+    continue_session: true

@@ -1,0 +1,31 @@
+id: pos-list-disks
+name: List Available Disk Presets
+description: Skill activates. Runs `aca sandbox disk list` (or equivalent) and shows the 17-disk catalog
+  from Phase 0b verification, including the `copilot` and `claude` presets (verified present in the live
+  catalog).
+tags:
+- positive
+- disk
+- catalog
+- list
+inputs:
+  prompt: What disk images can I use for my sandbox?
+expected:
+  should_trigger: true
+graders:
+- type: prompt
+  name: behavior-pos-list-disks
+  config:
+    prompt: 'The user asked: "What disk images can I use for my sandbox?"
+
+
+      Skill activates. Runs `aca sandbox disk list` (or equivalent) and shows the 17-disk catalog from
+      Phase 0b verification, including the `copilot` and `claude` presets (verified present in the live
+      catalog).
+
+
+      If the response follows the expected behavior described above, call set_waza_grade_pass.
+
+
+      If it fails to meet the expected behavior, call set_waza_grade_fail.'
+    continue_session: true

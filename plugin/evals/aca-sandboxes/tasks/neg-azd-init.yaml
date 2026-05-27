@@ -1,0 +1,31 @@
+id: neg-azd-init
+name: Reject — azd init
+description: Azure Developer CLI (azd) project init is out of scope. Redirect to azure-prepare or azd
+  docs.
+tags:
+- negative
+- routing
+- azd
+inputs:
+  prompt: Run azd init for my project
+expected:
+  should_trigger: false
+graders:
+- type: prompt
+  name: behavior-neg-azd-init
+  config:
+    prompt: 'The user asked: "Run azd init for my project"
+
+
+      Azure Developer CLI (azd) project init is out of scope. Redirect to azure-prepare or azd docs.
+
+
+      This is OUT OF SCOPE for aca-sandboxes. The skill should either not trigger, or briefly redirect
+      to the correct skill/product. It must NOT provide a full walkthrough for this query.
+
+
+      If the response correctly avoids deep engagement, call set_waza_grade_pass.
+
+
+      If it provides a detailed walkthrough for this out-of-scope query, call set_waza_grade_fail.'
+    continue_session: true

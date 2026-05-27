@@ -1,0 +1,34 @@
+id: pos-yaml-apply
+name: Apply Sandbox From YAML Manifest
+description: Skill activates. Walks user through `aca sandbox init` to scaffold a starter sandbox.yaml,
+  `aca sandbox validate -f sandbox.yaml`, then `aca sandbox apply -f sandbox.yaml`. Explains the manifest
+  pattern is the recommended path for CI/CD and reproducibility, parallel to the imperative `aca sandbox
+  create` flow.
+tags:
+- positive
+- yaml
+- manifest
+- apply
+- cli
+inputs:
+  prompt: Apply my sandbox manifest from sandbox.yaml
+expected:
+  should_trigger: true
+graders:
+- type: prompt
+  name: behavior-pos-yaml-apply
+  config:
+    prompt: 'The user asked: "Apply my sandbox manifest from sandbox.yaml"
+
+
+      Skill activates. Walks user through `aca sandbox init` to scaffold a starter sandbox.yaml, `aca
+      sandbox validate -f sandbox.yaml`, then `aca sandbox apply -f sandbox.yaml`. Explains the manifest
+      pattern is the recommended path for CI/CD and reproducibility, parallel to the imperative `aca sandbox
+      create` flow.
+
+
+      If the response follows the expected behavior described above, call set_waza_grade_pass.
+
+
+      If it fails to meet the expected behavior, call set_waza_grade_fail.'
+    continue_session: true

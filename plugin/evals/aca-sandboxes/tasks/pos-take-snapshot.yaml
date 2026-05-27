@@ -1,0 +1,31 @@
+id: pos-take-snapshot
+name: Take Snapshot Before Destroy
+description: Skill activates. Uses `aca sandbox commit -l name=<sb> --image <snapshot-name>` (or equivalent
+  snapshot verb from the 1.0.0-beta.1 surface). Strongly recommends snapshotting before `aca sandbox delete`
+  so state can be restored. Mentions snapshots are stored in the sandbox group's image registry.
+tags:
+- positive
+- snapshot
+- commit
+- lifecycle
+inputs:
+  prompt: Take a snapshot of my sandbox before I delete it
+expected:
+  should_trigger: true
+graders:
+- type: prompt
+  name: behavior-pos-take-snapshot
+  config:
+    prompt: 'The user asked: "Take a snapshot of my sandbox before I delete it"
+
+
+      Skill activates. Uses `aca sandbox commit -l name=<sb> --image <snapshot-name>` (or equivalent snapshot
+      verb from the 1.0.0-beta.1 surface). Strongly recommends snapshotting before `aca sandbox delete`
+      so state can be restored. Mentions snapshots are stored in the sandbox group''s image registry.
+
+
+      If the response follows the expected behavior described above, call set_waza_grade_pass.
+
+
+      If it fails to meet the expected behavior, call set_waza_grade_fail.'
+    continue_session: true

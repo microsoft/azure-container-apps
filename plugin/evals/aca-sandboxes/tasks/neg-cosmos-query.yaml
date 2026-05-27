@@ -1,0 +1,30 @@
+id: neg-cosmos-query
+name: Reject — Cosmos Query
+description: Cosmos DB queries are out of scope. Redirect to azure-cosmos or cosmos data explorer.
+tags:
+- negative
+- routing
+- cosmos
+inputs:
+  prompt: Query my Cosmos DB sandbox container
+expected:
+  should_trigger: false
+graders:
+- type: prompt
+  name: behavior-neg-cosmos-query
+  config:
+    prompt: 'The user asked: "Query my Cosmos DB sandbox container"
+
+
+      Cosmos DB queries are out of scope. Redirect to azure-cosmos or cosmos data explorer.
+
+
+      This is OUT OF SCOPE for aca-sandboxes. The skill should either not trigger, or briefly redirect
+      to the correct skill/product. It must NOT provide a full walkthrough for this query.
+
+
+      If the response correctly avoids deep engagement, call set_waza_grade_pass.
+
+
+      If it provides a detailed walkthrough for this out-of-scope query, call set_waza_grade_fail.'
+    continue_session: true

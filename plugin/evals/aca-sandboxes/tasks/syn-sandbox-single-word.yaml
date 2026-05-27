@@ -1,0 +1,36 @@
+id: syn-sandbox-single-word
+name: Synthetic — Sandbox Single Word
+description: 'Single-word `sandbox` is ambiguous (Windows Sandbox, Linux network namespaces, Salesforce
+  Sandbox, ACA Sandbox, Dynamic Sessions, Playwright sandbox, etc.). Skill MAY activate but MUST ask a
+  clarifying question: "Do you mean an Azure Container Apps sandbox (developer microVM), Container Apps
+  Dynamic Sessions (LLM code interpreter), or something else?"'
+tags:
+- synthetic
+- ambiguous
+- single-word
+- disambiguation
+inputs:
+  prompt: sandbox
+expected:
+  should_trigger: true
+graders:
+- type: prompt
+  name: behavior-syn-sandbox-single-word
+  config:
+    prompt: 'The user asked: "sandbox"
+
+
+      Single-word `sandbox` is ambiguous (Windows Sandbox, Linux network namespaces, Salesforce Sandbox,
+      ACA Sandbox, Dynamic Sessions, Playwright sandbox, etc.). Skill MAY activate but MUST ask a clarifying
+      question: "Do you mean an Azure Container Apps sandbox (developer microVM), Container Apps Dynamic
+      Sessions (LLM code interpreter), or something else?"
+
+
+      Note on ambiguity: Single word — high ambiguity, must disambiguate before proceeding.
+
+
+      If the response follows the expected behavior described above, call set_waza_grade_pass.
+
+
+      If it fails to meet the expected behavior, call set_waza_grade_fail.'
+    continue_session: true

@@ -1,0 +1,32 @@
+id: pos-expose-port-with-email
+name: Expose Port With Entra Email Auth
+description: 'Skill activates. Uses `aca sandbox port add -l name=<sb> --port 3000 --email <user>@microsoft.com`.
+  CRITICAL gotcha: for some accounts the alias does NOT work — must use the full Entra-ID email. Should
+  mention this explicitly. Should NOT suggest SSH port 22 — direct user to `aca sandbox shell` instead.'
+tags:
+- positive
+- port
+- auth
+- entra
+- gotcha
+inputs:
+  prompt: Expose port 3000 on my sandbox locked down to my Entra ID
+expected:
+  should_trigger: true
+graders:
+- type: prompt
+  name: behavior-pos-expose-port-with-email
+  config:
+    prompt: 'The user asked: "Expose port 3000 on my sandbox locked down to my Entra ID"
+
+
+      Skill activates. Uses `aca sandbox port add -l name=<sb> --port 3000 --email <user>@microsoft.com`.
+      CRITICAL gotcha: for some accounts the alias does NOT work — must use the full Entra-ID email. Should
+      mention this explicitly. Should NOT suggest SSH port 22 — direct user to `aca sandbox shell` instead.
+
+
+      If the response follows the expected behavior described above, call set_waza_grade_pass.
+
+
+      If it fails to meet the expected behavior, call set_waza_grade_fail.'
+    continue_session: true

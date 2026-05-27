@@ -1,0 +1,32 @@
+id: neg-deploy-function-app
+name: Reject — Deploy Function App
+description: Function App deployment is out of scope for aca-sandboxes. Redirect to azure-functions or
+  azure-deploy skill. Should NOT walk through Function App setup.
+tags:
+- negative
+- routing
+- functions
+inputs:
+  prompt: Deploy my Azure Function from my local code
+expected:
+  should_trigger: false
+graders:
+- type: prompt
+  name: behavior-neg-deploy-function-app
+  config:
+    prompt: 'The user asked: "Deploy my Azure Function from my local code"
+
+
+      Function App deployment is out of scope for aca-sandboxes. Redirect to azure-functions or azure-deploy
+      skill. Should NOT walk through Function App setup.
+
+
+      This is OUT OF SCOPE for aca-sandboxes. The skill should either not trigger, or briefly redirect
+      to the correct skill/product. It must NOT provide a full walkthrough for this query.
+
+
+      If the response correctly avoids deep engagement, call set_waza_grade_pass.
+
+
+      If it provides a detailed walkthrough for this out-of-scope query, call set_waza_grade_fail.'
+    continue_session: true

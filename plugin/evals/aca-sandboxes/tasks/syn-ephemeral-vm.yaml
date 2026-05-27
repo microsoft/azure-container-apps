@@ -1,0 +1,34 @@
+id: syn-ephemeral-vm
+name: Synthetic — Ephemeral VM
+description: 'Ambiguous: "ephemeral VM" could mean ACA Sandbox (long-lived but auto-suspends), Dynamic
+  Sessions (truly ephemeral, seconds-long), or Codespaces. Skill should activate but disambiguate by asking
+  lifetime (minutes vs. hours vs. days).'
+tags:
+- synthetic
+- ambiguous
+- ephemeral
+inputs:
+  prompt: Give me an ephemeral VM for testing
+expected:
+  should_trigger: true
+graders:
+- type: prompt
+  name: behavior-syn-ephemeral-vm
+  config:
+    prompt: 'The user asked: "Give me an ephemeral VM for testing"
+
+
+      Ambiguous: "ephemeral VM" could mean ACA Sandbox (long-lived but auto-suspends), Dynamic Sessions
+      (truly ephemeral, seconds-long), or Codespaces. Skill should activate but disambiguate by asking
+      lifetime (minutes vs. hours vs. days).
+
+
+      Note on ambiguity: "Ephemeral" is overloaded — clarify lifetime + isolation needs before picking
+      product.
+
+
+      If the response follows the expected behavior described above, call set_waza_grade_pass.
+
+
+      If it fails to meet the expected behavior, call set_waza_grade_fail.'
+    continue_session: true

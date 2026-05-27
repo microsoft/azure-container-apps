@@ -1,0 +1,32 @@
+id: neg-list-k8s-pods
+name: Reject — List K8s Pods
+description: Kubernetes pod listing is out of scope. ACA Sandboxes are microVMs, not Kubernetes pods.
+  Redirect to AKS tooling.
+tags:
+- negative
+- routing
+- aks
+inputs:
+  prompt: List the pods in my AKS sandbox cluster
+expected:
+  should_trigger: false
+graders:
+- type: prompt
+  name: behavior-neg-list-k8s-pods
+  config:
+    prompt: 'The user asked: "List the pods in my AKS sandbox cluster"
+
+
+      Kubernetes pod listing is out of scope. ACA Sandboxes are microVMs, not Kubernetes pods. Redirect
+      to AKS tooling.
+
+
+      This is OUT OF SCOPE for aca-sandboxes. The skill should either not trigger, or briefly redirect
+      to the correct skill/product. It must NOT provide a full walkthrough for this query.
+
+
+      If the response correctly avoids deep engagement, call set_waza_grade_pass.
+
+
+      If it provides a detailed walkthrough for this out-of-scope query, call set_waza_grade_fail.'
+    continue_session: true

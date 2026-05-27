@@ -1,0 +1,36 @@
+id: syn-coding-agent-sandbox
+name: Synthetic — Coding Agent Sandbox
+description: 'Ambiguous: "sandbox for my coding agent" could mean (a) the agent''s PERSONAL dev environment
+  (ACA Sandbox + claude/copilot disk preset = ideal fit), or (b) an isolated runtime for the agent to
+  execute generated code (Dynamic Sessions). Skill should activate, recognize Personal Agent template
+  as a strong match (option a), but ask which scenario before committing.'
+tags:
+- synthetic
+- ambiguous
+- coding-agent
+- personal-agent
+inputs:
+  prompt: Set up a sandbox for my coding agent
+expected:
+  should_trigger: true
+graders:
+- type: prompt
+  name: behavior-syn-coding-agent-sandbox
+  config:
+    prompt: 'The user asked: "Set up a sandbox for my coding agent"
+
+
+      Ambiguous: "sandbox for my coding agent" could mean (a) the agent''s PERSONAL dev environment (ACA
+      Sandbox + claude/copilot disk preset = ideal fit), or (b) an isolated runtime for the agent to execute
+      generated code (Dynamic Sessions). Skill should activate, recognize Personal Agent template as a
+      strong match (option a), but ask which scenario before committing.
+
+
+      Note on ambiguity: Personal dev environment vs. code-interpreter — different ACA products.
+
+
+      If the response follows the expected behavior described above, call set_waza_grade_pass.
+
+
+      If it fails to meet the expected behavior, call set_waza_grade_fail.'
+    continue_session: true
