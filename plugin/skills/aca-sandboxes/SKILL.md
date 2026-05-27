@@ -148,9 +148,12 @@ The YAML/declarative path is the **recommended flow for CI/CD and reproducibilit
 ```bash
 aca sandbox init > sandbox.yaml          # 1. scaffold a starter manifest
 $EDITOR sandbox.yaml                     # 2. edit disk, resources, lifecycle, egressPolicy
+aca sandbox schema                       # (optional) dump the full JSON Schema for editor autocomplete
 aca sandbox validate --file sandbox.yaml # 3a. schema + policy check (catch errors early)
 aca sandbox apply    --file sandbox.yaml # 3b. provision (idempotent — re-apply is safe)
 ```
+
+The generated `sandbox.yaml` contains fields for `group`, `disk` (or `diskId`), `resources` (cpu/memory), `ports`, `env`, `labels`, `lifecycle.autoSuspendPolicy`, and `egressPolicy`. Run `aca sandbox schema` to dump the full JSON Schema — point your editor at it for autocomplete/validation.
 
 **Why the manifest pattern over imperative `aca sandbox create`?**
 - **Source-controllable & reviewable:** diffs show what changed.

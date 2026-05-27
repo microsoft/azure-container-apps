@@ -17,6 +17,8 @@ aca auth login
 aca auth status
 ```
 
+> **Note:** The same `curl … install.sh | bash` one-liner is also the path used **inside sandboxes and containers** for agent-driven installs (e.g., when an agent provisions the `aca` CLI inside a fresh `ubuntu` sandbox to manage sibling sandboxes from within).
+
 ## Imperative path — create a sandbox group, then a sandbox
 
 ```bash
@@ -47,9 +49,12 @@ aca sandbox delete   -l name=my-sb
 ```bash
 aca sandbox init > sandbox.yaml       # prints a template
 $EDITOR sandbox.yaml
+aca sandbox schema                    # (optional) dump full JSON Schema for editor autocomplete
 aca sandbox validate --file sandbox.yaml
 aca sandbox apply --file sandbox.yaml
 ```
+
+The generated `sandbox.yaml` covers `group`, `disk` (or `diskId`), `resources` (cpu/memory), `ports`, `env`, `labels`, `lifecycle.autoSuspendPolicy`, and `egressPolicy`. There is **no `-f` short flag** on `validate` or `apply` — use `--file`.
 
 Example `sandbox.yaml` (template output):
 
