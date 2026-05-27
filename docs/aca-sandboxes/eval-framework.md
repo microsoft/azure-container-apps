@@ -29,7 +29,7 @@
 |--------|--------|-----------|------------------|
 | `routing_accuracy` | 0.25 | 0.90 | Activates for ACA Sandboxes / microVM / sandbox-group queries; rejects Functions, AKS, ACR, Cosmos, App Service, **Dynamic Sessions** queries. |
 | `cli_command_correctness` | 0.25 | 0.90 | `aca` 1.0.0-beta.1 verbs and flags are correct (`--location` not `--region`, `-l name=` selectors, `aca sandbox apply -f`, `aca sandboxgroup create --set-config`). |
-| `install_path_selection` | 0.15 | 0.85 | Picks `aca` CLI primary; `adc-api.js` only when agent fan-out is needed; Python SDK marked "coming soon". |
+| `install_path_selection` | 0.15 | 0.85 | Picks `aca` CLI primary; Python SDK marked "coming soon". |
 | `portal_url_correctness` | 0.10 | 0.95 | Uses `https://containerapps.azure.com/sandbox-groups`; never `portal.agentdevcompute.io` or fabricated hosts. |
 | `gotcha_handling` | 0.15 | 0.85 | Applies Entra-email gotcha, port-order warning, snapshot-before-destroy, auto-suspend awareness, Dynamic Sessions disambiguation. |
 | `naming_policy` | 0.10 | 0.90 | "ACA Sandboxes" / "Azure Container Apps sandboxes" in customer text; "ADC" only as internal codename. |

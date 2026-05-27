@@ -4,7 +4,7 @@ ACA Sandboxes do **not** support traditional SSH (port 22), `ssh -i` with privat
 
 When users ask to SSH into a sandbox, present these options in order:
 
-## 1. `aca sandbox shell` (easiest)
+## 1. `aca sandbox shell` (recommended)
 
 ```bash
 aca sandbox shell -l name=my-sb
@@ -16,13 +16,3 @@ Interactive WebSocket shell, authenticated via your `az login` token. No keys to
 
 Open the sandbox in the [ACA portal](https://containerapps.azure.com/sandbox-groups) → click **Terminal**. Browser-based shell, no install needed.
 
-## 3. Node.js helper (offline / agent fan-out)
-
-Copy [`../assets/ssh.mjs`](../assets/ssh.mjs) to a working directory, then:
-
-```bash
-npm install ws
-node ssh.mjs <sandbox-id>
-```
-
-Requires `az login` and Node 18+. Useful when you want a programmatic shell from a Node script — for example, agent fan-out across many sandboxes.

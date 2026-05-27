@@ -1,8 +1,8 @@
 id: pos-ssh-into-sandbox
 name: SSH Into Sandbox
 description: Skill activates. Leads with `aca sandbox shell -l name=<sb>` (FIRST option — uses the `aca`
-  CLI's built-in SSH). Mentions portal terminal as option 2, `ssh.mjs` Node helper as option 3 (for offline
-  / Windows-headless cases). Does NOT suggest opening port 22 directly.
+  CLI's built-in WebSocket shell). Mentions the portal terminal as option 2. Does NOT suggest opening
+  port 22 directly, `ssh -i`, or any keypair-based SSH.
 tags:
 - positive
 - ssh
@@ -20,8 +20,8 @@ graders:
 
 
       Skill activates. Leads with `aca sandbox shell -l name=<sb>` (FIRST option — uses the `aca` CLI''s
-      built-in SSH). Mentions portal terminal as option 2, `ssh.mjs` Node helper as option 3 (for offline
-      / Windows-headless cases). Does NOT suggest opening port 22 directly.
+      built-in WebSocket shell). Mentions the portal terminal as option 2. Does NOT suggest opening
+      port 22 directly, `ssh -i`, or any keypair-based SSH.
 
 
       If the response follows the expected behavior described above, call set_waza_grade_pass.

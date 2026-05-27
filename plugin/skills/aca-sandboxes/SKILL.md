@@ -31,7 +31,7 @@ Deploy AI agents, MCP servers, web apps, and background tasks to **ACA Sandboxes
 - There is **no** `aca deploy`, `aca init` (project scaffolding), or `aca setup` command. (`aca sandbox init` exists — it prints a YAML manifest template.)
 - **Auth** uses Azure CLI bearer tokens. Ensure `az` is installed and `az login` has been run. `aca auth login` delegates to `az login`; `aca auth status` shows ARM + data-plane status.
 - **Management API** is `https://management.azuredevcompute.io`. The **portal** is `https://containerapps.azure.com/sandbox-groups`. The **proxy** for exposed ports is `<sandbox-id>--<port>.proxy.azuredevcompute.io`. Do not invent other hostnames.
-- **SSH:** no traditional SSH, no `ssh -i`, no keypair. Use `aca sandbox shell`, the portal terminal, or `assets/ssh.mjs`. See [references/ssh-setup.md](references/ssh-setup.md).
+- **SSH:** no traditional SSH, no `ssh -i`, no keypair. Use `aca sandbox shell` or the portal terminal. See [references/ssh-setup.md](references/ssh-setup.md).
 - Use only the information in this skill and its references. The authoritative public docs live at [`microsoft/azure-container-apps/docs/early/`](https://github.com/microsoft/azure-container-apps/tree/main/docs/early).
 
 ## When to use this skill
@@ -98,7 +98,7 @@ aca sandbox snapshot create -l name=my-sb --name post-install
 
 ## Surfaces
 
-Today there are two: the `aca` CLI (default) and the `adc-api.js` Node helper (for in-process agent fan-out). The Python SDK is [coming soon](https://github.com/microsoft/azure-container-apps/tree/main/docs/early/python-sdk). See [references/architecture.md](references/architecture.md) for the full side-by-side reference table.
+The `aca` CLI is the supported surface today. The Python SDK is [coming soon](https://github.com/microsoft/azure-container-apps/tree/main/docs/early/python-sdk). See [references/architecture.md](references/architecture.md).
 
 ## References
 
@@ -114,8 +114,6 @@ Today there are two: the `aca` CLI (default) and the `adc-api.js` Node helper (f
 | Gotchas, deployment issues, uninstall | [references/troubleshooting.md](references/troubleshooting.md) |
 | Excalidraw MCP template | [assets/excalidraw-mcp-template/README.md](assets/excalidraw-mcp-template/README.md) |
 | Personal Agent template | [assets/personal-agent-template/README.md](assets/personal-agent-template/README.md) |
-| `adc-api.js` Node helper | [assets/adc-api.js](assets/adc-api.js) |
-| `ssh.mjs` Node SSH helper | [assets/ssh.mjs](assets/ssh.mjs) |
 
 ## Learn more
 

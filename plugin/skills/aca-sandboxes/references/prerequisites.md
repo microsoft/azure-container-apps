@@ -7,7 +7,6 @@
 | **`aca` CLI** | See [quickstart.md](quickstart.md). |
 | **RBAC role** | `Container Apps SandboxGroup Data Owner` on the sandbox group (or higher). |
 | **Microsoft Entra ID account** | Only Entra ID accounts can access sandboxes. Personal Microsoft accounts are not supported. |
-| **Node.js ≥18** | Optional — only needed for the `adc-api.js` helper (in-process Node fan-out) and `ssh.mjs`. |
 
 ## Supported platforms
 

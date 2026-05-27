@@ -38,9 +38,8 @@ metrics:
     threshold: 0.85
     description: >-
       Picks `aca` CLI as the primary install path (curl install script per
-      platform). Falls back to `adc-api.js` Node helper only when an agent
-      fan-out pattern is explicitly needed. Notes Python SDK as "coming
-      soon" rather than guessing.
+      platform). Notes Python SDK as "coming soon" rather than guessing
+      flags or fabricating a surface that does not exist today.
 
   - name: portal_url_correctness
     weight: 0.10

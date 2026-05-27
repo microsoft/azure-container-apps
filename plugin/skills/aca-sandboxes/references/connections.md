@@ -19,8 +19,7 @@ aca sandbox port add -l name=my-sb --port 80 --email "$EMAIL"
 
 When personal connectors (Office 365, M365 Copilot) are attached to a sandbox:
 
-- Port add/remove via `adc-api.js` will fail with `409 caller email could not be determined` because `az` CLI tokens for the sandbox scope don't include the `email` JWT claim.
-- **Use `aca sandbox port` or the Portal** for port management when personal connectors are involved — both flow through interactive Entra login and produce tokens with the email claim.
+- Port management must use `aca sandbox port` or the Portal — both flow through interactive Entra login and produce tokens with the `email` JWT claim, which the personal-connector port flow requires.
 
 ## MCP server discovery
 

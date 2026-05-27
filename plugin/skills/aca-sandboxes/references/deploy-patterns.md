@@ -30,14 +30,14 @@ End-to-end onboarding for the Personal Agent template with all 4 connectors.
    ```
    Skipping this step makes attaching Office 365 / M365 Copilot fail with `500 Cannot add personal connector because port does not have Entra ID authentication`.
 
-4. **Attach connections** to the sandbox (GitHub Copilot first, then the rest). Use the portal, or [`adc-api.js`](../assets/adc-api.js) `api.addConnectionToSandbox(sandboxId, connectionId)` for each.
+4. **Attach connections** to the sandbox in the portal (GitHub Copilot first, then the rest).
 
 5. **Verify MCP config:** the in-sandbox Node Agent writes `/root/.copilot/mcp-config.json` when connections are attached. If missing, restart the sandbox to trigger regeneration.
    ```bash
    aca sandbox exec -l name=personal-agent -c "cat /root/.copilot/mcp-config.json || echo MISSING"
    ```
 
-6. **Deploy the Personal Agent template** — upload files, install Node 24 + deps, start the server. See [deploy path code reference](#deploy-path-code-reference) below.
+6. **Deploy the Personal Agent template** — upload files, install Node 24 + deps, start the server. See [deploy path](#deploy-path-cli-walkthrough) below.
 
 ## Multi-agent routing
 
@@ -49,36 +49,32 @@ Users can prefix messages with `@agent_name` to route to specialized agents:
 | `@research` | Research Agent | M365 Copilot queries, document search, SharePoint |
 | (none) | General Agent | Everything — auto-detects intent |
 
-## Deploy path code reference
+## Deploy path (CLI walkthrough)
 
-```javascript
-import { AdcApi } from "./adc-api.js";
-const api = new AdcApi();
-const sandboxId = "<from-user>";
+```bash
+SB="-l name=personal-agent"
 
-// 1. Create dirs
-await api.execShell(sandboxId, "mkdir -p /home/user/personal-agent/public");
+# 1. Make directories
+aca sandbox exec $SB -c "mkdir -p /home/user/personal-agent/public"
 
-// 2. Upload files
-await api.uploadFile(sandboxId, "/home/user/personal-agent/index.js", indexJsContent);
-await api.uploadFile(sandboxId, "/home/user/personal-agent/package.json", packageJsonContent);
-await api.uploadFile(sandboxId, "/home/user/personal-agent/public/index.html", htmlContent);
+# 2. Upload files
+aca sandbox fs put $SB --src ./index.js        --dest /home/user/personal-agent/index.js
+aca sandbox fs put $SB --src ./package.json    --dest /home/user/personal-agent/package.json
+aca sandbox fs put $SB --src ./public/index.html --dest /home/user/personal-agent/public/index.html
 
-// 3. Install Node 24 + deps
-await api.execShell(sandboxId, "npm install -g n && n 24");
-await api.execShell(sandboxId, "cd /home/user/personal-agent && npm config set strict-ssl false && npm install");
+# 3. Install Node 24 + deps (copilot disk already has Node 24; ubuntu does not)
+aca sandbox exec $SB -c "npm install -g n && n 24"
+aca sandbox exec $SB -c "cd /home/user/personal-agent && npm config set strict-ssl false && npm install"
 
-// 4. Verify
-const check = await api.execShell(sandboxId, "ls /home/user/personal-agent/node_modules/ | wc -l");
-if (parseInt(check.stdout?.trim() || "0") < 10) throw new Error("npm install failed");
+# 4. Verify install succeeded (silent failures happen on egress timeouts)
+aca sandbox exec $SB -c "ls /home/user/personal-agent/node_modules/ | wc -l"  # expect > 10
 
-// 5. Start
-await api.execShell(sandboxId, "cd /home/user/personal-agent && PORT=80 nohup node index.js > /tmp/server.log 2>&1 &");
+# 5. Start the server
+aca sandbox exec $SB -c "cd /home/user/personal-agent && PORT=80 nohup node index.js > /tmp/server.log 2>&1 &"
 
-// 6. Wait + verify
-await new Promise(r => setTimeout(r, 5000));
-const health = await api.execShell(sandboxId, "curl -s http://localhost/health");
-console.log(health.stdout); // {"status":"ok","app":"personal-agent",...}
+# 6. Health check (give it 5–10s to bind)
+sleep 8
+aca sandbox exec $SB -c "curl -s http://localhost/health"
 ```
 
-See [troubleshooting.md](troubleshooting.md) for deployment gotchas (silent npm failures, `execShell` timing, etc.).
+See [troubleshooting.md](troubleshooting.md) for deployment gotchas (silent npm failures, `aca sandbox exec` timing, etc.).
