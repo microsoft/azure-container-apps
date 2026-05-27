@@ -45,7 +45,7 @@ Deploy AI agents, MCP servers, web apps, and background tasks to **ACA Sandboxes
 
 > ### Related skills
 >
-> This skill is the **CLI-first successor candidate** to [`annaji-msft/acaexpress/plugin/skills/azure-sandbox`](https://github.com/annaji-msft/acaexpress/tree/main/plugin/skills/azure-sandbox) v0.1.0, opened in coordination with Jenny Lawrance + Annaji Sharma Ganti's consolidation effort. Same product; we re-anchor on the `aca` Rust CLI (the public early-access surface). For the `az sandbox` extension path, see [Other surfaces](#other-surfaces) — it remains fully supported. (Python SDK is "coming soon" per public docs — section TBD when SDK ships.)
+> Python SDK is "coming soon" per public docs — section TBD when SDK ships.
 
 ---
 
@@ -196,17 +196,6 @@ ACA Sandboxes can be driven from two surfaces today. Pick one per workflow; don'
 
 Human + agent workflows, CI/CD, anything that shells out, YAML-manifest workflows. Install above.
 
-### `az sandbox` extension (Azure CLI integration)
-
-Use when your scripts are already `az`-native everywhere else.
-
-```bash
-gh release download --repo annaji-msft/acaexpress --pattern "sandbox-*-py3-none-any.whl" --dir /tmp
-az extension add --source /tmp/sandbox-*-py3-none-any.whl
-az sandboxgroup --help
-az sandbox --help
-```
-
 ### Programmatic / agent fan-out (`adc-api.js`)
 
 In-process **Node** agent control — same management API `aca` uses, same `az login` auth. Lives at [`assets/adc-api.js`](assets/adc-api.js).
@@ -231,25 +220,25 @@ await Promise.all(sandboxes.map((sbx, i) =>
 
 ## Side-by-side CLI ↔ helper reference
 
-| Action | `aca` CLI | `adc-api.js` (Advanced) | `az sandbox` ext (Advanced) |
-|---|---|---|---|
-| List sandboxes | `aca sandbox list` | `api.listSandboxes()` | `az sandbox list` |
-| Create (imperative) | `aca sandbox create --disk ubuntu --label name=my-sb` | `api.createSandbox({ diskName:"ubuntu" })` | `az sandbox create --disk ubuntu` |
-| Create (YAML manifest) | `aca sandbox apply --file sandbox.yaml` | n/a | n/a |
-| Init manifest template | `aca sandbox init > sandbox.yaml` | n/a | n/a |
-| Validate manifest | `aca sandbox validate --file sandbox.yaml` | n/a | n/a |
-| Exec | `aca sandbox exec -l name=my-sb -c "cmd"` | `api.execShell(id,"cmd")` | `az sandbox exec --id $ID -c "cmd"` |
-| Shell | `aca sandbox shell -l name=my-sb` | `api.sshShell(id)` | `az sandbox shell --id $ID` |
-| Upload | `aca sandbox fs put -l name=my-sb --src ./app.js --dest /home/user/app.js` | `api.uploadFile(id,"/path",content)` | `az sandbox fs put …` |
-| Download | `aca sandbox fs get -l name=my-sb --src /path --dest ./out.txt` | `api.downloadFile(id,"/path")` | `az sandbox fs get …` |
-| Add port (anonymous) | `aca sandbox port add -l name=my-sb --port 80 --anonymous` | `api.addPort(id,80,{anonymous:true})` | `az sandbox port add …` |
-| Add port (Entra ID) | `aca sandbox port add -l name=my-sb --port 80 --email you@company.com` | `api.addPort(id,80,{email:"you@company.com"})` | `az sandbox port add … --email …` |
-| Egress (declarative) | `aca sandbox egress apply -l name=my-sb --file egress.yaml` | `api.setEgressPolicy(id, …)` | `az sandbox egress add …` |
-| Snapshot | `aca sandbox snapshot create -l name=my-sb --name mysnap` | `api.createSnapshot(id,"mysnap")` | `az sandbox snapshot create …` |
-| Stop / Resume | `aca sandbox stop -l name=my-sb` / `aca sandbox resume -l name=my-sb` | `api.stopSandbox(id)` / `api.resumeSandbox(id)` | `az sandbox stop` / `az sandbox resume` |
-| Disk catalog | `aca sandboxgroup disk list-public` | `api.listDiskImages()` | `az sandboxgroup disk list-public` |
+| Action | `aca` CLI | `adc-api.js` (Advanced) |
+|---|---|---|
+| List sandboxes | `aca sandbox list` | `api.listSandboxes()` |
+| Create (imperative) | `aca sandbox create --disk ubuntu --label name=my-sb` | `api.createSandbox({ diskName:"ubuntu" })` |
+| Create (YAML manifest) | `aca sandbox apply --file sandbox.yaml` | n/a |
+| Init manifest template | `aca sandbox init > sandbox.yaml` | n/a |
+| Validate manifest | `aca sandbox validate --file sandbox.yaml` | n/a |
+| Exec | `aca sandbox exec -l name=my-sb -c "cmd"` | `api.execShell(id,"cmd")` |
+| Shell | `aca sandbox shell -l name=my-sb` | `api.sshShell(id)` |
+| Upload | `aca sandbox fs put -l name=my-sb --src ./app.js --dest /home/user/app.js` | `api.uploadFile(id,"/path",content)` |
+| Download | `aca sandbox fs get -l name=my-sb --src /path --dest ./out.txt` | `api.downloadFile(id,"/path")` |
+| Add port (anonymous) | `aca sandbox port add -l name=my-sb --port 80 --anonymous` | `api.addPort(id,80,{anonymous:true})` |
+| Add port (Entra ID) | `aca sandbox port add -l name=my-sb --port 80 --email you@company.com` | `api.addPort(id,80,{email:"you@company.com"})` |
+| Egress (declarative) | `aca sandbox egress apply -l name=my-sb --file egress.yaml` | `api.setEgressPolicy(id, …)` |
+| Snapshot | `aca sandbox snapshot create -l name=my-sb --name mysnap` | `api.createSnapshot(id,"mysnap")` |
+| Stop / Resume | `aca sandbox stop -l name=my-sb` / `aca sandbox resume -l name=my-sb` | `api.stopSandbox(id)` / `api.resumeSandbox(id)` |
+| Disk catalog | `aca sandboxgroup disk list-public` | `api.listDiskImages()` |
 
-`az sandbox` flag spellings shown for orientation — confirm against `az sandbox <verb> --help`. `adc-api.js` is the current in-process Node surface; Python SDK is the supported in-process Python surface once it ships.
+`adc-api.js` is the current in-process Node surface; Python SDK is the supported in-process Python surface once it ships.
 
 ---
 
@@ -289,9 +278,6 @@ claude plugin uninstall azure-container-apps@azure-container-apps
 
 # aca CLI
 rm $(which aca) && rm -rf ~/.aca
-
-# az sandbox extension
-az extension remove --name sandbox
 ```
 
 ---
@@ -353,7 +339,7 @@ See [references/security.md](references/security.md) for details.
 | Command | Returns | Use for |
 |---------|---------|---------|
 | `az account show --query user.name` | alias (e.g., `anganti@microsoft.com`) | ❌ Do NOT use for port auth |
-| `az ad signed-in-user show --query mail -o tsv` | Entra email (e.g., `Annaji.Ganti@microsoft.com`) | ✅ Use this for port auth |
+| `az ad signed-in-user show --query mail -o tsv` | Entra email (e.g., `you@microsoft.com`) | ✅ Use this for port auth |
 | `az ad signed-in-user show --query userPrincipalName -o tsv` | UPN (often same as alias) | ❌ Same as alias |
 
 The port Entra ID auth email **must match** the `mail` attribute in the user's Entra directory. For some accounts all three commands return the same value — when they differ, only `mail` works.

@@ -38,9 +38,9 @@ metrics:
     threshold: 0.85
     description: >-
       Picks `aca` CLI as the primary install path (curl install script per
-      platform). Falls back to `az sandbox` extension or `adc-api.js` Node
-      helper only when explicitly requested or when an agent fan-out pattern
-      is needed. Notes Python SDK as "coming soon" rather than guessing.
+      platform). Falls back to `adc-api.js` Node helper only when an agent
+      fan-out pattern is explicitly needed. Notes Python SDK as "coming
+      soon" rather than guessing.
 
   - name: portal_url_correctness
     weight: 0.10
