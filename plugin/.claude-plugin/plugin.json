@@ -1,0 +1,21 @@
+{
+  "name": "Azure-Container-Apps",
+  "description": "Azure Container Apps skills marketplace — sandboxes (and more, coming soon).",
+  "version": "0.0.1-beta",
+  "author": {
+    "name": "Microsoft",
+    "url": "https://www.microsoft.com"
+  },
+  "homepage": "https://github.com/microsoft/azure-container-apps",
+  "repository": "https://github.com/microsoft/azure-container-apps",
+  "license": "MIT",
+  "keywords": [
+    "azure",
+    "container-apps",
+    "sandbox",
+    "microvm",
+    "ai-agents",
+    "aca"
+  ],
+  "skills": "./skills/"
+}
