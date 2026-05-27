@@ -68,24 +68,22 @@ When grading, the prompt grader can reference these authoritative sources:
 
 ```bash
 cd /path/to/azure-container-apps
-waza eval plugin/evals/aca-sandboxes/eval.yaml
+waza run evals/aca-sandboxes/eval.yaml --parallel --output results/baseline.json
 ```
 
-Outputs land in `results/aca-sandboxes-run-<timestamp>.md` (gitignored — local only).
+Outputs land in `results/` (gitignored — local only).
 
 ### CI run
 
-Not yet wired. Phase 10 follow-up will add a GitHub Action that runs the suite on every PR touching `plugin/skills/aca-sandboxes/` or `plugin/evals/aca-sandboxes/`.
+Not yet wired. Phase 10 follow-up will add a GitHub Action that runs the suite on every PR touching `plugin/skills/aca-sandboxes/` or `evals/aca-sandboxes/`.
 
 ---
 
-## 5. Baseline (TBD)
+## 5. Baseline
 
-**Status:** Not yet collected. First baseline will be run before marking PR #1725 ready-for-review (Phase 9).
+**Pass gate for the PR:** ≥0.70 aggregate score across all tasks. Below that = SKILL.md needs more work, not eval tuning.
 
-**Pass gate for the PR:** ≥0.70 average across all 6 metrics. Below that = SKILL.md needs more work, not eval tuning.
-
-**Critical task gates (any failure blocks PR):**
+**Critical task gates (any failure flagged but not blocking until Phase 9 reaches ready-for-review):**
 
 | Task | Why it's critical |
 |------|-------------------|
@@ -95,7 +93,46 @@ Not yet wired. Phase 10 follow-up will add a GitHub Action that runs the suite o
 | `pos-create-sandbox` | The Quick Start IS the skill. If this fails, the whole skill fails. |
 | `pos-yaml-apply` | The YAML manifest pattern is the v0.8.0 anchor — it's the recommended path. |
 
-Baseline + critical-task results will be appended here as `### 5.1 Baseline run-1 (YYYY-MM-DD)` after Phase 9 smoke test.
+### 5.1 Baseline run-1 (2026-05-26, commit 8cc45a2)
+
+First baseline against the slim layout (commit `8cc45a2` — evals moved to repo root, JS helpers dropped per Annaji feedback).
+
+| Stat | Value |
+|---|---|
+| Aggregate score | **0.50** |
+| Pass rate | **18.5% (5 / 27)** |
+| Failed | 22 |
+| Errors (grader transient) | 0 |
+| Duration | 13m 14s |
+| Gate (≥0.70) | ❌ not met |
+
+**Pass:** `neg-acr-build`, `neg-app-service-deploy`, `neg-deploy-function-app`, `compare-sandbox-vs-container-app`, `syn-microvm-vague` (5).
+
+**Critical failures:**
+
+- `compare-sandbox-vs-dynamic-session` (CRITICAL) — failed. The most important disambiguation in the suite.
+- `pos-create-sandbox` (CRITICAL) — failed. Bare model used `az login` / `az account show` instead of `aca` CLI.
+- `pos-install-aca-{linux, macos, windows}` (CRITICAL for Windows) — all failed. Bare model suggested `brew install aca` or web-searched without finding the tool.
+- `pos-yaml-apply` (CRITICAL) — failed. Bare model didn't scaffold a manifest, just asked "where is sandbox.yaml?"
+
+**Root cause analysis:**
+
+1. **Skill activation (10 of 11 positive failures).** Grader notes show bare-model behavior, not skill-augmented behavior. Either (a) the copilot-sdk eval session isn't loading SKILL.md, or (b) trigger phrases in the `USE FOR` block don't match the natural language of the prompts (e.g., "create a sandbox", "ssh into my sandbox"). Likely both.
+
+2. **Negative-test eval-isolation artifact (5 of 7 negative failures).** Without other Copilot skills loaded (e.g., `azure-prepare`, `azure-cosmos`), the bare model engages deeply with out-of-scope queries (azd, Cosmos, K8s, Dynamic Sessions). In production with the wider skill set loaded, those queries route elsewhere. Eval isolation overstates the failure rate here.
+
+3. **Dynamic Sessions disambiguation (0 of 3).** `DO NOT USE FOR` line in description isn't enough — needs body-level coverage.
+
+**Per-metric breakdown:** waza's `.metrics` object returned `{}` (no per-metric weighted scoring). Eval.yaml `metrics:` section declares names + weights but graders are per-task (`behavior-<id>`), not per-metric. Waza apparently expects graders to tag the metric they're scoring. Investigating whether to (a) refactor graders to be metric-tagged, or (b) compute weighted aggregates externally from task pass/fail.
+
+**Iteration plan:**
+
+1. Tighten `USE FOR` triggers — add shorter natural phrases.
+2. Verify skill loading via `--session-log` and inspect transcript.
+3. Hoist Dynamic Sessions disambiguation into SKILL.md body (not just description).
+4. Re-baseline. Target ≥0.70 before flipping draft → ready-for-review.
+
+Structured results JSON: kept locally only (gitignored to avoid repo bloat). Per-run summaries: [`evals/aca-sandboxes/BASELINES.md`](../../evals/aca-sandboxes/BASELINES.md).
 
 ---
 
