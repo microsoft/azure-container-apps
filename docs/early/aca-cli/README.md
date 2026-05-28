@@ -78,15 +78,15 @@ aca sandboxgroup role create \
 aca doctor
 
 # 5. Create a sandbox
-aca sandbox create --disk ubuntu
+aca sandbox create --disk ubuntu --label name=my-first-sandbox
 # Created sandbox: a1b2c3d4-...
 # Run 'aca sandboxgroup disk list-public' for more options
 
 # 6. Run a command
-aca sandbox exec --id <sandbox-id> -c "echo hello world && uname -a"
+aca sandbox exec -l name=my-first-sandbox -c "echo hello world && uname -a"
 
 # 7. Clean up
-aca sandbox delete --id <sandbox-id> --yes
+aca sandbox delete -l name=my-first-sandbox --yes
 ```
 
 That's it — zero to sandbox in 5 minutes. Read on for everything else the CLI can do.
@@ -118,58 +118,61 @@ That's it — zero to sandbox in 5 minutes. Read on for everything else the CLI 
 
 ```bash
 # Create
-aca sandbox create --disk ubuntu
+aca sandbox create --disk ubuntu --label name=my-second-sandbox
 # Created sandbox: <id>
 
 # List
 aca sandbox list
 
 # Get details
-aca sandbox get --id <id>
-aca sandbox get --id <id> -o json    # JSON output
+aca sandbox get -l name=my-second-sandbox
+aca sandbox get -l name=my-second-sandbox -o json    # JSON output
 
 # Stop (preserves state)
-aca sandbox stop --id <id>
+aca sandbox stop -l name=my-second-sandbox
 
 # Resume
-aca sandbox resume --id <id>
+aca sandbox resume -l name=my-second-sandbox
 
 # Delete
-aca sandbox delete --id <id> --yes
+aca sandbox delete -l name=my-second-sandbox --yes
 ```
 
 Use `--no-wait` with stop/resume to return immediately:
 
 ```bash
-aca sandbox stop --id <id> --no-wait
-aca sandbox resume --id <id> --no-wait
+aca sandbox stop -l name=my-second-sandbox --no-wait
+aca sandbox resume -l name=my-second-sandbox --no-wait
 ```
 
 ### Running Commands
 
 ```bash
+# create a sandbox
+aca sandbox create --disk ubuntu --label name=sandbox-a
+
 # Simple command
-aca sandbox exec --id <id> -c "echo hello"
+aca sandbox exec --label name=sandbox-a -c "echo hello"
 
 # Chained commands
-aca sandbox exec --id <id> -c "apt update && apt install -y curl"
+aca sandbox exec --label name=sandbox-a -c "apt update && apt install -y curl"
 
 # Set working directory
-aca sandbox exec --id <id> -c "ls -la" --working-directory /tmp
+aca sandbox exec --label name=sandbox-a -c "ls -la" --working-directory /tmp
 
 # Pipes work
-aca sandbox exec --id <id> -c "echo hello | tr a-z A-Z"
+aca sandbox exec --label name=sandbox-a -c "echo hello | tr a-z A-Z"
 # HELLO
 
 # Exit codes propagate
-aca sandbox exec --id <id> -c "exit 42"
+aca sandbox exec --label name=sandbox-a -c "exit 42"
 # (exits with code 42)
 ```
 
 For an interactive shell:
 
 ```bash
-aca sandbox shell --id <id>
+aca sandbox shell --label name=sandbox-a
 # Default: /bin/bash. Override with --command /bin/sh
 ```
 
@@ -177,16 +180,16 @@ aca sandbox shell --id <id>
 
 ```bash
 # List files
-aca sandbox fs ls --id <id> --path /
+aca sandbox fs ls --label name=sandbox-a --path /
 
 # Read a file
-aca sandbox fs cat --id <id> --path /etc/os-release
+aca sandbox fs cat --label name=sandbox-a --path /etc/os-release
 
 # Upload a local file
-aca sandbox fs write --id <id> --path /tmp/myfile.txt --file ./local-file.txt
+aca sandbox fs write --label name=sandbox-a --path /tmp/myfile.txt --file ./local-file.txt
 
 # Copy files between local machine and sandbox
-aca sandbox fs cp --id <id> --src ./local-dir --dest /app/
+aca sandbox fs cp --label name=sandbox-a --src ./local-dir --dest /app/
 ```
 
 ### Port Management
@@ -195,16 +198,16 @@ Expose ports from a sandbox to get a public URL:
 
 ```bash
 # Add a port
-aca sandbox port add --id <id> --port 8080
+aca sandbox port add --label name=sandbox-a --port 8080
 
 # Add with anonymous access (no auth required)
-aca sandbox port add --id <id> --port 3000 --anonymous
+aca sandbox port add --label name=sandbox-a --port 3000 --anonymous
 
 # List exposed ports
-aca sandbox port list --id <id>
+aca sandbox port list --label name=sandbox-a
 
 # Remove a port
-aca sandbox port remove --id <id> --port 3000
+aca sandbox port remove --label name=sandbox-a --port 3000
 ```
 
 ### Environment Variables & Labels
@@ -223,7 +226,7 @@ aca sandbox create --disk ubuntu \
 Env vars are available immediately inside the sandbox:
 
 ```bash
-aca sandbox exec --id <id> -c 'echo $API_KEY'
+aca sandbox exec -l app=my-agent -c 'echo $API_KEY'
 # sk-xxx
 ```
 
@@ -285,7 +288,7 @@ aca sandboxgroup snapshot list
 aca sandbox create --snapshot my-checkpoint
 
 # Delete snapshot
-aca sandboxgroup snapshot delete --name my-checkpoint
+aca sandboxgroup snapshot delete -l name=my-checkpoint
 ```
 
 > **Note:** You cannot snapshot a stopped sandbox — resume it first.
@@ -297,13 +300,13 @@ aca sandboxgroup snapshot delete --name my-checkpoint
 aca sandbox commit --id <id> --name my-custom-disk
 
 # Create sandbox from committed disk
-aca sandbox create --disk my-custom-disk
+aca sandbox create --disk-id <disk-id>
 
 # List disk images
 aca sandboxgroup disk list
 
 # Delete
-aca sandboxgroup disk delete --name my-custom-disk
+aca sandboxgroup disk delete -l name=my-custom-disk
 ```
 
 You can also create disk images from container images:
@@ -315,7 +318,7 @@ aca sandboxgroup disk create --image docker.io/library/ubuntu:22.04 --name ubunt
 ### Custom Resources
 
 ```bash
-aca sandbox create --disk ubuntu --cpu 2000m --memory 4096Mi
+aca sandbox create --disk-id <disk-id> --cpu 2000m --memory 4096Mi
 ```
 
 Check resource usage:
