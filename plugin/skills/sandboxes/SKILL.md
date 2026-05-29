@@ -1,10 +1,10 @@
 ---
 name: sandboxes
 description: |
-  Hardware-isolated microVMs on Azure Container Apps for AI-generated
-  code, coding agents, MCP servers, web apps, ephemeral workloads.
-  Snapshot/resume, scale-to-zero, sub-second startup, deny-default
-  egress. Driven by `aca` CLI (auth via `az login`).
+  Azure Container Apps sandboxes let you run untrusted code, agents,
+  MCP servers, and web apps in hardware-isolated microVMs.
+  Supports snapshot/resume, scale-to-zero, deny-default egress, and is
+  managed with `aca` CLI using `az login`.
 
   Use when the user wants to: create/manage sandbox groups and
   sandboxes; exec or open a shell; read/write files; expose ports;
@@ -19,7 +19,8 @@ description: |
 
   Triggers: install aca, install aca cli, setup aca, aca doctor, aca
   login, command not found: aca, create sandbox, sandbox group, aca
-  cli, aca sandbox, microVM, code interpreter, agent swarm, host mcp.
+  cli, aca sandbox, exec in sandbox, microVM, code interpreter, agent
+  swarm, host mcp.
 ---
 
 # Sandboxes
