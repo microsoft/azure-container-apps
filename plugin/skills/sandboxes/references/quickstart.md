@@ -24,15 +24,14 @@ aca sandboxgroup role create \
 # 4. Verify setup
 aca doctor
 
-# 5. Create a sandbox
-aca sandbox create --disk ubuntu
-# Created sandbox: a1b2c3d4-1234-5678-9abc-def012345678
+# 5. Create a sandbox (capture the ID for reuse)
+SANDBOX_ID=$(aca sandbox create --disk ubuntu -o json | jq -r .id)
 
 # 6. Run a command
-aca sandbox exec --id <sandbox-id> -c "echo hello world && uname -a"
+aca sandbox exec --id "$SANDBOX_ID" -c "echo hello world && uname -a"
 
-# 7. Clean up
-aca sandbox delete --id <sandbox-id> --yes
+# 7. Clean up (snapshot first if there's state you want to keep)
+aca sandbox delete --id "$SANDBOX_ID" --yes
 ```
 
 `aca doctor` should print eight green checks:
@@ -69,6 +68,75 @@ Tear down the whole group later:
 
 ```bash
 aca sandboxgroup delete --name my-sandbox-group --yes
+```
+
+## Common follow-up tasks
+
+Once a sandbox is running, these are the most-used data-plane verbs.
+
+### Open an interactive shell
+
+```bash
+aca sandbox shell --id "$SANDBOX_ID"
+```
+
+`exec` runs one command and returns; `shell` gives you a real PTY. There
+is no SSH daemon — these two are the only paths into the sandbox.
+
+### Copy a file in and out
+
+```bash
+aca sandbox fs write --id "$SANDBOX_ID" --path /tmp/data.csv --file ./data.csv
+aca sandbox fs cat   --id "$SANDBOX_ID" --path /tmp/out.json > ./out.json
+```
+
+`fs` also has `ls`, `stat`, `mkdir`, `rm [--recursive]`.
+
+### Expose a port publicly (preview)
+
+```bash
+URL=$(aca sandbox port add --id "$SANDBOX_ID" --port 8080 --anonymous -o json | jq -r .url)
+curl "$URL"
+
+# When done:
+aca sandbox port remove --id "$SANDBOX_ID" --port 8080
+```
+
+`--anonymous` makes the URL reachable by anyone who has it (public
+preview). For per-user gating, swap to `--email <entra-mail>`.
+
+### Mount a shared volume
+
+```bash
+# Once, at the group:
+aca sandboxgroup volume create --name shared --type AzureBlob
+
+# Each sandbox that needs it:
+aca sandbox mount --id "$SANDBOX_ID" --volume shared --path /mnt/shared
+```
+
+`AzureBlob` is multi-attach (shared across sandboxes); `DataDisk` is
+single-attach high-perf block storage.
+
+### Suspend and resume to save cost
+
+```bash
+aca sandbox stop   --id "$SANDBOX_ID"   # preserves memory + disk
+aca sandbox resume --id "$SANDBOX_ID"   # sub-second restore
+
+# Or set an idle policy (default 300s):
+aca sandbox lifecycle set --id "$SANDBOX_ID" --auto-suspend 60
+```
+
+Suspended sandboxes incur storage cost only — no compute.
+
+### Snapshot before destructive changes
+
+```bash
+aca sandbox snapshot --id "$SANDBOX_ID" --name pre-experiment
+# ... do risky thing ...
+# If it goes wrong, boot a clean replica from the snapshot:
+aca sandbox create --snapshot pre-experiment
 ```
 
 ## What next

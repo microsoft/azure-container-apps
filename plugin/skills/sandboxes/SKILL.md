@@ -19,8 +19,10 @@ description: |
 
   Triggers: install aca, install aca cli, setup aca, aca doctor, aca
   login, command not found: aca, create sandbox, sandbox group, aca
-  cli, aca sandbox, exec in sandbox, microVM, code interpreter, agent
-  swarm, host mcp.
+  cli, aca sandbox, exec in sandbox, sandbox shell, mount volume,
+  expose port, fs write, egress allow, suspend sandbox, snapshot
+  sandbox, sandbox-group connector, mcp connector, sandbox trigger,
+  microVM, code interpreter, agent swarm, host mcp.
 ---
 
 # Sandboxes
@@ -56,10 +58,21 @@ intent.
 | User intent | Cues your response MUST include |
 |---|---|
 | **Install the `aca` CLI** (any OS) | (1) The curl/iwr one-liner from [references/install.md](references/install.md) — use the `https://aka.ms/aca-cli-install` (Linux/macOS) and `https://aka.ms/aca-cli-install-ps` (Windows) short URLs. (2) `aca --version` + `az login` + `aca doctor` (`aca` delegates auth to `az login` — same Entra identity). (3) The explicit sentence: **"this same install path is also used inside sandboxes and containers for agent-driven self-installs."** |
+| **Bootstrap a sandbox group (one-time setup)** | The 4-step flow: `az login` → `aca sandboxgroup create --name <g> --location <region> --set-config` → `aca sandboxgroup role create --role "Container Apps SandboxGroup Data Owner" --principal-id $(az ad signed-in-user show --query id -o tsv)` → `aca doctor`. **`--set-config` is required** so subsequent `aca sandbox …` commands don't need `--group` on every call. Treat green `aca doctor` as the gate before doing anything else. |
+| **Create a sandbox (imperative)** | Minimum: `aca sandbox create --disk ubuntu`. Common knobs: `--cpu 2000m`, `--memory 4096Mi`, `--env "K=V"`, `--labels "name=dev,role=worker"`. Capture the printed ID into `SANDBOX_ID=$(aca sandbox create --disk ubuntu -o json \| jq -r .id)` for reuse. For config that should live in source control, use the manifest flow (see the row below) instead. |
 | **Apply / deploy a sandbox manifest** | The full 3-command flow: `aca sandbox init` → `aca sandbox validate --file sandbox.yaml` → `aca sandbox apply --file sandbox.yaml`. Always `--file` (no `-f` short flag). State that **the manifest pattern is the recommended path for CI/CD and reproducibility**, in contrast to imperative `aca sandbox create`. If no manifest is present, run `aca sandbox init` — don't ask for a path. |
 | **Scaffold / generate a sandbox manifest** | Run (or show) `aca sandbox init`. Mention the commonly edited fields (`disk`, `resources`, `lifecycle.autoSuspendPolicy`, `egressPolicy`, plus `ports`, `env`, `labels` as needed). Mention `aca sandbox schema` as the way to dump the JSON Schema for editor autocomplete. |
-| **Expose a port with email / Entra auth** | The `aca sandbox port add -l name=<sb> --port <p> --email <email>` command. **The Entra gotcha:** the email must be the user's Entra `mail` value — for some tenants the alias / UPN differs and won't work. Recommend `az ad signed-in-user show --query mail -o tsv`. |
-| **Snapshot / commit a sandbox** | The canonical command form: `aca sandbox snapshot -l name=<sb> --name <snap>` (or `aca sandbox commit … --name <disk>`). **Strongly recommend snapshotting BEFORE `aca sandbox delete`** to preserve state. Use `--name`, never `--image`. |
+| **Run a command or open a shell in a sandbox** | Two distinct verbs: `aca sandbox exec --id "$SANDBOX_ID" -c "<command>"` for one-shot commands (returns stdout/stderr); `aca sandbox shell --id "$SANDBOX_ID"` for an interactive PTY. **Anti-cue:** `ssh` does not work — there is no SSH daemon inside the sandbox. `aca sandbox exec` / `shell` is the only path. |
+| **Delete a sandbox** | `aca sandbox delete --id "$SANDBOX_ID" --yes`. **Always recommend snapshotting first** if there is any state worth preserving (`aca sandbox snapshot --id "$SANDBOX_ID" --name <snap>`) — delete is destructive. To delete by label selector: `aca sandbox list -l "name=<n>" -o json \| jq -r '.[].id' \| xargs -I{} aca sandbox delete --id {} --yes`. |
+| **Read / write / copy files in a sandbox** | The `aca sandbox fs` family — `fs write --id "$SANDBOX_ID" --path /remote/p --file ./local` to upload, `fs cat --id "$SANDBOX_ID" --path /remote/p` to read, plus `fs ls / stat / mkdir / rm [--recursive]` for management. **Don't** suggest `scp` / `rsync` / shared filesystems — there is no SSH, and `fs` is the only data-plane file transport. |
+| **Expose a port — public preview (anonymous)** | The two-step shape: `URL=$(aca sandbox port add --id "$SANDBOX_ID" --port <p> --anonymous -o json \| jq -r .url)`, then hit `$URL`. **State explicitly** that anonymous = anyone with the URL can reach it (public preview only). Remove with `aca sandbox port remove --id "$SANDBOX_ID" --port <p>`. For per-user gating use the Entra row below. |
+| **Expose a port with email / Entra auth** | The `aca sandbox port add --id "$SANDBOX_ID" --port <p> --email <email>` command. **The Entra gotcha:** the email must be the user's Entra `mail` value — for some tenants the alias / UPN differs and won't work. Recommend `az ad signed-in-user show --query mail -o tsv` to fetch it. |
+| **Mount a shared volume** | Two-step: (1) at the group: `aca sandboxgroup volume create --name <v> --type AzureBlob` (multi-attach, shared) or `--type DataDisk` (single-attach, high-perf block). (2) at the sandbox: `aca sandbox mount --id "$SANDBOX_ID" --volume <v> --path /mnt/<v>`. State that **the volume lives at the group level**; sandboxes attach it at runtime. |
+| **Lock down network egress (deny-default + allow-list)** | The canonical form: `aca sandbox egress set --id "$SANDBOX_ID" --default Deny --rule "*.github.com:Allow" --traffic-inspection Full`. Multiple `--rule "host:Allow"` flags accumulate. Inspect current policy with `aca sandbox egress show --id "$SANDBOX_ID"`. For production agent code, **always recommend `--default Deny`** with an explicit allow-list. |
+| **Use a non-default disk image** | List published images first: `aca sandboxgroup disk list-public`, then `aca sandbox create --disk <name>`. To bake your own from an OCI image: `aca sandboxgroup disk create --image docker.io/library/alpine:3.19 --name <my-disk>`, then `aca sandbox create --disk-id <id>`. **Flag distinction:** `--disk` takes the public name; `--disk-id` takes the resource ID of a private/committed disk. |
+| **Suspend, resume, or set auto-suspend** | Manual: `aca sandbox stop --id "$SANDBOX_ID"` suspends (preserves memory + disk); `aca sandbox resume --id "$SANDBOX_ID"` does sub-second restore. Idle policy: `aca sandbox lifecycle set --id "$SANDBOX_ID" --auto-suspend <seconds>` (default 300s = 5 min). State that **suspended sandboxes incur storage cost only, no compute** — this is the primary cost lever. |
+| **Snapshot / commit a sandbox** | Per-sandbox: `aca sandbox snapshot --id "$SANDBOX_ID" --name <snap>`, then boot replicas with `aca sandbox create --snapshot <snap>`. Group-level CRUD: `aca sandboxgroup snapshot list / get / delete --selector "name=<snap>"`. **Strongly recommend snapshotting BEFORE `aca sandbox delete`** to preserve state. Use `--name`, never `--image`. Disk-only baking is `aca sandbox commit … --name <disk>`. |
+| **Wire up MCP connectors or triggers on a group** | These are **group-level** features under the hyphenated `aca sandbox-group` command group (note the hyphen — distinct from `sandboxgroup` used elsewhere): `aca sandbox-group connector add` to attach a pre-built MCP server to the group, `aca sandbox-group connector remove` to detach, `aca sandbox-group trigger create / list` to wire events. This surface is still evolving — run `--help` on each subcommand for the current flag set rather than guessing. |
 | **Anything in the "When NOT to use this skill" table below** | A one-paragraph redirect to the right tool or official docs. **Do NOT** run the out-of-scope tool's commands. **Do NOT** walk through options. **Do NOT** ask follow-up questions about the out-of-scope tool. Bow out cleanly. |
 
 ## When **NOT** to use this skill (hard reject + redirect)
@@ -122,6 +135,7 @@ options.
 | 12 | **Interactive shell**     | Real PTY into a running sandbox.                                             | `aca sandbox shell --id <id>` |
 | 13 | **YAML spec / `apply`**   | Declarative infra-as-code: `init`, `validate`, `apply`, `schema`.            | `aca sandbox init > sandbox.yaml` · `validate` · `apply --file sandbox.yaml` |
 | 14 | **`aca doctor`**          | Diagnose subscription / RG / group / region / role.                          | `aca doctor` |
+| 15 | **MCP connectors & triggers** | Attach pre-built MCP server tools to a group; wire events that act on sandboxes. | `aca sandbox-group connector add / remove` · `aca sandbox-group trigger create / list` (note: hyphenated `sandbox-group` command group) |
 
 ## Scenarios
 
