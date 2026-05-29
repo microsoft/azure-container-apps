@@ -46,6 +46,39 @@ folder.
 > do not touch sandboxes. If you see `az containerapp sandbox …` in a
 > snippet, it's wrong.
 
+## ⚠ Required cues per response type (non-negotiable)
+
+Before composing your answer, identify the user's intent and ensure the
+cues below are present. These are **acceptance criteria, not
+suggestions** — a response is incomplete if it omits any cue for its
+intent.
+
+| User intent | Cues your response MUST include |
+|---|---|
+| **Install the `aca` CLI** (any OS) | (1) The curl/iwr one-liner from [references/install.md](references/install.md). (2) `aca version` + `aca auth login` + `aca doctor` (the verb is `aca auth login`, **never** `aca login`). (3) The explicit sentence: **"this same install path is also used inside sandboxes and containers for agent-driven self-installs."** |
+| **Apply / deploy a sandbox manifest** | The full 3-command flow: `aca sandbox init` → `aca sandbox validate --file sandbox.yaml` → `aca sandbox apply --file sandbox.yaml`. Always `--file` (no `-f` short flag). State that **the manifest pattern is the recommended path for CI/CD and reproducibility**, in contrast to imperative `aca sandbox create`. If no manifest is present, run `aca sandbox init` — don't ask for a path. |
+| **Scaffold / generate a sandbox manifest** | Run (or show) `aca sandbox init`. Mention the commonly edited fields (`disk`, `resources`, `lifecycle.autoSuspendPolicy`, `egressPolicy`, plus `ports`, `env`, `labels` as needed). Mention `aca sandbox schema` as the way to dump the JSON Schema for editor autocomplete. |
+| **Expose a port with email / Entra auth** | The `aca sandbox port add -l name=<sb> --port <p> --email <email>` command. **The Entra gotcha:** the email must be the user's Entra `mail` value — for some tenants the alias / UPN differs and won't work. Recommend `az ad signed-in-user show --query mail -o tsv`. |
+| **Snapshot / commit a sandbox** | The canonical command form: `aca sandbox snapshot -l name=<sb> --name <snap>` (or `aca sandbox commit … --name <disk>`). **Strongly recommend snapshotting BEFORE `aca sandbox delete`** to preserve state. Use `--name`, never `--image`. |
+| **Anything in the "When NOT to use this skill" table below** | A one-paragraph redirect to the right tool or official docs. **Do NOT** run the out-of-scope tool's commands. **Do NOT** walk through options. **Do NOT** ask follow-up questions about the out-of-scope tool. Bow out cleanly. |
+
+## When **NOT** to use this skill (hard reject + redirect)
+
+If the user's task is **not about ACA Sandboxes**, refuse and redirect
+in one short reply — don't run any commands, don't walk through options,
+don't ask clarifying questions about the out-of-scope tool. The skill
+activated by mistake; bow out cleanly.
+
+| User asks about… | Reply pattern |
+|---|---|
+| `azd init`, `azd up`, `azd deploy`, project scaffolding | "That's the Azure Developer CLI (`azd`), not ACA Sandboxes. See the [azd docs](https://learn.microsoft.com/azure/developer/azure-developer-cli/). Sandboxes don't have an `init`/`up`/`deploy` command and aren't a project bootstrapper." |
+| `az acr build`, `docker build`, registry pushes | "That's Azure Container Registry / Docker, not ACA Sandboxes. See the [`az acr` docs](https://learn.microsoft.com/cli/azure/acr). Sandboxes consume disk images, not container images." |
+| Cosmos / SQL / data-plane queries to other Azure services | "That's the relevant data service (Cosmos DB, Azure SQL, etc.), not ACA Sandboxes. Use that service's CLI / SDK / portal." |
+| Listing Kubernetes pods, AKS cluster ops, `kubectl` | "That's AKS / Kubernetes, not ACA Sandboxes. Use `kubectl` or the AKS docs. Sandboxes are individual microVMs, not a Kubernetes cluster." |
+| Deploying a Function App, App Service site, full Container App (Apps/Jobs) | "That's Azure Functions / App Service / Container Apps (apps and jobs), not Sandboxes. Use those products' deployment docs." |
+
+**Never** start running the out-of-scope tool's commands "just to help." A one-paragraph redirect is the correct, complete answer.
+
 ## Get started
 
 | | Where |
