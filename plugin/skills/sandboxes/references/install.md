@@ -1,31 +1,31 @@
 # Install the `aca` CLI
 
-The `aca` CLI is the primary surface for sandboxes. It delegates
-authentication to the Azure CLI (`az login`).
+The `aca` CLI is the primary surface for sandboxes. It owns the auth verb
+(`aca auth login`), which delegates to Azure CLI (`az login`) under the hood.
 
 ## Linux / macOS
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/microsoft/azure-container-apps/main/docs/early/aca-cli/install.sh | sh
+curl -fsSL https://aka.ms/aca-cli-install | sh
 ```
 
 Pin a specific version:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/microsoft/azure-container-apps/main/docs/early/aca-cli/install.sh \
+curl -fsSL https://aka.ms/aca-cli-install \
   | ACA_VERSION=aca-cli-v0.1.0-early-access sh
 ```
 
 ## Windows (PowerShell)
 
 ```powershell
-irm https://raw.githubusercontent.com/microsoft/azure-container-apps/main/docs/early/aca-cli/install.ps1 | iex
+irm https://aka.ms/aca-cli-install-ps | iex
 ```
 
 Pin a specific version:
 
 ```powershell
-& ([scriptblock]::Create((irm https://raw.githubusercontent.com/microsoft/azure-container-apps/main/docs/early/aca-cli/install.ps1))) -Version aca-cli-v0.1.0-early-access
+& ([scriptblock]::Create((irm https://aka.ms/aca-cli-install-ps))) -Version aca-cli-v0.1.0-early-access
 ```
 
 ## Verify
@@ -38,20 +38,24 @@ aca --version
 Then log in and run the doctor:
 
 ```bash
-az login
+aca auth login
 aca doctor
 ```
+
+> `aca auth login` is the canonical CLI entry point. It delegates to
+> `az login` under the hood, so if `az` is already authenticated you can
+> skip the login step. Use `aca auth status` to check.
 
 ## Uninstall
 
 ```bash
 # Linux / macOS
-curl -fsSL https://raw.githubusercontent.com/microsoft/azure-container-apps/main/docs/early/aca-cli/install.sh | sh -s -- --uninstall
+curl -fsSL https://aka.ms/aca-cli-install | sh -s -- --uninstall
 ```
 
 ```powershell
 # Windows
-& ([scriptblock]::Create((irm https://raw.githubusercontent.com/microsoft/azure-container-apps/main/docs/early/aca-cli/install.ps1))) -Uninstall
+& ([scriptblock]::Create((irm https://aka.ms/aca-cli-install-ps))) -Uninstall
 ```
 
 ## Supported platforms
