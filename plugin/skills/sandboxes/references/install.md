@@ -1,20 +1,21 @@
 # Install the `aca` CLI
 
 The `aca` CLI is the primary surface for sandboxes. It delegates
-authentication to the Azure CLI (`az login`).
+authentication to the Azure CLI — sign in once with `az login` and the
+same Entra identity is used by `aca`.
 
 ## Linux / macOS
 
 ```bash
 # This same one-liner is also the install path used INSIDE a sandbox or
 # container for agent-driven self-installs — no package manager needed.
-curl -fsSL https://raw.githubusercontent.com/microsoft/azure-container-apps/main/docs/early/aca-cli/install.sh | sh
+curl -fsSL https://aka.ms/aca-cli-install | sh
 ```
 
 Pin a specific version:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/microsoft/azure-container-apps/main/docs/early/aca-cli/install.sh \
+curl -fsSL https://aka.ms/aca-cli-install \
   | ACA_VERSION=aca-cli-v0.1.0-early-access sh
 ```
 
@@ -23,27 +24,25 @@ curl -fsSL https://raw.githubusercontent.com/microsoft/azure-container-apps/main
 ```powershell
 # This same one-liner is also the install path used INSIDE a Windows
 # sandbox or container for agent-driven self-installs.
-irm https://raw.githubusercontent.com/microsoft/azure-container-apps/main/docs/early/aca-cli/install.ps1 | iex
+irm https://aka.ms/aca-cli-install-ps | iex
 ```
 
 Pin a specific version:
 
 ```powershell
-& ([scriptblock]::Create((irm https://raw.githubusercontent.com/microsoft/azure-container-apps/main/docs/early/aca-cli/install.ps1))) -Version aca-cli-v0.1.0-early-access
+& ([scriptblock]::Create((irm https://aka.ms/aca-cli-install-ps))) -Version aca-cli-v0.1.0-early-access
 ```
 
 ## Verify
 
 ```bash
-aca version
-# aca 1.0.0-beta.1
+aca --version
 ```
 
-Then log in and run the doctor (the verb is `aca auth login`, **not**
-top-level `aca login`):
+Then log in (`aca` delegates auth to `az login`) and run the doctor:
 
 ```bash
-aca auth login   # delegates to `az login` — same Entra identity, same MFA
+az login
 aca doctor
 ```
 
@@ -51,12 +50,12 @@ aca doctor
 
 ```bash
 # Linux / macOS
-curl -fsSL https://raw.githubusercontent.com/microsoft/azure-container-apps/main/docs/early/aca-cli/install.sh | sh -s -- --uninstall
+curl -fsSL https://aka.ms/aca-cli-install | sh -s -- --uninstall
 ```
 
 ```powershell
 # Windows
-& ([scriptblock]::Create((irm https://raw.githubusercontent.com/microsoft/azure-container-apps/main/docs/early/aca-cli/install.ps1))) -Uninstall
+& ([scriptblock]::Create((irm https://aka.ms/aca-cli-install-ps))) -Uninstall
 ```
 
 ## Supported platforms
