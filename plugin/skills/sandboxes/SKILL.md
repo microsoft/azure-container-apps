@@ -106,6 +106,28 @@ After install, always confirm setup with `aca doctor` — it resolves
 subscription / RG / group / region / role and tells you which check
 is red.
 
+## Try asking
+
+Once the skill is loaded, paste any of these into your agent. Each one
+exercises a different capability — together they show the canonical
+shape for the most common sandbox tasks (and they double as a routing
+smoke test if you're testing changes to this skill).
+
+| Try saying | What you should get back |
+|---|---|
+| *"install the aca cli"* | the `aka.ms/aca-cli-install` one-liner + `aca --version` + `az login` + `aca doctor` |
+| *"set up a sandbox group from scratch"* | the full 4-step bootstrap (group create + Data Owner role + `aca doctor` gate) |
+| *"create an ubuntu sandbox and run uname -a in it"* | `aca sandbox create` with ID capture, then `aca sandbox exec` |
+| *"how do I ssh into my sandbox?"* | corrective answer — no SSH daemon; use `aca sandbox shell` or `exec` |
+| *"copy data.csv into my sandbox"* | `aca sandbox fs write --path … --file …` (and the anti-`scp` note) |
+| *"expose port 8080 publicly"* | `aca sandbox port add --anonymous -o json \| jq -r .url` |
+| *"mount a shared volume on two sandboxes"* | `aca sandboxgroup volume create --type AzureBlob` + `aca sandbox mount` |
+| *"restrict outbound traffic to github.com only"* | `aca sandbox egress set --default Deny --rule "*.github.com:Allow"` |
+| *"snapshot my sandbox before I tear it down"* | `aca sandbox snapshot --name <s>` followed by `aca sandbox delete --yes` |
+| *"suspend my sandbox to save money"* | `aca sandbox stop`/`resume` plus `aca sandbox lifecycle set --auto-suspend` |
+| *"attach an MCP connector to my group"* | `aca sandbox-group connector add` (note the **hyphenated** command group) |
+| *"give me a YAML manifest for a 2 vCPU sandbox"* | `aca sandbox init` → edit → `aca sandbox validate --file` → `aca sandbox apply --file` |
+
 ## Capabilities
 
 Everything the platform exposes. Each row is the starting point — open
