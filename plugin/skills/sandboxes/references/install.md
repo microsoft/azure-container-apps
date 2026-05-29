@@ -6,6 +6,8 @@ authentication to the Azure CLI (`az login`).
 ## Linux / macOS
 
 ```bash
+# This same one-liner is also the install path used INSIDE a sandbox or
+# container for agent-driven self-installs — no package manager needed.
 curl -fsSL https://raw.githubusercontent.com/microsoft/azure-container-apps/main/docs/early/aca-cli/install.sh | sh
 ```
 
@@ -19,6 +21,8 @@ curl -fsSL https://raw.githubusercontent.com/microsoft/azure-container-apps/main
 ## Windows (PowerShell)
 
 ```powershell
+# This same one-liner is also the install path used INSIDE a Windows
+# sandbox or container for agent-driven self-installs.
 irm https://raw.githubusercontent.com/microsoft/azure-container-apps/main/docs/early/aca-cli/install.ps1 | iex
 ```
 
@@ -31,14 +35,15 @@ Pin a specific version:
 ## Verify
 
 ```bash
-aca --version
+aca version
 # aca 1.0.0-beta.1
 ```
 
-Then log in and run the doctor:
+Then log in and run the doctor (the verb is `aca auth login`, **not**
+top-level `aca login`):
 
 ```bash
-az login
+aca auth login   # delegates to `az login` — same Entra identity, same MFA
 aca doctor
 ```
 
