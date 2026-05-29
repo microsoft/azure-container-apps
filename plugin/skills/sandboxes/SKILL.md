@@ -21,8 +21,7 @@ description: |
   login, command not found: aca, create sandbox, sandbox group, aca
   cli, aca sandbox, exec in sandbox, sandbox shell, mount volume,
   expose port, fs write, egress allow, suspend sandbox, snapshot
-  sandbox, sandbox-group connector, mcp connector, sandbox trigger,
-  microVM, code interpreter, agent swarm, host mcp.
+  sandbox, microVM, code interpreter, agent swarm, host mcp.
 ---
 
 # Sandboxes
@@ -48,6 +47,15 @@ folder.
 > do not touch sandboxes. If you see `az containerapp sandbox …` in a
 > snippet, it's wrong.
 
+> ⚠️ **There is no `aca sandbox-group` (hyphenated) command group.**
+> Every group-level verb is `aca sandboxgroup …` (no hyphen):
+> `aca sandboxgroup create / get / list / delete / role create /
+> identity assign / secret upsert / disk list / volume create / snapshot …`.
+> The hyphenated `--sandbox-group <name>` is the *flag* you pass to
+> top-level commands to select the default group — it is not a verb.
+> If you see `aca sandbox-group …` in a snippet (including for MCP
+> connectors, credentials, or triggers), it's wrong / fabricated.
+
 ## ⚠ Required cues per response type (non-negotiable)
 
 Before composing your answer, identify the user's intent and ensure the
@@ -72,7 +80,6 @@ intent.
 | **Use a non-default disk image** | List published images first: `aca sandboxgroup disk list-public`, then `aca sandbox create --disk <name>`. To bake your own from an OCI image: `aca sandboxgroup disk create --image docker.io/library/alpine:3.19 --name <my-disk>`, then `aca sandbox create --disk-id <id>`. **Flag distinction:** `--disk` takes the public name; `--disk-id` takes the resource ID of a private/committed disk. |
 | **Suspend, resume, or set auto-suspend** | Manual: `aca sandbox stop --id "$SANDBOX_ID"` suspends (preserves memory + disk); `aca sandbox resume --id "$SANDBOX_ID"` does sub-second restore. Idle policy: `aca sandbox lifecycle set --id "$SANDBOX_ID" --auto-suspend <seconds>` (default 300s = 5 min). State that **suspended sandboxes incur storage cost only, no compute** — this is the primary cost lever. |
 | **Snapshot / commit a sandbox** | Per-sandbox: `aca sandbox snapshot --id "$SANDBOX_ID" --name <snap>`, then boot replicas with `aca sandbox create --snapshot <snap>`. Group-level CRUD: `aca sandboxgroup snapshot list / get / delete --selector "name=<snap>"`. **Strongly recommend snapshotting BEFORE `aca sandbox delete`** to preserve state. Use `--name`, never `--image`. Disk-only baking is `aca sandbox commit … --name <disk>`. |
-| **Wire up MCP connectors or triggers on a group** | These are **group-level** features under the hyphenated `aca sandbox-group` command group (note the hyphen — distinct from `sandboxgroup` used elsewhere): `aca sandbox-group connector add` to attach a pre-built MCP server to the group, `aca sandbox-group connector remove` to detach, `aca sandbox-group trigger create / list` to wire events. This surface is still evolving — run `--help` on each subcommand for the current flag set rather than guessing. |
 | **Anything in the "When NOT to use this skill" table below** | A one-paragraph redirect to the right tool or official docs. **Do NOT** run the out-of-scope tool's commands. **Do NOT** walk through options. **Do NOT** ask follow-up questions about the out-of-scope tool. Bow out cleanly. |
 
 ## When **NOT** to use this skill (hard reject + redirect)
@@ -125,7 +132,6 @@ smoke test if you're testing changes to this skill).
 | *"restrict outbound traffic to github.com only"* | `aca sandbox egress set --default Deny --rule "*.github.com:Allow"` |
 | *"snapshot my sandbox before I tear it down"* | `aca sandbox snapshot --name <s>` followed by `aca sandbox delete --yes` |
 | *"suspend my sandbox to save money"* | `aca sandbox stop`/`resume` plus `aca sandbox lifecycle set --auto-suspend` |
-| *"attach an MCP connector to my group"* | `aca sandbox-group connector add` (note the **hyphenated** command group) |
 | *"give me a YAML manifest for a 2 vCPU sandbox"* | `aca sandbox init` → edit → `aca sandbox validate --file` → `aca sandbox apply --file` |
 
 ## Capabilities
@@ -157,7 +163,6 @@ options.
 | 12 | **Interactive shell**     | Real PTY into a running sandbox.                                             | `aca sandbox shell --id <id>` |
 | 13 | **YAML spec / `apply`**   | Declarative infra-as-code: `init`, `validate`, `apply`, `schema`.            | `aca sandbox init > sandbox.yaml` · `validate` · `apply --file sandbox.yaml` |
 | 14 | **`aca doctor`**          | Diagnose subscription / RG / group / region / role.                          | `aca doctor` |
-| 15 | **MCP connectors & triggers** | Attach pre-built MCP server tools to a group; wire events that act on sandboxes. | `aca sandbox-group connector add / remove` · `aca sandbox-group trigger create / list` (note: hyphenated `sandbox-group` command group) |
 
 ## Scenarios
 
