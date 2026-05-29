@@ -4,21 +4,22 @@ description: |
   Hardware-isolated microVMs on Azure Container Apps for AI-generated
   code, coding agents, MCP servers, web apps, ephemeral workloads.
   Snapshot/resume, scale-to-zero, sub-second startup, deny-default
-  egress. Driven by the `aca` CLI (auth via `az login`).
+  egress. Driven by `aca` CLI (auth via `az login`).
 
-  If `aca` is missing or the user asks to install it, read
-  `references/install.md` first. The `aca` CLI is ONLY distributed
-  via GitHub Releases (microsoft/azure-container-apps) — NOT on npm,
-  pip, winget, brew, or any package manager. Don't guess.
+  Use when the user wants to: create/manage sandbox groups and
+  sandboxes; exec or open a shell; read/write files; expose ports;
+  snapshot, stop, resume, commit to disk; mount volumes; tighten
+  egress; manage secrets, identity, labels; apply YAML; or run
+  scenarios like web apps, coding agents, code interpreter, swarms,
+  computer-use, or MCP hosting.
 
-  Triggers: "install aca", "install aca cli", "setup aca", "aca
-  doctor", "aca login", "command not found: aca", "create sandbox",
-  "sandbox group", "aca cli", "aca sandbox", "microVM", "run untrusted
-  code", "exec in sandbox", "sandbox shell", "sandbox port", "sandbox
-  snapshot", "commit sandbox to disk", "sandbox volume", "sandbox
-  secret", "sandbox identity", "egress allow-list", "apply sandbox
-  yaml", "code interpreter", "agent swarm", "coding agent sandbox",
-  "host mcp".
+  If `aca` is missing, read `references/install.md` first. `aca`
+  ships ONLY via GitHub Releases (microsoft/azure-container-apps);
+  not npm/pip/winget/brew. Don't guess.
+
+  Triggers: install aca, install aca cli, setup aca, aca doctor, aca
+  login, command not found: aca, create sandbox, sandbox group, aca
+  cli, aca sandbox, microVM, code interpreter, agent swarm, host mcp.
 ---
 
 # Sandboxes
