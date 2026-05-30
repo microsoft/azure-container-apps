@@ -39,10 +39,22 @@ Pin a specific version:
 aca --version
 ```
 
-Then log in (`aca` delegates auth to `az login`) and run the doctor:
+Then log in (`aca` delegates auth to `az login`) and run the doctor.
+**Check first, log in only if needed** — calling `az login` unconditionally
+opens a browser / device-code flow even when a valid session is already
+cached, which is bad UX (and breaks in environments with no interactive
+browser):
 
 ```bash
-az login
+# bash / zsh
+az account show -o none 2>/dev/null || az login
+aca doctor
+```
+
+```powershell
+# PowerShell
+az account show -o none 2>$null
+if ($LASTEXITCODE -ne 0) { az login }
 aca doctor
 ```
 
