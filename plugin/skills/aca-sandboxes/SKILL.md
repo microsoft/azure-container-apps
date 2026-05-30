@@ -13,10 +13,6 @@ description: |
   scenarios like web apps, coding agents, code interpreter, swarms,
   computer-use, or MCP hosting.
 
-  If `aca` is missing, read `references/install.md` first. `aca`
-  ships ONLY via GitHub Releases (microsoft/azure-container-apps);
-  not npm/pip/winget/brew. Don't guess.
-
   Triggers: install aca, install aca cli, setup aca, aca doctor, aca
   login, command not found: aca, create sandbox, sandbox group, aca
   cli, aca sandbox, exec in sandbox, sandbox shell, mount volume,
