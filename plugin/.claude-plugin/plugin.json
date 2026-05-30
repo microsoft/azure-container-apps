@@ -17,11 +17,5 @@
     "ai-agents",
     "aca"
   ],
-  "skills": [
-    {
-      "name": "aca-sandboxes",
-      "description": "Use when the user wants to create, manage, or operate Azure Container Apps sandboxes \u2014 hardware-isolated microVMs driven by the `aca` CLI. USE FOR: create sandbox group, create sandbox, aca doctor, aca login, install aca, exec in sandbox, sandbox shell, fs read/write, expose port, mount volume, snapshot/suspend/resume sandbox, commit to disk, egress rules, secrets, identity, scenarios like coding agents, code interpreter, agent swarms, computer-use, web apps, MCP hosting. DO NOT USE FOR: regular Azure Container Apps (`Microsoft.App/containerApps`), AKS, or VM workloads.",
-      "path": "skills/aca-sandboxes"
-    }
-  ]
+  "skills": "./skills/"
 }
