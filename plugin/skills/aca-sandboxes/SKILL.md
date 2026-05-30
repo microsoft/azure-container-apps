@@ -1,5 +1,5 @@
 ---
-name: sandboxes
+name: aca-sandboxes
 description: |
   Azure Container Apps sandboxes let you run untrusted code, agents,
   MCP servers, and web apps in hardware-isolated microVMs.

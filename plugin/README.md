@@ -12,7 +12,7 @@ in your coding agent.
 /plugin marketplace add microsoft/azure-container-apps
 
 # Install all skills
-/plugin install sandboxes@Azure-Container-Apps
+/plugin install aca-sandboxes@Azure-Container-Apps
 ```
 
 ### Claude Code
