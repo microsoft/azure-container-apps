@@ -10,9 +10,9 @@
   },
   "plugins": [
     {
-      "name": "aca-sandboxes",
+      "name": "Azure-Container-Apps",
       "source": "./plugin",
-      "description": "Sandboxes — hardware-isolated microVMs with snapshot/resume, scale-to-zero. Driven by the `aca` CLI; Python SDK also available.",
+      "description": "Azure Container Apps skills for coding agents — currently hosts `aca-sandboxes`. More `aca-*` skills (jobs, apps, environments) will land in this same plugin.",
       "version": "0.0.5-beta",
       "skills": [
         "./plugin/skills/aca-sandboxes"

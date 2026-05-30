@@ -1,6 +1,6 @@
 {
-  "name": "aca-sandboxes",
-  "description": "Azure Container Apps sandboxes — hardware-isolated microVMs with snapshot/resume, scale-to-zero, deny-default egress. Driven by the `aca` CLI (delegates auth to `az login`); Python SDK also available.",
+  "name": "Azure-Container-Apps",
+  "description": "Azure Container Apps skills for coding agents — currently hosts `aca-sandboxes` (hardware-isolated microVMs). More `aca-*` skills (jobs, apps, environments) will land in this same plugin.",
   "version": "0.0.5-beta",
   "author": {
     "name": "Microsoft",
