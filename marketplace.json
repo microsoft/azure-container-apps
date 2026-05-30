@@ -13,7 +13,7 @@
       "name": "sandboxes",
       "source": "./plugin",
       "description": "Sandboxes — hardware-isolated microVMs with snapshot/resume, scale-to-zero. Driven by the `aca` CLI; Python SDK also available.",
-      "version": "0.0.1-beta",
+      "version": "0.0.5-beta",
       "skills": [
         "./plugin/skills/sandboxes"
       ]

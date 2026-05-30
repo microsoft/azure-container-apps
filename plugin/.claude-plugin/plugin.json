@@ -1,7 +1,7 @@
 {
-  "name": "Azure-Container-Apps",
-  "description": "Azure Container Apps skills marketplace — sandboxes (and more, coming soon).",
-  "version": "0.0.1-beta",
+  "name": "sandboxes",
+  "description": "Azure Container Apps sandboxes — hardware-isolated microVMs with snapshot/resume, scale-to-zero, deny-default egress. Driven by the `aca` CLI (delegates auth to `az login`); Python SDK also available.",
+  "version": "0.0.5-beta",
   "author": {
     "name": "Microsoft",
     "url": "https://www.microsoft.com"
@@ -17,5 +17,11 @@
     "ai-agents",
     "aca"
   ],
-  "skills": "./skills/"
+  "skills": [
+    {
+      "name": "sandboxes",
+      "description": "Azure Container Apps sandboxes let you run untrusted code, agents, MCP servers, and web apps in hardware-isolated microVMs. Supports snapshot/resume, scale-to-zero, deny-default egress, and is managed with the `aca` CLI using `az login`. USE FOR: create/manage sandbox groups and sandboxes, exec or open a shell, read/write files, expose ports, snapshot/stop/resume/commit-to-disk, mount volumes, tighten egress, manage secrets/identity/labels, apply YAML manifests, host MCP servers, code interpreter, agent swarms, computer-use. Triggers: install aca, install aca cli, setup aca, aca doctor, aca login, command not found: aca, create sandbox, sandbox group, aca cli, aca sandbox, exec in sandbox, sandbox shell, mount volume, expose port, fs write, egress allow, suspend sandbox, snapshot sandbox, microVM, code interpreter, agent swarm, host mcp. DO NOT USE FOR: Container Apps Apps/Jobs (use az containerapp), AKS (use kubectl), Azure Functions, App Service, building container images (use az acr build / docker).",
+      "path": "./skills/sandboxes"
+    }
+  ]
 }
