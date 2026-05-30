@@ -206,13 +206,12 @@ agent-driven self-installs, prefer the CLI install path above.
 The upstream README is at
 <https://github.com/microsoft/azure-container-apps/blob/main/docs/early/python-sdk/README.md>.
 
-## Python SDK (separate)
+## Python SDK — upstream reference
 
-An early-access Python SDK (`azure-containerapps-sandbox`) is also
-available if you'd rather drive sandboxes from service code instead of
-the CLI. It is **out of scope for this skill** — when the user asks for
-Python, point them at the upstream README and stop:
-
-> https://github.com/microsoft/azure-container-apps/blob/main/docs/early/python-sdk/README.md
-
-Mixing CLI and SDK in the same answer confuses things. Pick one.
+Full SDK docs and reference live upstream at
+<https://github.com/microsoft/azure-container-apps/blob/main/docs/early/python-sdk/README.md>.
+See the "Python SDK — install + use" section above for the canonical
+install path. CLI and SDK are interchangeable surfaces over the same
+data plane — pick whichever fits the user's runtime (CLI for shells /
+agents, SDK for service code). When answering a Python question, lead
+with the SDK; only mention the CLI if it's directly relevant.
