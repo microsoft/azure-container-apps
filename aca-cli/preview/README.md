@@ -24,13 +24,13 @@ curl -fsSL https://aka.ms/aca-cli-install | ACA_VERSION=aca-cli-v0.1.0-preview s
 ### Windows (PowerShell)
 
 ```powershell
-irm https://raw.githubusercontent.com/microsoft/azure-container-apps/main/aca-cli/preview/install.ps1 | iex
+irm https://aka.ms/aca-cli-install-windows | iex
 ```
 
 Pin a specific version:
 
 ```powershell
-& ([scriptblock]::Create((irm https://raw.githubusercontent.com/microsoft/azure-container-apps/main/aca-cli/preview/install.ps1))) -Version aca-cli-v0.1.0-preview
+& ([scriptblock]::Create((irm https://aka.ms/aca-cli-install-windows))) -Version aca-cli-v0.1.0-preview
 ```
 
 ## Uninstall
@@ -44,7 +44,7 @@ curl -fsSL https://aka.ms/aca-cli-install | sh -s -- --uninstall
 **Windows (PowerShell):**
 
 ```powershell
-& ([scriptblock]::Create((irm https://raw.githubusercontent.com/microsoft/azure-container-apps/main/aca-cli/preview/install.ps1))) -Uninstall
+& ([scriptblock]::Create((irm https://aka.ms/aca-cli-install-windows))) -Uninstall
 ```
 
 ## Supported platforms
