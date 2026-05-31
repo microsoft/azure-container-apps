@@ -40,9 +40,9 @@ function Install-Aca {
 
     if ($Version -eq "latest") {
         # Fetch latest version from version file (no API, no rate limits)
-        $Version = (Invoke-WebRequest -Uri "https://raw.githubusercontent.com/$Repo/$Branch/docs/early/aca-cli/latest-version.txt" -UseBasicParsing).Content.Trim()
+        $Version = (Invoke-WebRequest -Uri "https://raw.githubusercontent.com/$Repo/$Branch/aca-cli/preview/latest-version.txt" -UseBasicParsing).Content.Trim()
         if (-not $Version) {
-            throw "Could not determine latest version. Specify manually: -Version aca-cli-v0.1.0-early-access"
+            throw "Could not determine latest version. Specify manually: -Version aca-cli-v0.1.0-preview"
         }
         Write-Host "Latest version: $Version"
     }

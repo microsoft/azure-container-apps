@@ -175,21 +175,10 @@ in [references/scenarios.md](references/scenarios.md).
 
 ## Python SDK — install + use
 
-The Python SDK (`azure-containerapps-sandbox`) is the programmatic
-counterpart to the `aca` CLI and is in early access. **It is not on
-PyPI yet** — `pip install azure-containerapps-sandbox` will fail. The
-canonical install is the wheel at `https://aka.ms/aca-sdk-python`:
+The Python SDK ([`azure-containerapps-sandbox`](https://pypi.org/project/azure-containerapps-sandbox/)) is the programmatic counterpart to the `aca` CLI and is in public preview. Install from PyPI:
 
 ```bash
-# bash / zsh
-curl -L -OJ https://aka.ms/aca-sdk-python
-pip install ./azure_containerapps_sandbox-*.whl
-```
-
-```powershell
-# PowerShell
-Invoke-WebRequest -Uri https://aka.ms/aca-sdk-python -OutFile $env:TEMP\aca-sdk.whl
-pip install $env:TEMP\aca-sdk.whl
+pip install azure-containerapps-sandbox
 ```
 
 Import as:
@@ -202,16 +191,3 @@ The SDK and the `aca` CLI are interchangeable surfaces over the same
 control plane — pick whichever fits your runtime (CLI for shells /
 agents / scripts, SDK for service code). When in doubt or for
 agent-driven self-installs, prefer the CLI install path above.
-
-The upstream README is at
-<https://github.com/microsoft/azure-container-apps/blob/main/docs/early/python-sdk/README.md>.
-
-## Python SDK — upstream reference
-
-Full SDK docs and reference live upstream at
-<https://github.com/microsoft/azure-container-apps/blob/main/docs/early/python-sdk/README.md>.
-See the "Python SDK — install + use" section above for the canonical
-install path. CLI and SDK are interchangeable surfaces over the same
-data plane — pick whichever fits the user's runtime (CLI for shells /
-agents, SDK for service code). When answering a Python question, lead
-with the SDK; only mention the CLI if it's directly relevant.

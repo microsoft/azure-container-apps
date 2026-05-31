@@ -39,10 +39,10 @@ detect_platform() {
 get_download_url() {
     if [ "$VERSION" = "latest" ]; then
         # Fetch latest version from version file (no API, no rate limits)
-        VERSION="$(curl -fsSL "https://raw.githubusercontent.com/${REPO}/${BRANCH}/docs/early/aca-cli/latest-version.txt" | tr -d '[:space:]')"
+        VERSION="$(curl -fsSL "https://raw.githubusercontent.com/${REPO}/${BRANCH}/aca-cli/preview/latest-version.txt" | tr -d '[:space:]')"
         if [ -z "$VERSION" ]; then
             echo "Error: Could not determine latest version."
-            echo "Specify a version manually: ACA_VERSION=aca-cli-v0.1.0-early-access $0"
+            echo "Specify a version manually: ACA_VERSION=aca-cli-v0.1.0-preview $0"
             exit 1
         fi
         echo "Latest version: ${VERSION}"
