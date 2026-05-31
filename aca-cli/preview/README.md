@@ -15,22 +15,10 @@ The `aca` CLI is the command-line client for Azure Container Apps Sandboxes, now
 curl -fsSL https://aka.ms/aca-cli-install | sh
 ```
 
-Pin a specific version:
-
-```bash
-curl -fsSL https://aka.ms/aca-cli-install | ACA_VERSION=aca-cli-v0.1.0-preview sh
-```
-
 ### Windows (PowerShell)
 
 ```powershell
 irm https://aka.ms/aca-cli-install-ps | iex
-```
-
-Pin a specific version:
-
-```powershell
-& ([scriptblock]::Create((irm https://aka.ms/aca-cli-install-ps))) -Version aca-cli-v0.1.0-preview
 ```
 
 ## Uninstall
@@ -88,10 +76,6 @@ Get-FileHash -Algorithm SHA256 aca-cli-v0.1.0-preview-win-x64.zip
 ```
 
 Compare the output against the matching line in [`latest-version.txt`](./latest-version.txt).
-
-### Installing an older version
-
-If you pin a version that differs from the one in `latest-version.txt` (via `ACA_VERSION=...` on Linux/macOS or `-Version ...` on Windows), the installer prints a warning and skips the SHA-256 check, since this file only carries the hashes for the currently pinned version.
 
 ## Feedback
 

@@ -6,9 +6,6 @@ BRANCH="main"
 BINARY_NAME="aca"
 INSTALL_DIR="/usr/local/bin"
 
-# Allow overriding version; default to latest
-VERSION="${ACA_VERSION:-latest}"
-
 detect_platform() {
     OS="$(uname -s)"
     ARCH="$(uname -m)"
@@ -64,9 +61,8 @@ is_sha256() {
 }
 
 # Fetch and parse the pinned latest-version.txt. Sets:
-#   PINNED_VERSION  - the version= line value
-#   EXPECTED_HASH   - the <platform>= line value, or empty when not verifying
-#   VERIFY_HASH     - "yes" when the install must verify the SHA-256, else "no"
+#   VERSION         - the version= line value
+#   EXPECTED_HASH   - the <platform>= line value, validated as 64-char hex
 load_version_pin() {
     VERSION_FILE_URL="https://raw.githubusercontent.com/${REPO}/${BRANCH}/aca-cli/preview/latest-version.txt"
     VERSION_FILE_CONTENT="$(curl -fsSL "$VERSION_FILE_URL")" || VERSION_FILE_CONTENT=""
@@ -76,36 +72,23 @@ load_version_pin() {
         exit 1
     fi
 
-    PINNED_VERSION="$(printf '%s\n' "$VERSION_FILE_CONTENT" | extract_value version)"
-    if [ -z "$PINNED_VERSION" ]; then
+    VERSION="$(printf '%s\n' "$VERSION_FILE_CONTENT" | extract_value version)"
+    if [ -z "$VERSION" ]; then
         echo "Error: latest-version.txt is missing a 'version=' entry."
         exit 1
     fi
 
-    if [ "$VERSION" = "latest" ] || [ "$VERSION" = "$PINNED_VERSION" ]; then
-        VERSION="$PINNED_VERSION"
-        EXPECTED_HASH="$(printf '%s\n' "$VERSION_FILE_CONTENT" | extract_value "$PLATFORM")"
-        if [ -z "$EXPECTED_HASH" ]; then
-            echo "Error: latest-version.txt has no SHA-256 entry for platform '${PLATFORM}'."
-            echo "This release does not advertise a verified archive for your platform."
-            exit 1
-        fi
-        if ! is_sha256 "$EXPECTED_HASH"; then
-            echo "Error: SHA-256 for '${PLATFORM}' in latest-version.txt is not 64 lowercase hex characters."
-            exit 1
-        fi
-        VERIFY_HASH="yes"
-        echo "Pinned version: ${VERSION}"
-    else
-        # User asked for a version different from the one pinned in main.
-        # We can't verify older/newer tags from this file, so install but warn.
-        EXPECTED_HASH=""
-        VERIFY_HASH="no"
-        echo "Requested version: ${VERSION}"
-        echo "Pinned version on main: ${PINNED_VERSION}"
-        echo "WARNING: SHA-256 verification skipped because the requested version does not match the pinned version."
-        echo "         To get a verified install, run without ACA_VERSION (or set ACA_VERSION=${PINNED_VERSION})."
+    EXPECTED_HASH="$(printf '%s\n' "$VERSION_FILE_CONTENT" | extract_value "$PLATFORM")"
+    if [ -z "$EXPECTED_HASH" ]; then
+        echo "Error: latest-version.txt has no SHA-256 entry for platform '${PLATFORM}'."
+        echo "This release does not advertise a verified archive for your platform."
+        exit 1
     fi
+    if ! is_sha256 "$EXPECTED_HASH"; then
+        echo "Error: SHA-256 for '${PLATFORM}' in latest-version.txt is not 64 lowercase hex characters."
+        exit 1
+    fi
+    echo "Pinned version: ${VERSION}"
 }
 
 get_download_url() {
@@ -132,9 +115,6 @@ to_lower() {
 
 verify_archive() {
     archive="$1"
-    if [ "$VERIFY_HASH" != "yes" ]; then
-        return 0
-    fi
     actual="$(compute_sha256 "$archive")"
     rc=$?
     if [ $rc -ne 0 ] || [ -z "$actual" ]; then
