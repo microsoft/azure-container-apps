@@ -1,1 +1,10 @@
-aca-cli-v0.1.0-preview
+# ACA CLI release pin.
+# install.sh and install.ps1 read this file to determine the version
+# AND the expected SHA-256 of each platform archive. A mismatch aborts
+# the install. Lines beginning with # and blank lines are ignored.
+# Updating a hash requires a PR review.
+
+version=aca-cli-v0.1.0-preview
+linux-x64=aa16b020f28288efc78d97cdebcbfd74ea6602e32b63f9984775b815c722d741
+osx-arm64=362fa2da370a996660d23ffae9f2eca4e28a32e501a4b8818297cb066eb5f6dc
+win-x64=62dcf2cfc67443d361ea43460a2197736c3a3ad86b377a3d9d542791cec2ab5d
