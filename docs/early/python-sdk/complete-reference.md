@@ -32,10 +32,10 @@ Reference documentation for the `azure-containerapps-sandbox` Python SDK. Covers
 
 ## Installation
 
-Install the SDK wheel from the early-access GitHub release:
+Install the SDK from PyPI:
 
 ```bash
-pip install https://github.com/microsoft/azure-container-apps/releases/download/python-sdk-v0.1.0b1-early-access/azure_containerapps_sandbox-0.1.0b1-py3-none-any.whl
+pip install azure-containerapps-sandbox
 ```
 
 For one-time setup that creates a resource group and assigns RBAC, also install the Azure management libraries:

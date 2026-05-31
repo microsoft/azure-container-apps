@@ -14,7 +14,7 @@ Python SDK for Azure Container Apps sandboxes. Create sandbox groups, sandboxes,
 ## Install
 
 ```bash
-pip install https://github.com/microsoft/azure-container-apps/releases/download/python-sdk-v0.1.0b1-early-access/azure_containerapps_sandbox-0.1.0b1-py3-none-any.whl
+pip install azure-containerapps-sandbox
 ```
 
 For management setup (resource group and role assignment):
@@ -486,7 +486,7 @@ orchestrator = client.begin_create_sandbox(
 
 ```python
 # Install SDK inside the sandbox
-orchestrator.exec("pip install <sdk-wheel-url> azure-identity --quiet")
+orchestrator.exec("pip install azure-containerapps-sandbox azure-identity --quiet")
 
 # Write a script that creates child sandboxes using managed identity
 orchestrator.write_file("/tmp/spawn.py", """
