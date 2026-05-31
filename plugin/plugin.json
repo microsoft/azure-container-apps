@@ -1,7 +1,7 @@
 {
-  "name": "Azure-Container-Apps",
-  "description": "Azure Container Apps skills marketplace — sandboxes (and more, coming soon).",
-  "version": "0.0.1-beta",
+  "name": "sandboxes",
+  "description": "Azure Container Apps Sandboxes — hardware-isolated microVMs driven by the `aca` CLI. Part of the `Azure-Container-Apps` marketplace; future siblings (`jobs`, `apps`, `environments`) will land alongside it.",
+  "version": "0.0.5-beta",
   "author": {
     "name": "Microsoft",
     "url": "https://www.microsoft.com"

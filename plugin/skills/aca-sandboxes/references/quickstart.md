@@ -7,8 +7,10 @@ sandbox, run a command, and clean up — all via the `aca` CLI.
 > Azure CLI is on your `PATH`. Full prereqs: [prerequisites.md](prerequisites.md).
 
 ```bash
-# 0. Log in to Azure
-az login
+# 0. Log in to Azure — auth-aware: skip if already signed in
+#    (calling `az login` unconditionally opens a browser even when
+#    a valid session is already cached)
+az account show -o none 2>/dev/null || az login
 
 # 1. Create a resource group (skip if you have one)
 az group create --name my-rg --location eastus2

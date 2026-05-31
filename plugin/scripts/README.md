@@ -19,7 +19,7 @@ connector add` (not a real command; the group is `aca sandboxgroup` with no hyph
 node plugin/scripts/verify-aca-verbs.mjs
 
 # Or scope to a single skill:
-node plugin/scripts/verify-aca-verbs.mjs plugin/skills/sandboxes
+node plugin/scripts/verify-aca-verbs.mjs plugin/skills/aca-sandboxes
 ```
 
 ### Exit codes

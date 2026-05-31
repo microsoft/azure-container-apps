@@ -1,27 +1,10 @@
 ---
-name: sandboxes
-description: |
-  Azure Container Apps sandboxes let you run untrusted code, agents,
-  MCP servers, and web apps in hardware-isolated microVMs.
-  Supports snapshot/resume, scale-to-zero, deny-default egress, and is
-  managed with `aca` CLI using `az login`.
-
-  Use when the user wants to: create/manage sandbox groups and
-  sandboxes; exec or open a shell; read/write files; expose ports;
-  snapshot, stop, resume, commit to disk; mount volumes; tighten
-  egress; manage secrets, identity, labels; apply YAML; or run
-  scenarios like web apps, coding agents, code interpreter, swarms,
-  computer-use, or MCP hosting.
-
-  If `aca` is missing, read `references/install.md` first. `aca`
-  ships ONLY via GitHub Releases (microsoft/azure-container-apps);
-  not npm/pip/winget/brew. Don't guess.
-
-  Triggers: install aca, install aca cli, setup aca, aca doctor, aca
-  login, command not found: aca, create sandbox, sandbox group, aca
-  cli, aca sandbox, exec in sandbox, sandbox shell, mount volume,
-  expose port, fs write, egress allow, suspend sandbox, snapshot
-  sandbox, microVM, code interpreter, agent swarm, host mcp.
+name: aca-sandboxes
+description: "Use when the user wants to create, manage, or operate Azure Container Apps sandboxes \u2014 hardware-isolated microVMs driven by the `aca` CLI. USE FOR: create sandbox group, create sandbox, aca doctor, aca auth login, install aca, exec in sandbox, sandbox shell, fs read/write, expose port, mount volume, snapshot/suspend/resume sandbox, commit to disk, egress rules, secrets, identity, list disk images, Python SDK install, Azure portal sandbox surface, compare to Dynamic Sessions or Container Apps, scenarios like coding agents, code interpreter, agent swarms, computer-use, web apps, MCP hosting. DO NOT USE FOR: regular Azure Container Apps (`Microsoft.App/containerApps`), AKS, or VM workloads."
+license: MIT
+metadata:
+  author: Microsoft
+  version: "0.0.5-beta"
 ---
 
 # Sandboxes
@@ -65,22 +48,26 @@ intent.
 
 | User intent | Cues your response MUST include |
 |---|---|
-| **Install the `aca` CLI** (any OS) | (1) The curl/iwr one-liner from [references/install.md](references/install.md) — use the `https://aka.ms/aca-cli-install` (Linux/macOS) and `https://aka.ms/aca-cli-install-ps` (Windows) short URLs. (2) `aca --version` + `az login` + `aca doctor` (`aca` delegates auth to `az login` — same Entra identity). (3) The explicit sentence: **"this same install path is also used inside sandboxes and containers for agent-driven self-installs."** |
-| **Bootstrap a sandbox group (one-time setup)** | The 4-step flow: `az login` → `aca sandboxgroup create --name <g> --location <region> --set-config` → `aca sandboxgroup role create --role "Container Apps SandboxGroup Data Owner" --principal-id $(az ad signed-in-user show --query id -o tsv)` → `aca doctor`. **`--set-config` is required** so subsequent `aca sandbox …` commands don't need `--group` on every call. Treat green `aca doctor` as the gate before doing anything else. |
+| **Install the `aca` CLI** (any OS) | (1) The curl/iwr one-liner from [references/install.md](references/install.md) — use the `https://aka.ms/aca-cli-install` (Linux/macOS) and `https://aka.ms/aca-cli-install-ps` (Windows) short URLs. (2) `aca --version` + **auth-aware sign-in** (`az account show -o none 2>$null; if ($LASTEXITCODE -ne 0) { az login }`, then `aca auth login` to acquire an `aca` token — never call `az login` or `aca auth login` unconditionally; gate both on a status check) + `aca doctor`. The CLI surface for auth is **`aca auth login`** (the top-level `aca` binary does not have a bare `login` subcommand). (3) The explicit sentence: **"this same install path is also used inside sandboxes and containers for agent-driven self-installs."** |
+| **Bootstrap a sandbox group (one-time setup)** | The 4-step flow: **check auth first** (`az account show -o none 2>$null; if ($LASTEXITCODE -ne 0) { az login }`, then `aca auth login` if `aca` is not yet authenticated — *never* call `az login` or `aca auth login` unconditionally) → `aca sandboxgroup create --name <g> --location <region> --set-config` → `aca sandboxgroup role create --role "Container Apps SandboxGroup Data Owner" --principal-id $(az ad signed-in-user show --query id -o tsv)` → `aca doctor`. **`--set-config` is required** so subsequent `aca sandbox …` commands don't need `--group` on every call. Treat green `aca doctor` as the gate before doing anything else. **Heads-up:** `aca sandboxgroup create` already grants the Data Owner role to the calling principal, so the explicit `role create` is only needed when granting access to *additional* principals (use `--skip-role-check` on `create` if you want to defer). |
 | **Create a sandbox (imperative)** | Minimum: `aca sandbox create --disk ubuntu`. Common knobs: `--cpu 2000m`, `--memory 4096Mi`, `--env "K=V"`, `--labels "name=dev,role=worker"`. Capture the printed ID into `SANDBOX_ID=$(aca sandbox create --disk ubuntu -o json \| jq -r .id)` for reuse. For config that should live in source control, use the manifest flow (see the row below) instead. |
 | **Apply / deploy a sandbox manifest** | The full 3-command flow: `aca sandbox init` → `aca sandbox validate --file sandbox.yaml` → `aca sandbox apply --file sandbox.yaml`. Always `--file` (no `-f` short flag). State that **the manifest pattern is the recommended path for CI/CD and reproducibility**, in contrast to imperative `aca sandbox create`. If no manifest is present, run `aca sandbox init` — don't ask for a path. |
-| **Scaffold / generate a sandbox manifest** | Run (or show) `aca sandbox init`. Mention the commonly edited fields (`disk`, `resources`, `lifecycle.autoSuspendPolicy`, `egressPolicy`, plus `ports`, `env`, `labels` as needed). Mention `aca sandbox schema` as the way to dump the JSON Schema for editor autocomplete. |
+| **Scaffold / generate a sandbox manifest** | Run (or show) `aca sandbox init` to scaffold a starter `sandbox.yaml`. Mention the commonly edited fields (`disk`, `resources`, `lifecycle.autoSuspendPolicy`, `egressPolicy`, plus `ports`, `env`, `labels` as needed). Mention `aca sandbox schema` as the way to dump the JSON Schema for editor autocomplete. |
 | **Run a command or open a shell in a sandbox** | Two distinct verbs: `aca sandbox exec --id "$SANDBOX_ID" -c "<command>"` for one-shot commands (returns stdout/stderr); `aca sandbox shell --id "$SANDBOX_ID"` for an interactive PTY. **Anti-cue:** `ssh` does not work — there is no SSH daemon inside the sandbox. `aca sandbox exec` / `shell` is the only path. |
 | **Delete a sandbox** | `aca sandbox delete --id "$SANDBOX_ID" --yes`. **Always recommend snapshotting first** if there is any state worth preserving (`aca sandbox snapshot --id "$SANDBOX_ID" --name <snap>`) — delete is destructive. To delete by label selector: `aca sandbox list -l "name=<n>" -o json \| jq -r '.[].id' \| xargs -I{} aca sandbox delete --id {} --yes`. |
 | **Read / write / copy files in a sandbox** | The `aca sandbox fs` family — `fs write --id "$SANDBOX_ID" --path /remote/p --file ./local` to upload, `fs cat --id "$SANDBOX_ID" --path /remote/p` to read, plus `fs ls / stat / mkdir / rm [--recursive]` for management. **Don't** suggest `scp` / `rsync` / shared filesystems — there is no SSH, and `fs` is the only data-plane file transport. |
 | **Expose a port — public preview (anonymous)** | The two-step shape: `URL=$(aca sandbox port add --id "$SANDBOX_ID" --port <p> --anonymous -o json \| jq -r .url)`, then hit `$URL`. **State explicitly** that anonymous = anyone with the URL can reach it (public preview only). Remove with `aca sandbox port remove --id "$SANDBOX_ID" --port <p>`. For per-user gating use the Entra row below. |
-| **Expose a port with email / Entra auth** | The `aca sandbox port add --id "$SANDBOX_ID" --port <p> --email <email>` command. **The Entra gotcha:** the email must be the user's Entra `mail` value — for some tenants the alias / UPN differs and won't work. Recommend `az ad signed-in-user show --query mail -o tsv` to fetch it. |
+| **Expose a port with Entra auth (per-user gating)** | `aca sandbox port add --id "$SANDBOX_ID" --port <p> --auth entra --allow-principal <user-object-id>`. Fetch the principal's object id with `az ad signed-in-user show --query id -o tsv` (or `az ad user show --id <upn> --query id -o tsv` for someone else). Pass `--allow-principal` once per principal you want to admit. **Anti-cue:** there is **no `--email` flag** — that's a stale shape; the supported gating is `--auth entra` + `--allow-principal <object-id>`. |
 | **Mount a shared volume** | Two-step: (1) at the group: `aca sandboxgroup volume create --name <v> --type AzureBlob` (multi-attach, shared) or `--type DataDisk` (single-attach, high-perf block). (2) at the sandbox: `aca sandbox mount --id "$SANDBOX_ID" --volume <v> --path /mnt/<v>`. State that **the volume lives at the group level**; sandboxes attach it at runtime. |
-| **Lock down network egress (deny-default + allow-list)** | The canonical form: `aca sandbox egress set --id "$SANDBOX_ID" --default Deny --rule "*.github.com:Allow" --traffic-inspection Full`. Multiple `--rule "host:Allow"` flags accumulate. Inspect current policy with `aca sandbox egress show --id "$SANDBOX_ID"`. For production agent code, **always recommend `--default Deny`** with an explicit allow-list. |
-| **Use a non-default disk image** | List published images first: `aca sandboxgroup disk list-public`, then `aca sandbox create --disk <name>`. To bake your own from an OCI image: `aca sandboxgroup disk create --image docker.io/library/alpine:3.19 --name <my-disk>`, then `aca sandbox create --disk-id <id>`. **Flag distinction:** `--disk` takes the public name; `--disk-id` takes the resource ID of a private/committed disk. |
+| **Lock down network egress (deny-default + allow-list)** | The canonical form: `aca sandbox egress set --id "$SANDBOX_ID" --default Deny --host-allow "*.github.com" --traffic-inspection Full`. Multiple `--host-allow "<host>"` flags accumulate. Inspect current policy with `aca sandbox egress show --id "$SANDBOX_ID"`. For production agent code, **always recommend `--default Deny`** with an explicit `--host-allow` list. **Anti-cue:** do not invent flags for individual IPs or block-lists — the only supported shape is `--default Deny|Allow` plus repeated `--host-allow`. |
+| **List / use a disk image** | The canonical "what disks are available?" verb is **`aca sandboxgroup disk list-public`** (NOT `aca disks list`, which does not exist). Common presets include `ubuntu`, `debian`, `alpine`, `python`, `node`, `dotnet`, and `playwright`. To bake your own from an OCI image: `aca sandboxgroup disk create --image docker.io/library/alpine:3.19 --name <my-disk>`, then `aca sandbox create --disk-id <id>`. **Flag distinction:** `--disk` takes the public preset name; `--disk-id` takes the resource ID of a private/committed disk. |
 | **Suspend, resume, or set auto-suspend** | Manual: `aca sandbox stop --id "$SANDBOX_ID"` suspends (preserves memory + disk); `aca sandbox resume --id "$SANDBOX_ID"` does sub-second restore. Idle policy: `aca sandbox lifecycle set --id "$SANDBOX_ID" --auto-suspend <seconds>` (default 300s = 5 min). State that **suspended sandboxes incur storage cost only, no compute** — this is the primary cost lever. |
-| **Snapshot / commit a sandbox** | Per-sandbox: `aca sandbox snapshot --id "$SANDBOX_ID" --name <snap>`, then boot replicas with `aca sandbox create --snapshot <snap>`. Group-level CRUD: `aca sandboxgroup snapshot list / get / delete --selector "name=<snap>"`. **Strongly recommend snapshotting BEFORE `aca sandbox delete`** to preserve state. Use `--name`, never `--image`. Disk-only baking is `aca sandbox commit … --name <disk>`. |
+| **Snapshot / commit a sandbox** | Per-sandbox: `aca sandbox snapshot --id "$SANDBOX_ID" --name <snap-name>`, then boot replicas with `aca sandbox create --snapshot <snap-name>`. Group-level CRUD: `aca sandboxgroup snapshot list / get / delete --selector "name=<snap-name>"`. **Strongly recommend snapshotting BEFORE `aca sandbox delete`** to preserve state. Always use `--name <snap-name>`, **never `--image`** (that is the wrong flag and will be rejected). Disk-only baking is `aca sandbox commit --id "$SANDBOX_ID" --name <disk-name>`. |
+| **Install the Python SDK** | The SDK is distributed as a wheel from `https://aka.ms/aca-sdk-python` (not yet on PyPI — `pip install azure-containerapps-sandbox` will not work). Canonical install: `curl -L -OJ https://aka.ms/aca-sdk-python` then `pip install ./azure_containerapps_sandbox-*.whl` (PowerShell: `Invoke-WebRequest https://aka.ms/aca-sdk-python -OutFile $env:TEMP\aca-sdk.whl; pip install $env:TEMP\aca-sdk.whl`). Import as `from azure_containerapps_sandbox import ...`. The SDK and the `aca` CLI are interchangeable surfaces over the same data plane — pick whichever fits your runtime (CLI for shells / agents, SDK for service code). |
+| **Compare the `aca` CLI vs the Azure portal** | Both surfaces exist for sandbox groups. The portal lives at **`https://containerapps.azure.com/sandbox-groups`** and is good for visual inventory, role assignments, and ad-hoc inspection. The `aca` CLI is the authoritative scripting / automation surface — every `aca sandbox …` and `aca sandboxgroup …` verb is available there and is what CI/CD, agents, and reproducible workflows should use. Recommend **portal for discovery and one-off ops, CLI for everything programmable**. |
+| **Compare ACA Sandboxes vs Dynamic Sessions** | **Different products.** ACA Sandboxes (`Microsoft.App/SandboxGroups`, the `aca` CLI) are hardware-isolated microVMs with snapshot/resume, shell/exec, port exposure, volumes, and egress policy — meant for long-running agent workloads, dev envs, MCP hosting, computer-use. Dynamic Sessions (`Microsoft.App/sessionPools`, the Sessions SDK) are short-lived Python/Node code-interpreter sandboxes meant for single-call LLM tool execution. If the user asks about Dynamic Sessions, redirect to those docs — do **not** answer with `aca` commands. |
 | **Anything in the "When NOT to use this skill" table below** | A one-paragraph redirect to the right tool or official docs. **Do NOT** run the out-of-scope tool's commands. **Do NOT** walk through options. **Do NOT** ask follow-up questions about the out-of-scope tool. Bow out cleanly. |
+| **Vague / single-word prompts** (`sandbox`, `microvm`, "I need a VM", "ephemeral VM for dev", "coding agent sandbox", "AI agent runtime") | **Ask one clarifying question first** before jumping into `aca sandbox create`. Disambiguate between: (a) coding agent / dev env in a sandbox, (b) AI agent runtime, (c) MCP hosting, (d) ephemeral VM-style dev box, (e) code interpreter. Then route to the matching row above. Premature commitment to `aca sandbox create` on a vague prompt is a failure. |
 
 ## When **NOT** to use this skill (hard reject + redirect)
 
@@ -122,7 +109,7 @@ smoke test if you're testing changes to this skill).
 
 | Try saying | What you should get back |
 |---|---|
-| *"install the aca cli"* | the `aka.ms/aca-cli-install` one-liner + `aca --version` + `az login` + `aca doctor` |
+| *"install the aca cli"* | the `aka.ms/aca-cli-install` one-liner + `aca --version` + **auth-aware** `az account show; az login *only* if it fails` + `aca doctor` |
 | *"set up a sandbox group from scratch"* | the full 4-step bootstrap (group create + Data Owner role + `aca doctor` gate) |
 | *"create an ubuntu sandbox and run uname -a in it"* | `aca sandbox create` with ID capture, then `aca sandbox exec` |
 | *"how do I ssh into my sandbox?"* | corrective answer — no SSH daemon; use `aca sandbox shell` or `exec` |
@@ -154,7 +141,7 @@ options.
 | 03 | **Disks**                 | Public disks, build from container image, commit a running sandbox.          | `aca sandboxgroup disk list-public / create --image` · `aca sandbox commit --id <id> --name X` · `aca sandbox create --disk <public-name>` (or `--disk-id <id>` for private/committed disks) |
 | 04 | **Volumes**               | `AzureBlob` (shared) or `DataDisk` (block); mount at create or post-create.  | `aca sandboxgroup volume create --type AzureBlob` · `aca sandbox mount --volume X --path /mnt/x` |
 | 05 | **Lifecycle**             | Stop/resume; auto-suspend after idle; auto-delete after TTL.                 | `aca sandbox stop / resume` · `aca sandbox lifecycle set --auto-suspend 60` |
-| 06 | **Ports**                 | Expose an HTTP port; anonymous or Entra-gated; revoke.                       | `aca sandbox port add --port 8080 [--anonymous]` · `port list / remove` |
+| 06 | **Ports**                 | Expose an HTTP port; anonymous or Entra-gated (`--auth entra --allow-principal`); revoke.   | `aca sandbox port add --port 8080 [--anonymous \| --auth entra --allow-principal <object-id>]` · `port list / remove` |
 | 07 | **Files**                 | write / read / list / stat / mkdir / delete inside the sandbox.              | `aca sandbox fs write --file ./local` · `fs cat / ls` · `fs cp <src> <dst>` (positional, `sbx-id:/path` syntax) |
 | 08 | **Egress**                | Deny-default outbound + host allow-list; audit decisions; YAML transforms.   | `aca sandbox egress set --default Deny --host-allow "*.host.com"` · `egress show / decisions / apply` |
 | 09 | **Secrets**               | Group-scoped key/value, fetched at runtime from inside the sandbox.          | `aca sandboxgroup secret upsert --name X --values "K=V"` · `secret list / delete` |
@@ -186,13 +173,45 @@ in [references/scenarios.md](references/scenarios.md).
   `AzureBlob` volumes.
 - **Developer workflows** — PR builds, ephemeral CI, on-demand dev envs.
 
-## Python SDK (separate)
+## Python SDK — install + use
 
-An early-access Python SDK (`azure-containerapps-sandbox`) is also
-available if you'd rather drive sandboxes from service code instead of
-the CLI. It is **out of scope for this skill** — when the user asks for
-Python, point them at the upstream README and stop:
+The Python SDK (`azure-containerapps-sandbox`) is the programmatic
+counterpart to the `aca` CLI and is in early access. **It is not on
+PyPI yet** — `pip install azure-containerapps-sandbox` will fail. The
+canonical install is the wheel at `https://aka.ms/aca-sdk-python`:
 
-> https://github.com/microsoft/azure-container-apps/blob/main/docs/early/python-sdk/README.md
+```bash
+# bash / zsh
+curl -L -OJ https://aka.ms/aca-sdk-python
+pip install ./azure_containerapps_sandbox-*.whl
+```
 
-Mixing CLI and SDK in the same answer confuses things. Pick one.
+```powershell
+# PowerShell
+Invoke-WebRequest -Uri https://aka.ms/aca-sdk-python -OutFile $env:TEMP\aca-sdk.whl
+pip install $env:TEMP\aca-sdk.whl
+```
+
+Import as:
+
+```python
+from azure_containerapps_sandbox import SandboxGroupsClient
+```
+
+The SDK and the `aca` CLI are interchangeable surfaces over the same
+control plane — pick whichever fits your runtime (CLI for shells /
+agents / scripts, SDK for service code). When in doubt or for
+agent-driven self-installs, prefer the CLI install path above.
+
+The upstream README is at
+<https://github.com/microsoft/azure-container-apps/blob/main/docs/early/python-sdk/README.md>.
+
+## Python SDK — upstream reference
+
+Full SDK docs and reference live upstream at
+<https://github.com/microsoft/azure-container-apps/blob/main/docs/early/python-sdk/README.md>.
+See the "Python SDK — install + use" section above for the canonical
+install path. CLI and SDK are interchangeable surfaces over the same
+data plane — pick whichever fits the user's runtime (CLI for shells /
+agents, SDK for service code). When answering a Python question, lead
+with the SDK; only mention the CLI if it's directly relevant.

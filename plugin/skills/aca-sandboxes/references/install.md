@@ -39,12 +39,32 @@ Pin a specific version:
 aca --version
 ```
 
-Then log in (`aca` delegates auth to `az login`) and run the doctor:
+Then sign in and run the doctor. Both `az login` and `aca auth login`
+should be **gated on a status check** — calling either one
+unconditionally opens a browser / device-code flow even when a valid
+session is already cached, which is bad UX (and breaks in environments
+with no interactive browser):
 
 ```bash
-az login
+# bash / zsh
+az account show -o none 2>/dev/null || az login
+aca auth status >/dev/null 2>&1 || aca auth login
 aca doctor
 ```
+
+```powershell
+# PowerShell
+az account show -o none 2>$null
+if ($LASTEXITCODE -ne 0) { az login }
+aca auth status *> $null
+if ($LASTEXITCODE -ne 0) { aca auth login }
+aca doctor
+```
+
+> The CLI verb for `aca` sign-in is **`aca auth login`**. The top-level
+> `aca` binary does not have a bare `login` subcommand — always use the
+> `auth` namespace. `aca` delegates the underlying Entra flow to
+> `az login`, so the same identity / MFA apply.
 
 ## Uninstall
 
