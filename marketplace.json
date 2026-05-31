@@ -10,9 +10,9 @@
   },
   "plugins": [
     {
-      "name": "Azure-Container-Apps",
+      "name": "sandboxes",
       "source": "./plugin",
-      "description": "Azure Container Apps skills for coding agents — currently hosts `aca-sandboxes`. More `aca-*` skills (jobs, apps, environments) will land in this same plugin.",
+      "description": "Azure Container Apps Sandboxes — hardware-isolated microVMs driven by the `aca` CLI. Future siblings (`jobs`, `apps`, `environments`) will land in this same marketplace.",
       "version": "0.0.5-beta",
       "skills": [
         "./plugin/skills/aca-sandboxes"
