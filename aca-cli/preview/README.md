@@ -12,13 +12,13 @@ The `aca` CLI is the command-line client for Azure Container Apps Sandboxes, now
 ### Linux / macOS
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/microsoft/azure-container-apps/main/aca-cli/preview/install.sh | sh
+curl -fsSL https://aka.ms/aca-cli-install | sh
 ```
 
 Pin a specific version:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/microsoft/azure-container-apps/main/aca-cli/preview/install.sh | ACA_VERSION=aca-cli-v0.1.0-preview sh
+curl -fsSL https://aka.ms/aca-cli-install | ACA_VERSION=aca-cli-v0.1.0-preview sh
 ```
 
 ### Windows (PowerShell)
@@ -38,7 +38,7 @@ Pin a specific version:
 **Linux / macOS:**
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/microsoft/azure-container-apps/main/aca-cli/preview/install.sh | sh -s -- --uninstall
+curl -fsSL https://aka.ms/aca-cli-install | sh -s -- --uninstall
 ```
 
 **Windows (PowerShell):**
