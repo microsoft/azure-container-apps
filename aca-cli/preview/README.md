@@ -24,13 +24,13 @@ curl -fsSL https://aka.ms/aca-cli-install | ACA_VERSION=aca-cli-v0.1.0-preview s
 ### Windows (PowerShell)
 
 ```powershell
-irm https://aka.ms/aca-cli-install-windows | iex
+irm https://aka.ms/aca-cli-install-ps | iex
 ```
 
 Pin a specific version:
 
 ```powershell
-& ([scriptblock]::Create((irm https://aka.ms/aca-cli-install-windows))) -Version aca-cli-v0.1.0-preview
+& ([scriptblock]::Create((irm https://aka.ms/aca-cli-install-ps))) -Version aca-cli-v0.1.0-preview
 ```
 
 ## Uninstall
@@ -44,7 +44,7 @@ curl -fsSL https://aka.ms/aca-cli-install | sh -s -- --uninstall
 **Windows (PowerShell):**
 
 ```powershell
-& ([scriptblock]::Create((irm https://aka.ms/aca-cli-install-windows))) -Uninstall
+& ([scriptblock]::Create((irm https://aka.ms/aca-cli-install-ps))) -Uninstall
 ```
 
 ## Supported platforms
