@@ -25,7 +25,7 @@ and CSV formats for use by the
 
 ## Prerequisites
 
-- Python 3.12+
+- Python 3.13+
 - [uv](https://docs.astral.sh/uv/) for dependency management
 - Azure CLI authenticated (`az login`) or another credential source supported
   by `DefaultAzureCredential`
