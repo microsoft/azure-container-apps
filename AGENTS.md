@@ -47,6 +47,25 @@ with `uv`** — never lead with bare `python`, `python3`, `pip`, or
    `irm https://astral.sh/uv/install.ps1 | iex` on Windows). Don't
    recommend `pip install uv` (chicken-and-egg, and we are not leading
    with `pip`).
+6. **Always preflight `uv` before invoking it in docs / scripts /
+   skills.** Don't assume the user has `uv`. Gate the install:
+
+   ```bash
+   # Linux / macOS
+   command -v uv >/dev/null 2>&1 || curl -LsSf https://astral.sh/uv/install.sh | sh
+   uv pip install <pkg>
+   ```
+
+   ```powershell
+   # Windows
+   if (-not (Get-Command uv -ErrorAction SilentlyContinue)) {
+     irm https://astral.sh/uv/install.ps1 | iex
+   }
+   uv pip install <pkg>
+   ```
+
+   This pattern works for any uv-leading command (`uv pip install`,
+   `uv run`, `uv venv`, etc.).
 
 ### Why
 
@@ -74,4 +93,8 @@ with `uv`** — never lead with bare `python`, `python3`, `pip`, or
       instructions added to docs or samples.
 - [ ] No "or `pip install …`" / "or `python …`" alternative branches
       added.
+- [ ] Every `uv pip install …` / `uv run …` example in docs is
+      preceded by the `command -v uv` (bash) / `Get-Command uv`
+      (PowerShell) preflight (or runs in an environment where `uv` is
+      known to be pre-installed, e.g. a sandbox disk that ships uv).
 - [ ] Any new CLI commands verified against `aca --help`.
