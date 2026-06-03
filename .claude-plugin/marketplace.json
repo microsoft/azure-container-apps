@@ -1,0 +1,19 @@
+{
+  "name": "Azure-Container-Apps",
+  "metadata": {
+    "description": "Azure Container Apps skills marketplace — self-contained skills for coding agents (Copilot CLI, Claude Code).",
+    "version": "0.1.0"
+  },
+  "owner": {
+    "name": "Microsoft",
+    "url": "https://github.com/microsoft/azure-container-apps"
+  },
+  "plugins": [
+    {
+      "name": "sandboxes",
+      "source": "./plugin",
+      "description": "Azure Container Apps Sandboxes — hardware-isolated microVMs driven by the `aca` CLI. Future siblings (`jobs`, `apps`, `environments`) will land in this same marketplace.",
+      "version": "0.0.5-beta"
+    }
+  ]
+}
