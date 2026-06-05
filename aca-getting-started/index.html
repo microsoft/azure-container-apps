@@ -233,6 +233,7 @@
         <div class="container">
             <ul>
                 <li><a href="#getting-started">Getting Started</a></li>
+                <li><a href="#surfaces">Surfaces & Portals</a></li>
                 <li><a href="#documentation">Documentation</a></li>
                 <li><a href="#samples">Samples & Demos</a></li>
                 <li><a href="#tools">Tools</a></li>
@@ -267,6 +268,73 @@
                     <h4>🎓 Tutorial Series</h4>
                     <p>Step-by-step tutorials to help you master Azure Container Apps.</p>
                     <a href="https://learn.microsoft.com/azure/container-apps/tutorial-deploy-first-app-cli" target="_blank">Explore Tutorials →</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Surfaces & Portals Section -->
+        <section id="surfaces" class="section">
+            <h2>🌐 ACA Surfaces & Portals</h2>
+            <div class="highlight-box">
+                <h4>Azure Container Apps is available across multiple surfaces</h4>
+                <p>Azure Container Apps has grown into a platform with multiple resource types and dedicated portals. Whether you need full-featured container apps, instant deployment with Express, ephemeral sandboxes for AI agents, event-driven jobs, dynamic sessions, or autonomous SRE agents — there's a purpose-built surface for your workload.</p>
+            </div>
+
+            <h3>Portals & Entry Points</h3>
+            <div class="cards">
+                <div class="card">
+                    <h4>🚀 ACA Express Portal</h4>
+                    <p>The fastest way to deploy containers on Azure. No environment provisioning, sub-second cold starts, instant scale-to-zero. Purpose-built for developers and AI agents that need endpoints in seconds.</p>
+                    <span class="tag new">New</span><span class="tag preview">Preview</span>
+                    <a href="https://containerapps.azure.com/" target="_blank">Launch ACA Express →</a>
+                </div>
+                <div class="card">
+                    <h4>🧪 ACA Sandboxes Portal</h4>
+                    <p>Fast, isolated, ephemeral compute environments with suspend/resume. Ideal for AI code execution, dev/test, secure multitenant compute, and bursty workloads.</p>
+                    <span class="tag new">New</span><span class="tag preview">Preview</span>
+                    <a href="https://containerapps.azure.com/" target="_blank">Launch Sandboxes →</a>
+                </div>
+                <div class="card">
+                    <h4>🔧 Azure Portal</h4>
+                    <p>Full-featured management experience for Container Apps, environments, jobs, and all resource types in the Azure Portal.</p>
+                    <a href="https://portal.azure.com/#browse/Microsoft.App%2FcontainerApps" target="_blank">Open Azure Portal →</a>
+                </div>
+            </div>
+
+            <h3>Resource Types & Workload Surfaces</h3>
+            <div class="cards">
+                <div class="card">
+                    <h4>📦 Container Apps</h4>
+                    <p>The core resource type — long-running, scalable containerized web apps, APIs, and microservices with Dapr, ingress, and autoscaling.</p>
+                    <a href="https://learn.microsoft.com/azure/container-apps/overview" target="_blank">Learn More →</a>
+                </div>
+                <div class="card">
+                    <h4>⚡ Container Apps Express</h4>
+                    <p>Zero-config deployment surface. No environment to provision, per-second billing, sub-second cold starts. Ship SaaS apps, MCP servers, and agent endpoints instantly.</p>
+                    <span class="tag new">New</span><span class="tag preview">Preview</span>
+                    <a href="https://learn.microsoft.com/azure/container-apps/express-overview" target="_blank">Express Docs →</a>
+                </div>
+                <div class="card">
+                    <h4>🧪 Sandboxes</h4>
+                    <p>Ephemeral, strongly-isolated compute with instant startup from prewarmed pools. Built-in suspend/resume, snapshots, and state persistence for AI agent workloads.</p>
+                    <span class="tag new">New</span><span class="tag preview">Preview</span>
+                    <a href="https://learn.microsoft.com/azure/container-apps/sandboxes-overview" target="_blank">Sandboxes Docs →</a>
+                </div>
+                <div class="card">
+                    <h4>⏱️ Jobs</h4>
+                    <p>Short-lived, event-driven or scheduled container executions. Ideal for batch processing, CI/CD runners, and data pipelines.</p>
+                    <a href="https://learn.microsoft.com/azure/container-apps/jobs" target="_blank">Jobs Docs →</a>
+                </div>
+                <div class="card">
+                    <h4>💻 Dynamic Sessions</h4>
+                    <p>Secure, prewarmed session pools for running untrusted code. Code interpreter sessions (Python, Node.js, Shell) and custom container sessions for AI-driven execution.</p>
+                    <a href="https://learn.microsoft.com/azure/container-apps/sessions" target="_blank">Sessions Docs →</a>
+                </div>
+                <div class="card">
+                    <h4>🤖 Azure SRE Agent</h4>
+                    <p>AI-powered site reliability agent built on ACA. Autonomous incident investigation, VNet integration, managed connectors, tool permissions, and hooks for production governance.</p>
+                    <span class="tag new">New</span>
+                    <a href="https://aka.ms/sreagent" target="_blank">Try SRE Agent →</a>
                 </div>
             </div>
         </section>
@@ -475,28 +543,54 @@
         <section id="updates" class="section">
             <h2>🆕 Recent Updates & What's New</h2>
             <div class="highlight-box">
-                <h4>Latest Features</h4>
+                <h4>🎉 Build 2026 Announcements</h4>
                 <ul style="padding-left: 20px; margin-top: 15px;">
-                    <li><strong>Container Apps Jobs</strong> - Run scheduled and event-driven batch workloads <span class="tag new">New</span></li>
-                    <li><strong>Java Metrics</strong> - Enhanced observability for Java applications <span class="tag new">New</span></li>
+                    <li><strong>Azure Container Apps Express</strong> - The fastest way to go from container image to internet-reachable app. No environment, sub-second cold starts, per-second billing. <span class="tag new">New</span><span class="tag preview">Preview</span></li>
+                    <li><strong>ACA Sandboxes</strong> - Ephemeral, strongly-isolated compute with suspend/resume and snapshot capabilities for AI agents <span class="tag new">New</span><span class="tag preview">Preview</span></li>
+                    <li><strong>Azure SRE Agent (GA)</strong> - AI-powered site reliability agent with VNet integration, managed connectors, and tool permission governance <span class="tag new">New</span></li>
+                    <li><strong>Managed Connectors for SRE Agent</strong> - OneDrive, SharePoint, Google Drive, GitLab, Power BI integrations with per-tool governance <span class="tag new">New</span><span class="tag preview">Preview</span></li>
+                    <li><strong>VNet Integration for SRE Agent</strong> - Network-level egress control with Azure VNet, NSG rules, and private DNS <span class="tag new">New</span><span class="tag preview">Preview</span></li>
+                </ul>
+            </div>
+            <div class="highlight-box" style="margin-top: 20px;">
+                <h4>Recent Platform Features</h4>
+                <ul style="padding-left: 20px; margin-top: 15px;">
+                    <li><strong>Dynamic Sessions</strong> - Prewarmed code interpreter and custom container sessions for AI-generated code execution</li>
+                    <li><strong>Container Apps Jobs</strong> - Scheduled and event-driven batch workloads</li>
+                    <li><strong>Serverless GPU (Preview)</strong> - GPU-accelerated containers for AI/ML inference</li>
+                    <li><strong>Native Azure Functions Hosting</strong> - Run Functions in ACA with unified networking and observability</li>
+                    <li><strong>OpenTelemetry Agent Support</strong> - Enhanced distributed tracing and real-time monitoring</li>
+                    <li><strong>Free Managed TLS Certificates</strong> - Simple custom domain securing without manual renewal</li>
+                    <li><strong>NFS Azure Files Volumes</strong> - Network file system mount support across containers</li>
                     <li><strong>Dedicated Workload Profiles</strong> - Run containerized apps on dedicated hardware</li>
-                    <li><strong>Custom Domains with Free Managed Certificates</strong> - Simplified HTTPS configuration</li>
-                    <li><strong>Azure OpenAI Integration</strong> - Build AI-powered applications</li>
-                    <li><strong>Improved Scaling</strong> - Enhanced KEDA scalers and custom metrics</li>
-                    <li><strong>Init Containers</strong> - Run initialization logic before app containers start</li>
-                    <li><strong>Session Affinity</strong> - Sticky sessions for stateful applications</li>
+                    <li><strong>Improved Java & Tomcat Support</strong> - Enhanced JVM defaults and runtime performance</li>
                 </ul>
             </div>
             <div class="cards">
+                <div class="card">
+                    <h4>Build 2026 Blog</h4>
+                    <p>Read the full Build 2026 announcement for Azure Container Apps Express.</p>
+                    <a href="https://techcommunity.microsoft.com/blog/appsonazureblog/introducing-azure-container-apps-express/4519150" target="_blank">Read Announcement →</a>
+                </div>
+                <div class="card">
+                    <h4>SRE Agent at Build 2026</h4>
+                    <p>Full breakdown of SRE Agent capabilities, connectors, and governance.</p>
+                    <a href="https://aka.ms/Build26/blog/SREAgent" target="_blank">SRE Agent Blog →</a>
+                </div>
+                <div class="card">
+                    <h4>What's New</h4>
+                    <p>Full changelog of Azure Container Apps features and capabilities.</p>
+                    <a href="https://learn.microsoft.com/azure/container-apps/whats-new" target="_blank">View Changelog →</a>
+                </div>
                 <div class="card">
                     <h4>Roadmap</h4>
                     <p>See what features are planned for Azure Container Apps.</p>
                     <a href="https://github.com/microsoft/azure-container-apps/projects" target="_blank">View Roadmap →</a>
                 </div>
                 <div class="card">
-                    <h4>Release Notes</h4>
-                    <p>Detailed release notes and changelog.</p>
-                    <a href="https://azure.microsoft.com/updates/?query=container%20apps" target="_blank">Read Notes →</a>
+                    <h4>Azure Updates</h4>
+                    <p>Official Azure update feed filtered for Container Apps.</p>
+                    <a href="https://azure.microsoft.com/updates/?query=container%20apps" target="_blank">View Updates →</a>
                 </div>
                 <div class="card">
                     <h4>Preview Features</h4>
@@ -534,7 +628,10 @@
             <h2>🔗 Quick Links</h2>
             <div class="list-section">
                 <ul>
+                    <li><a href="https://containerapps.azure.com/" target="_blank">⚡ ACA Express Portal — Deploy containers in seconds (New!)</a></li>
+                    <li><a href="https://containerapps.azure.com/" target="_blank">🧪 ACA Sandboxes Portal — Ephemeral compute for AI agents (New!)</a></li>
                     <li><a href="https://portal.azure.com/#create/Microsoft.ContainerApp" target="_blank">🚀 Create Container App (Azure Portal)</a></li>
+                    <li><a href="https://aka.ms/sreagent" target="_blank">🤖 Azure SRE Agent — AI-powered site reliability</a></li>
                     <li><a href="https://learn.microsoft.com/azure/container-apps/" target="_blank">📖 Official Documentation</a></li>
                     <li><a href="https://github.com/microsoft/azure-container-apps" target="_blank">💻 GitHub Repository</a></li>
                     <li><a href="https://learn.microsoft.com/azure/container-apps/compare-options" target="_blank">⚖️ Compare Container Hosting Options</a></li>
@@ -554,7 +651,7 @@
                 <a href="https://www.microsoft.com/trademarks" target="_blank" style="color: var(--primary-color); margin: 0 15px;">Trademarks</a>
             </p>
             <p style="margin-top: 15px; font-size: 0.9em;">
-                Last updated: February 2026 | 
+                Last updated: June 2026 | 
                 <a href="https://github.com/microsoft/azure-container-apps" target="_blank" style="color: var(--primary-color);">Contribute on GitHub</a>
             </p>
         </div>
