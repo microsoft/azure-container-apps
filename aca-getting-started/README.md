@@ -18,6 +18,12 @@ The resource page provides organized access to:
 - Tutorial series
 - First deployment walkthroughs
 
+### 🌐 Surfaces & Portals
+- **ACA Express Portal** (containerapps.azure.com) - Instant deployment, sub-second cold starts
+- **ACA Sandboxes Portal** - Ephemeral compute for AI agents and dev/test
+- **Azure Portal** - Full-featured management experience
+- **Resource Types**: Container Apps, Express, Sandboxes, Jobs, Dynamic Sessions, SRE Agent
+
 ### 📚 Documentation
 - **Core Concepts**: Environments, containers, revisions, scaling, ingress, observability
 - **Advanced Features**: 
@@ -59,6 +65,7 @@ The resource page provides organized access to:
 - Social media channels
 
 ### 🆕 Recent Updates
+- Build 2026 announcements (ACA Express, Sandboxes, SRE Agent)
 - Latest features and capabilities
 - Roadmap and upcoming features
 - Preview features
@@ -168,6 +175,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ---
 
 **Maintained by**: Azure Container Apps Team  
-**Last Updated**: February 2026  
-**Version**: 1.0.0  
+**Last Updated**: June 2026  
+**Version**: 1.1.0  
 **Repository**: https://github.com/microsoft/azure-container-apps
