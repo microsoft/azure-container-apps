@@ -4,7 +4,7 @@ set -e
 REPO="microsoft/azure-container-apps"
 BRANCH="main"
 BINARY_NAME="aca"
-INSTALL_DIR="/usr/local/bin"
+INSTALL_DIR="${INSTALL_DIR:-/usr/local/bin}"
 
 detect_platform() {
     OS="$(uname -s)"
