@@ -14,6 +14,15 @@ To use these templates, follow the instructions provided in each template's
 README file. These templates are meant to be used as a starting point for 
 your own configurations. You can customize them to fit your specific requirements.
 
+## Community template collections
+
+- [Bring Your Own Orchestrator to Azure Container Apps Jobs](https://github.com/hetvip2/aca-jobs-orchestrator-templates)
+	compares community-maintained integration templates for using Airflow, Argo
+	Workflows, Camunda 8, Conductor, Dagster, Dapr Workflow, Azure Data Factory and
+	Fabric, Durable Functions, Logic Apps Standard, n8n, Prefect, or Temporal as an
+	orchestrator for Azure Container Apps Jobs. Each linked repository includes its
+	own deployment instructions, validation scope, and documented limitations.
+
 ## Disclaimer
 Please note that these templates are for reference purposes only and are not 
 intended for production environments. They are provided "as-is" without any 
