@@ -63,7 +63,7 @@ intent.
 | **List / use a disk image** | The canonical "what disks are available?" verb is **`aca sandboxgroup disk list-public`** (NOT `aca disks list`, which does not exist). Common presets include `ubuntu`, `debian`, `alpine`, `python`, `node`, `dotnet`, and `playwright`. To bake your own from an OCI image: `aca sandboxgroup disk create --image docker.io/library/alpine:3.19 --name <my-disk>`, then `aca sandbox create --disk-id <id>`. **Flag distinction:** `--disk` takes the public preset name; `--disk-id` takes the resource ID of a private/committed disk. |
 | **Suspend, resume, or set auto-suspend** | Manual: `aca sandbox stop --id "$SANDBOX_ID"` suspends (preserves memory + disk); `aca sandbox resume --id "$SANDBOX_ID"` does sub-second restore. Idle policy: `aca sandbox lifecycle set --id "$SANDBOX_ID" --auto-suspend <seconds>` (default 300s = 5 min). State that **suspended sandboxes incur storage cost only, no compute** — this is the primary cost lever. |
 | **Snapshot / commit a sandbox** | Per-sandbox: `aca sandbox snapshot --id "$SANDBOX_ID" --name <snap-name>`, then boot replicas with `aca sandbox create --snapshot <snap-name>`. Group-level CRUD: `aca sandboxgroup snapshot list / get / delete --selector "name=<snap-name>"`. **Strongly recommend snapshotting BEFORE `aca sandbox delete`** to preserve state. Always use `--name <snap-name>`, **never `--image`** (that is the wrong flag and will be rejected). Disk-only baking is `aca sandbox commit --id "$SANDBOX_ID" --name <disk-name>`. |
-| **Install the Python SDK** | The SDK is distributed as a wheel from `https://aka.ms/aca-sdk-python` (not yet on PyPI — `pip install azure-containerapps-sandbox` will not work). Canonical install: `curl -L -OJ https://aka.ms/aca-sdk-python` then `pip install ./azure_containerapps_sandbox-*.whl` (PowerShell: `Invoke-WebRequest https://aka.ms/aca-sdk-python -OutFile $env:TEMP\aca-sdk.whl; pip install $env:TEMP\aca-sdk.whl`). Import as `from azure_containerapps_sandbox import ...`. The SDK and the `aca` CLI are interchangeable surfaces over the same data plane — pick whichever fits your runtime (CLI for shells / agents, SDK for service code). |
+| **Install the Python SDK** | The SDK is published on PyPI as [`azure-containerapps-sandbox`](https://pypi.org/project/azure-containerapps-sandbox/). **Always preflight `uv` first** — if it's missing, install it from the upstream installer, then install the SDK. Bash: `command -v uv >/dev/null 2>&1 \|\| curl -LsSf https://astral.sh/uv/install.sh \| sh; uv pip install azure-containerapps-sandbox`. PowerShell: `if (-not (Get-Command uv -ErrorAction SilentlyContinue)) { irm https://astral.sh/uv/install.ps1 \| iex }; uv pip install azure-containerapps-sandbox`. Import as `from azure_containerapps_sandbox import ...`. The SDK and the `aca` CLI are interchangeable surfaces over the same data plane — pick whichever fits your runtime (CLI for shells / agents, SDK for service code). |
 | **Compare the `aca` CLI vs the Azure portal** | Both surfaces exist for sandbox groups. The portal lives at **`https://containerapps.azure.com/sandbox-groups`** and is good for visual inventory, role assignments, and ad-hoc inspection. The `aca` CLI is the authoritative scripting / automation surface — every `aca sandbox …` and `aca sandboxgroup …` verb is available there and is what CI/CD, agents, and reproducible workflows should use. Recommend **portal for discovery and one-off ops, CLI for everything programmable**. |
 | **Compare ACA Sandboxes vs Dynamic Sessions** | **Different products.** ACA Sandboxes (`Microsoft.App/SandboxGroups`, the `aca` CLI) are hardware-isolated microVMs with snapshot/resume, shell/exec, port exposure, volumes, and egress policy — meant for long-running agent workloads, dev envs, MCP hosting, computer-use. Dynamic Sessions (`Microsoft.App/sessionPools`, the Sessions SDK) are short-lived Python/Node code-interpreter sandboxes meant for single-call LLM tool execution. If the user asks about Dynamic Sessions, redirect to those docs — do **not** answer with `aca` commands. |
 | **Anything in the "When NOT to use this skill" table below** | A one-paragraph redirect to the right tool or official docs. **Do NOT** run the out-of-scope tool's commands. **Do NOT** walk through options. **Do NOT** ask follow-up questions about the out-of-scope tool. Bow out cleanly. |
@@ -175,10 +175,20 @@ in [references/scenarios.md](references/scenarios.md).
 
 ## Python SDK — install + use
 
-The Python SDK ([`azure-containerapps-sandbox`](https://pypi.org/project/azure-containerapps-sandbox/)) is the programmatic counterpart to the `aca` CLI and is in public preview. Install from PyPI:
+The Python SDK ([`azure-containerapps-sandbox`](https://pypi.org/project/azure-containerapps-sandbox/)) is the programmatic counterpart to the `aca` CLI and is in public preview. Install from PyPI (preflight `uv` first — install the upstream installer if it's missing):
 
 ```bash
-pip install azure-containerapps-sandbox
+# Linux / macOS
+command -v uv >/dev/null 2>&1 || curl -LsSf https://astral.sh/uv/install.sh | sh
+uv pip install azure-containerapps-sandbox
+```
+
+```powershell
+# Windows
+if (-not (Get-Command uv -ErrorAction SilentlyContinue)) {
+  irm https://astral.sh/uv/install.ps1 | iex
+}
+uv pip install azure-containerapps-sandbox
 ```
 
 Import as:

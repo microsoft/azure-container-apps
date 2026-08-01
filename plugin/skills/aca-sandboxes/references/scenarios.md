@@ -17,7 +17,7 @@ SBX=$(aca sandbox create --disk ubuntu -o json | jq -r .id)
 
 # Upload + start
 aca sandbox fs write --id $SBX --path /app/server.py --file ./server.py
-aca sandbox exec --id $SBX -c "nohup python3 /app/server.py > /tmp/srv.log 2>&1 &"
+aca sandbox exec --id $SBX -c "nohup uv run /app/server.py > /tmp/srv.log 2>&1 &"
 
 # Expose
 URL=$(aca sandbox port add --id $SBX --port 8080 --anonymous -o json | jq -r .url)
@@ -77,7 +77,7 @@ SBX=$(aca sandbox create --disk ubuntu --label kind=interpreter -o json | jq -r 
 #   2. write -> exec -> capture stdout/stderr
 #   3. feed back into prompt
 aca sandbox fs write --id $SBX --path /tmp/step.py --file ./step.py
-aca sandbox exec --id $SBX -c "python3 /tmp/step.py" -o json
+aca sandbox exec --id $SBX -c "uv run /tmp/step.py" -o json
 ```
 
 Snapshot between turns so you can rewind:
