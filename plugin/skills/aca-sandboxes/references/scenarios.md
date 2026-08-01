@@ -44,8 +44,8 @@ can only reach the endpoints you allow.
 SBX=$(aca sandbox create --disk ubuntu --label task=copilot-run -o json | jq -r .id)
 aca sandbox egress set --id $SBX \
   --default Deny \
-  --host-allow "api.githubcopilot.com" \
-  --host-allow "*.githubusercontent.com"
+  --rule "api.githubcopilot.com:Allow" \
+  --rule "*.githubusercontent.com:Allow"
 
 aca sandbox exec --id $SBX -c "curl -fsSL https://github.com/cli/cli/releases/.../gh.tar.gz | tar -xz && ./gh ..."
 ```
