@@ -27,16 +27,6 @@ jobs:
         with:
           ref: main
 
-      - name: Azure Login (OIDC)
-        uses: azure/login@v2
-        with:
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-
-      - name: Verify Azure session
-        run: az account show --query "{subscription:name, id:id}" -o table
-
       - name: Set up Python 3.12
         uses: actions/setup-python@v5
         with:
@@ -53,7 +43,6 @@ jobs:
         working-directory: scripts/region-discovery
         run: |
           uv run python discover.py \
-            --subscription-id "${{ secrets.AZURE_SUBSCRIPTION_ID }}" \
             --output-format json \
             --output-dir ../../aca-getting-started/data
 
