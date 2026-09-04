@@ -4,7 +4,7 @@
 # the install. Lines beginning with # and blank lines are ignored.
 # Updating a hash requires a PR review.
 
-version=aca-cli-v0.1.0-preview
-linux-x64=4dfd88851cfcbcf28eca7dd2e116e706538db189a3700572feb69e676422ed42
-osx-arm64=28e2992046cf9096e132f0d72b086257e5941cf06f5f129d9335ea884f5dc8af
-win-x64=d52f60a3e8a29b4fa7269faa47a8e4de17f1a1e4855efadfabc57fa00d1ab034
+version=aca-cli-v1.0.0-preview.2
+linux-x64=da571ae73c07a1dde7aedb8358f8d8fbe9e91baf2942eaff2d512a168e197b4b
+osx-arm64=0b7181321cf69c17a7e8102d53e4b0110c1292fc6387023ecc73254296a7198e
+win-x64=21dcc37f7c9f8778b571e5e264ac9a1bc01fb95b7fb7263e238f14dcc1874bab
