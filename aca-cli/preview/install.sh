@@ -4,7 +4,7 @@ set -e
 REPO="microsoft/azure-container-apps"
 BRANCH="main"
 BINARY_NAME="aca"
-INSTALL_DIR="${INSTALL_DIR:-/usr/local/bin}"
+INSTALL_DIR="${INSTALL_DIR:-${HOME}/.local/bin}"
 
 detect_platform() {
     OS="$(uname -s)"
@@ -178,10 +178,11 @@ install() {
     verify_archive "${TMP_DIR}/${BINARY_NAME}.tar.gz"
     tar -xzf "${TMP_DIR}/${BINARY_NAME}.tar.gz" -C "$TMP_DIR"
 
-    # Install to INSTALL_DIR (try sudo if needed)
     if [ ! -d "$INSTALL_DIR" ]; then
-        echo "Creating ${INSTALL_DIR} (requires sudo)..."
-        sudo mkdir -p "$INSTALL_DIR"
+        if ! mkdir -p "$INSTALL_DIR" 2>/dev/null; then
+            echo "Creating ${INSTALL_DIR} (requires sudo)..."
+            sudo mkdir -p "$INSTALL_DIR"
+        fi
     fi
 
     if [ -w "$INSTALL_DIR" ]; then
@@ -195,6 +196,14 @@ install() {
 
     echo ""
     echo "${BINARY_NAME} installed successfully to ${INSTALL_DIR}/${BINARY_NAME}"
+    case ":${PATH:-}:" in
+        *":${INSTALL_DIR}:"*) ;;
+        *)
+            echo ""
+            echo "Add ${INSTALL_DIR} to PATH in your shell profile, then open a new terminal:"
+            printf '  export PATH="%s:$PATH"\n' "$INSTALL_DIR"
+            ;;
+    esac
     echo ""
     echo "Prerequisites:"
     echo "  Azure CLI (az) must be installed and logged in."

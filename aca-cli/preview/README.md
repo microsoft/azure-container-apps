@@ -1,6 +1,6 @@
 # Azure Container Apps Sandboxes CLI (Preview)
 
-The `aca` CLI is the command-line client for Azure Container Apps Sandboxes, now in public preview. These installers fetch the latest release from [GitHub Releases](https://github.com/microsoft/azure-container-apps/releases) and place the `aca` binary on your `PATH`.
+The `aca` CLI is the command-line client for Azure Container Apps Sandboxes, now in public preview. These installers fetch the pinned release from [GitHub Releases](https://github.com/microsoft/azure-container-apps/releases) and install it for the current user by default.
 
 ## Prerequisites
 
@@ -15,11 +15,39 @@ The `aca` CLI is the command-line client for Azure Container Apps Sandboxes, now
 curl -fsSL https://aka.ms/aca-cli-install | sh
 ```
 
+The default location is `$HOME/.local/bin`; no sudo is needed for a normal
+user-owned home directory. This avoids elevation prompts for developers and
+allows installation from noninteractive tools such as canvases.
+
+If that directory is not already on your `PATH`, add this line to your shell
+profile (for example, `~/.bashrc` or `~/.zshrc`) and run it in the current terminal:
+
+```bash
+export PATH="$HOME/.local/bin:$PATH"
+```
+
+#### System-wide or custom installation
+
+Set `INSTALL_DIR` to override the destination. For a system-wide installation:
+
+```bash
+curl -fsSL https://aka.ms/aca-cli-install | INSTALL_DIR=/usr/local/bin sh
+```
+
+The override applies to the installer (`sh`), not to `curl`. System-wide
+installation can require sudo; run it in an interactive terminal with the
+necessary administrator permissions. A writable custom directory needs no sudo.
+Installing per-user does not replace an older `/usr/local/bin/aca`; check
+`command -v aca` to see which installation your shell uses.
+
 ### Windows (PowerShell)
 
 ```powershell
 irm https://aka.ms/aca-cli-install-ps | iex
 ```
+
+Windows continues to default to the per-user `$env:USERPROFILE\.aca\bin`
+directory and adds it to the user's `PATH`.
 
 ## Uninstall
 
@@ -27,6 +55,14 @@ irm https://aka.ms/aca-cli-install-ps | iex
 
 ```bash
 curl -fsSL https://aka.ms/aca-cli-install | sh -s -- --uninstall
+```
+
+For a system-wide or custom installation, use the same `INSTALL_DIR` used when
+installing. This also applies to system-wide installs made before the default
+changed:
+
+```bash
+curl -fsSL https://aka.ms/aca-cli-install | INSTALL_DIR=/usr/local/bin sh -s -- --uninstall
 ```
 
 **Windows (PowerShell):**
