@@ -1,27 +1,6 @@
- # Azure Container Apps Sandbox javascript client library
+# Azure Container Apps Sandbox javascript client library
 
 ## 1.0.0-beta.1 
-
-### Breaking Changes
-
-- Disk-image creation now uses `PUT /diskimages/v2`. The exported
-  `CreateDiskImageRequest` uses a nested registry `source`, not `image.base`.
-  Removed the ineffective disk-image `entrypoint` and `cmd` create options;
-  configure command overrides when creating a sandbox instead. Response metadata
-  and sandbox command options are unchanged.
-- `managedIdentityResourceId` now selects registry authentication: use `system`
-  or a user-assigned identity ARM resource ID. The latter is resolved through ARM
-  and requires permission to read that identity. Registry credentials and identity
-  are mutually exclusive; invalid credentials or failed lookups stop creation.
-
-- Sandbox create, `ports.add`, and `ports.update` now default ports with no
-  enabled authentication provider to anonymous access, matching the portal.
-  This includes numeric update shorthand, missing/empty auth, disabled Entra
-  auth, and `anonymous: false` without a nonempty email. These ports are
-  accessible without authentication instead of returning HTTP 409.
-  Enabled Entra ID policies are preserved; configure one to require auth.
-  Anonymous fallback omits disabled providers so stored/echoed configurations
-  remain readable by the Python SDK.
 
 ### Features Added
 
