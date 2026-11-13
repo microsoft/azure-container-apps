@@ -34,7 +34,7 @@ p { margin: 0 0 1.25rem; }
 .site-header { border-top: 4px solid #0078d4; border-bottom: 1px solid var(--border); }
 .header-inner { display: flex; align-items: center; justify-content: space-between; gap: 2rem; padding-block: 1.35rem; }
 .brand { display: flex; gap: .8rem; align-items: center; color: var(--ink); text-decoration: none; font-weight: 650; line-height: 1.3; }
-.brand-mark { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 11px; background: #0078d4; color: #fff; font: 600 22px/1 monospace; flex-shrink: 0; }
+.brand-mark { display: block; width: 44px; height: 44px; object-fit: contain; flex-shrink: 0; }
 .brand-label { display: block; color: var(--muted); font-size: .75rem; font-weight: 400; margin-top: .2rem; }
 .site-nav { display: flex; flex-wrap: wrap; gap: 1.5rem; font-size: .9rem; }
 .site-nav a { color: var(--muted); text-decoration: none; padding-block: .4rem; }
@@ -89,7 +89,6 @@ pre { padding: 1.25rem 1.5rem; overflow-x: auto; border: 1px solid var(--border)
 .prose th { background: var(--wash); }
 .prose hr { border: 0; border-top: 1px solid var(--border); margin: 2.5rem 0; }
 .post-footer { border-top: 1px solid var(--border); padding-top: 1.5rem; margin: 3rem 0; color: var(--muted); font-size: .88rem; }
-.post-footer p { margin-bottom: .4rem; }
 .post-navigation { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; max-width: 900px; margin: 0 auto 4rem; }
 .post-navigation-link { display: flex; flex-direction: column; gap: .6rem; padding: 1.4rem; border: 1px solid var(--border); border-radius: var(--radius); text-decoration: none; height: 100%; }
 .post-navigation-link:hover { border-color: var(--azure); background: var(--wash); }

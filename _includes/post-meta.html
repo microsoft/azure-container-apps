@@ -1,6 +1,3 @@
 <div class="post-meta">
   <a href="{{ '/archive/' | relative_url }}#{{ include.post.date | date: '%Y-%m' }}"><time datetime="{{ include.post.date | date_to_xmlschema }}">{{ include.post.date | date: "%B %-d, %Y" }}</time></a>
-  <span aria-hidden="true">&middot;</span>
-  {% assign author_anchor = include.post.author | url_encode %}
-  <a href="{{ '/authors/' | relative_url }}#author-{{ author_anchor | url_encode }}">{{ include.post.author | escape }}</a>
 </div>

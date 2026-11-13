@@ -14,7 +14,7 @@
   <meta property="og:site_name" content="{{ site.title | escape }}">
   <meta property="og:type" content="{% if page.layout == 'post' %}article{% else %}website{% endif %}">
   {% if page.layout == 'post' %}<meta property="article:published_time" content="{{ page.date | date_to_xmlschema }}">{% endif %}
-  <link rel="icon" href="{{ '/assets/favicon.svg' | relative_url }}" type="image/svg+xml">
+  <link rel="icon" href="{{ '/assets/container-apps.svg' | relative_url }}" type="image/svg+xml">
   <link rel="stylesheet" href="{{ '/assets/css/site.css' | relative_url }}">
   {% feed_meta %}
 </head>
@@ -23,14 +23,13 @@
   <header class="site-header">
     <div class="shell header-inner">
       <a class="brand" href="{{ '/' | relative_url }}">
-        <span class="brand-mark" aria-hidden="true">{ }</span>
+        <img class="brand-mark" src="{{ '/assets/container-apps.svg' | relative_url }}" alt="" width="44" height="44">
         <span>Azure Container Apps<span class="brand-label">The blog</span></span>
       </a>
       <nav class="site-nav" aria-label="Main navigation">
         <a href="{{ '/' | relative_url }}"{% if page.url == '/' %} aria-current="page"{% endif %}>Posts</a>
         <a href="{{ '/archive/' | relative_url }}"{% if page.url == '/archive/' %} aria-current="page"{% endif %}>Archive</a>
         <a href="{{ '/tags/' | relative_url }}"{% if page.url == '/tags/' %} aria-current="page"{% endif %}>Tags</a>
-        <a href="{{ '/authors/' | relative_url }}"{% if page.url == '/authors/' %} aria-current="page"{% endif %}>Authors</a>
         <a href="https://learn.microsoft.com/azure/container-apps/">Docs <span aria-hidden="true">&nearr;</span></a>
       </nav>
     </div>

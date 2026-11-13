@@ -20,7 +20,6 @@ defaults:
       type: posts
     values:
       layout: post
-      author: Azure Container Apps team
 
 exclude:
   - AGENTS.md

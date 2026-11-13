@@ -28,7 +28,7 @@ With Azure Container Apps, you can:
 The blog's Jekyll source lives at the repository root: `_posts` for Markdown
 posts, `_layouts` and `_includes` for templates, `assets` for styling, and
 `_config.yml` for site settings. [Adding a post](_posts/README.md) only requires
-one Markdown file; date, tag, and author navigation update automatically.
+one Markdown file; date and tag navigation update automatically.
 
 With Ruby and Bundler installed:
 

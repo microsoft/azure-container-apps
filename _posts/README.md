@@ -1,7 +1,6 @@
 # Publish a post
 
-Add **one Markdown file** here. No template changes, author registration, or
-navigation updates are needed.
+Add **one Markdown file** here. No template or navigation updates are needed.
 
 1. [Create a post in GitHub](https://github.com/microsoft/azure-container-apps/new/main/_posts).
 2. Name it `YYYY-MM-DD-your-post-title.md` and paste the template below.
@@ -11,7 +10,6 @@ navigation updates are needed.
 ```markdown
 ---
 title: "Your post title"
-author: "Your name"
 tags: [scaling, tutorials]
 ---
 
@@ -26,9 +24,8 @@ The rest of your post goes here.
 
 The filename supplies the publication date. Posts are listed newest first;
 future-dated posts stay hidden until a build on or after that date. Dates use
-UTC. If `author` is omitted, the byline is "Azure Container Apps team". New
-authors and tags appear in their indexes automatically. Use a single author
-name and a YAML list of tags.
+UTC. New tags appear in the topic index automatically. Use a YAML list of
+tags; you can also omit tags entirely.
 
 `description: "A short summary"` is optional. When present it replaces the
 opening paragraph in post lists and link previews. The `<!--more-->` marker

@@ -8,7 +8,7 @@ Welcome! This blog brings Azure Container Apps updates and practical guidance to
 
 <!--more-->
 
-Posts appear **newest first**. Use the [archive]({{ '/archive/' | relative_url }}) to browse by month, explore a [topic]({{ '/tags/' | relative_url }}), or find more from an [author]({{ '/authors/' | relative_url }}).
+Posts appear **newest first**. Use the [archive]({{ '/archive/' | relative_url }}) to browse by month, or explore a [topic]({{ '/tags/' | relative_url }}).
 
 ## Looking for something specific?
 

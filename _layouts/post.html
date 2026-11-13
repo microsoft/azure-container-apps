@@ -11,8 +11,6 @@ layout: default
   </header>
   <div class="prose">{{ content }}</div>
   <footer class="post-footer">
-    {% assign author_anchor = page.author | url_encode %}
-    <p>Written by <a href="{{ '/authors/' | relative_url }}#author-{{ author_anchor | url_encode }}">{{ page.author | escape }}</a>.</p>
     <a href="https://github.com/{{ site.repository }}/edit/main/{{ page.path }}">Suggest an edit on GitHub <span aria-hidden="true">&nearr;</span></a>
   </footer>
 </article>

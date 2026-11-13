@@ -32,8 +32,8 @@ test("the homepage lists every published post newest first", () => {
   assert.equal(files.filter((file) => /^\d{4}[\\/]\d{2}[\\/]\d{2}[\\/]/.test(file)).length, posts.length);
 });
 
-test("every post appears in its date, tag and author indexes", () => {
-  const indexes = ["archive/index.html", "tags/index.html", "authors/index.html"];
+test("every post appears in its date and tag indexes", () => {
+  const indexes = ["archive/index.html", "tags/index.html"];
   for (const index of indexes) {
     const indexedPosts = new Set(postCards(read(index)).map((post) => post.url));
     for (const post of posts) {
@@ -61,6 +61,7 @@ test("generated blog pages have valid local links, assets and fragment targets",
     assert.match(html, /<html lang="en">/);
     assert.match(html, /<meta name="viewport"/);
     assert.match(html, /<main id="main"/);
+    assert.doesNotMatch(html, /href="[^"]*\/authors\//, `Removed author navigation in ${file}`);
     assert.doesNotMatch(html, /\{%\s*(include|feed_meta)\b/, `Unrendered template in ${file}`);
     const pageUrl = new URL(file.replaceAll("\\", "/").replace(/index\.html$/, ""), origin);
     for (const [, attribute] of html.matchAll(/(?:href|src)="([^"]+)"/g)) {
@@ -77,6 +78,12 @@ test("generated blog pages have valid local links, assets and fragment targets",
       }
     }
   }
+});
+
+test("the supplied logo is published and the author index is removed", () => {
+  assert.ok(existsSync(join(root, "assets", "container-apps.svg")));
+  assert.match(homepage, /<img class="brand-mark" src="\/azure-container-apps\/assets\/container-apps\.svg"/);
+  assert.ok(!existsSync(join(root, "authors", "index.html")));
 });
 
 test("the resource hub remains available and non-site source stays private to GitHub", () => {
