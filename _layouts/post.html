@@ -1,0 +1,40 @@
+---
+layout: default
+---
+<article class="post">
+  <header class="post-header">
+    <a class="back-link" href="{{ '/' | relative_url }}">&larr; All posts</a>
+    {% include post-meta.html post=page %}
+    <h1>{{ page.title | escape }}</h1>
+    {% if page.description %}<p class="post-description">{{ page.description | escape }}</p>{% endif %}
+    {% include post-tags.html post=page %}
+  </header>
+  <div class="prose">{{ content }}</div>
+  <footer class="post-footer">
+    {% assign author_anchor = page.author | url_encode %}
+    <p>Written by <a href="{{ '/authors/' | relative_url }}#author-{{ author_anchor | url_encode }}">{{ page.author | escape }}</a>.</p>
+    <a href="https://github.com/{{ site.repository }}/edit/main/{{ page.path }}">Suggest an edit on GitHub <span aria-hidden="true">&nearr;</span></a>
+  </footer>
+</article>
+{% if page.previous or page.next %}
+<nav class="post-navigation" aria-label="More posts by date">
+  <div>
+    {% if page.previous %}
+    <a class="post-navigation-link older-post" href="{{ page.previous.url | relative_url }}">
+      <span class="eyebrow">&larr; Older post</span>
+      <strong>{{ page.previous.title | escape }}</strong>
+      <time datetime="{{ page.previous.date | date_to_xmlschema }}">{{ page.previous.date | date: "%B %-d, %Y" }}</time>
+    </a>
+    {% endif %}
+  </div>
+  <div>
+    {% if page.next %}
+    <a class="post-navigation-link newer-post" href="{{ page.next.url | relative_url }}">
+      <span class="eyebrow">Newer post &rarr;</span>
+      <strong>{{ page.next.title | escape }}</strong>
+      <time datetime="{{ page.next.date | date_to_xmlschema }}">{{ page.next.date | date: "%B %-d, %Y" }}</time>
+    </a>
+    {% endif %}
+  </div>
+</nav>
+{% endif %}

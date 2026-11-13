@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="{{ site.lang | default: 'en' }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  {% assign description = page.description | default: page.excerpt | default: site.description | strip_html | normalize_whitespace %}
+  <title>{{ page.title | escape }} | {{ site.title | escape }}</title>
+  <meta name="description" content="{{ description | escape }}">
+  <meta name="theme-color" content="#0078d4">
+  <link rel="canonical" href="{{ page.url | absolute_url }}">
+  <meta property="og:title" content="{{ page.title | escape }}">
+  <meta property="og:description" content="{{ description | escape }}">
+  <meta property="og:url" content="{{ page.url | absolute_url }}">
+  <meta property="og:site_name" content="{{ site.title | escape }}">
+  <meta property="og:type" content="{% if page.layout == 'post' %}article{% else %}website{% endif %}">
+  {% if page.layout == 'post' %}<meta property="article:published_time" content="{{ page.date | date_to_xmlschema }}">{% endif %}
+  <link rel="icon" href="{{ '/assets/favicon.svg' | relative_url }}" type="image/svg+xml">
+  <link rel="stylesheet" href="{{ '/assets/css/site.css' | relative_url }}">
+  {% feed_meta %}
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="shell header-inner">
+      <a class="brand" href="{{ '/' | relative_url }}">
+        <span class="brand-mark" aria-hidden="true">{ }</span>
+        <span>Azure Container Apps<span class="brand-label">The blog</span></span>
+      </a>
+      <nav class="site-nav" aria-label="Main navigation">
+        <a href="{{ '/' | relative_url }}"{% if page.url == '/' %} aria-current="page"{% endif %}>Posts</a>
+        <a href="{{ '/archive/' | relative_url }}"{% if page.url == '/archive/' %} aria-current="page"{% endif %}>Archive</a>
+        <a href="{{ '/tags/' | relative_url }}"{% if page.url == '/tags/' %} aria-current="page"{% endif %}>Tags</a>
+        <a href="{{ '/authors/' | relative_url }}"{% if page.url == '/authors/' %} aria-current="page"{% endif %}>Authors</a>
+        <a href="https://learn.microsoft.com/azure/container-apps/">Docs <span aria-hidden="true">&nearr;</span></a>
+      </nav>
+    </div>
+  </header>
+  <main id="main" class="shell" tabindex="-1">
+    {{ content }}
+  </main>
+  <footer class="site-footer">
+    <div class="shell footer-inner">
+      <p>Azure Container Apps <span class="footer-divider" aria-hidden="true">/</span> Build more. Manage less.</p>
+      <nav aria-label="Footer navigation">
+        <a href="{{ '/feed.xml' | relative_url }}">RSS</a>
+        <a href="https://github.com/{{ site.repository }}/blob/main/_posts/README.md">Write a post</a>
+        <a href="https://github.com/{{ site.repository }}">GitHub</a>
+        <a href="https://privacy.microsoft.com/privacystatement">Privacy</a>
+        <a href="https://www.microsoft.com/legal/terms-of-use">Terms</a>
+        <a href="https://www.microsoft.com/trademarks">Trademarks</a>
+      </nav>
+    </div>
+  </footer>
+</body>
+</html>

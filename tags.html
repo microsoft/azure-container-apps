@@ -1,0 +1,20 @@
+---
+layout: blog
+title: Explore by topic
+description: Find the posts that match what you are building.
+permalink: /tags/
+---
+{% assign tags = site.tags | sort %}
+<nav class="index-nav" aria-label="Jump to a tag">
+  {% for tag in tags %}
+  {% assign tag_anchor = tag[0] | url_encode %}
+  <a href="#tag-{{ tag_anchor | url_encode }}">{{ tag[0] | escape }} <span class="count">{{ tag[1].size }}</span></a>
+  {% endfor %}
+</nav>
+{% for tag in tags %}
+<section class="index-group" aria-labelledby="tag-{{ tag[0] | url_encode }}">
+  <h2 class="section-title" id="tag-{{ tag[0] | url_encode }}">{{ tag[0] | escape }}</h2>
+  {% assign posts = tag[1] | sort: 'date' | reverse %}
+  {% include post-list.html posts=posts heading='h3' %}
+</section>
+{% endfor %}

@@ -1,0 +1,39 @@
+title: Azure Container Apps
+description: Product updates, practical guides, and notes from the Azure Container Apps team.
+url: https://microsoft.github.io
+baseurl: /azure-container-apps
+repository: microsoft/azure-container-apps
+lang: en
+timezone: Etc/UTC
+permalink: /:year/:month/:day/:title/
+excerpt_separator: "<!--more-->"
+markdown: kramdown
+highlighter: rouge
+strict_front_matter: true
+
+plugins:
+  - jekyll-feed
+
+defaults:
+  - scope:
+      path: ""
+      type: posts
+    values:
+      layout: post
+      author: Azure Container Apps team
+
+exclude:
+  - AGENTS.md
+  - CODE_OF_CONDUCT.md
+  - Gemfile
+  - Gemfile.lock
+  - LICENSE
+  - README.md
+  - SECURITY.md
+  - aca-cli
+  - marketplace.json
+  - plugin
+  - preview
+  - scripts
+  - templates
+  - vendor

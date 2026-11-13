@@ -1,0 +1,11 @@
+<div class="post-list">
+  {% for post in include.posts %}
+  <article class="post-card">
+    {% include post-meta.html post=post %}
+    {% assign heading = include.heading | default: 'h2' %}
+    <{{ heading }}><a class="post-title" href="{{ post.url | relative_url }}">{{ post.title | escape }}</a></{{ heading }}>
+    <p class="post-excerpt">{{ post.description | default: post.excerpt | strip_html | normalize_whitespace | truncate: 220 | escape }}</p>
+    {% include post-tags.html post=post %}
+  </article>
+  {% endfor %}
+</div>

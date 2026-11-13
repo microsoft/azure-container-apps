@@ -1,0 +1,10 @@
+---
+layout: blog
+title: Latest posts
+description: Product updates, practical guides, and notes from the team. Newest first.
+---
+{% if site.posts.size > 0 %}
+{% include post-list.html posts=site.posts %}
+{% else %}
+<p>New posts are on the way. In the meantime, explore the <a href="{{ '/aca-getting-started/' | relative_url }}">Azure Container Apps resources</a>.</p>
+{% endif %}

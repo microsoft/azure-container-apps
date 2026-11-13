@@ -1,0 +1,20 @@
+---
+layout: blog
+title: Meet the authors
+description: The people sharing what they learn and build with Azure Container Apps.
+permalink: /authors/
+---
+{% assign authors = site.posts | group_by: 'author' | sort: 'name' %}
+<nav class="index-nav" aria-label="Jump to an author">
+  {% for author in authors %}
+  {% assign author_anchor = author.name | url_encode %}
+  <a href="#author-{{ author_anchor | url_encode }}">{{ author.name | escape }} <span class="count">{{ author.items.size }}</span></a>
+  {% endfor %}
+</nav>
+{% for author in authors %}
+<section class="index-group" aria-labelledby="author-{{ author.name | url_encode }}">
+  <h2 class="section-title" id="author-{{ author.name | url_encode }}">{{ author.name | escape }}</h2>
+  {% assign posts = author.items | sort: 'date' | reverse %}
+  {% include post-list.html posts=posts heading='h3' %}
+</section>
+{% endfor %}
