@@ -6,7 +6,8 @@ import test from "node:test";
 const root = resolve(process.env.BLOG_SITE_DIR ?? "_site");
 const origin = new URL("https://microsoft.github.io/azure-container-apps/");
 const read = (file) => readFileSync(join(root, file), "utf8");
-const decodeHtml = (value) => value.replace(/&amp;/g, "&").replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&lt;/g, "<").replace(/&gt;/g, ">");
+const entities = { "&amp;": "&", "&quot;": '"', "&#39;": "'", "&lt;": "<", "&gt;": ">" };
+const decodeHtml = (value) => value.replace(/&(?:amp|quot|#39|lt|gt);/g, (entity) => entities[entity]);
 const files = readdirSync(root, { recursive: true }).filter((file) => /\.html$/.test(file) && !/^(aca-getting-started|docs)[\\/]/.test(file));
 const postCards = (html) => [...html.matchAll(/<article class="post-card">([\s\S]*?)<\/article>/g)].map(([, card]) => ({
   date: card.match(/<time datetime="([^"]+)"/)?.[1],
@@ -15,6 +16,10 @@ const postCards = (html) => [...html.matchAll(/<article class="post-card">([\s\S
 }));
 const homepage = read("index.html");
 const posts = postCards(homepage);
+
+test("HTML entities are decoded once, preserving nested escapes in links and IDs", () => {
+  assert.equal(decodeHtml("&amp;lt; &amp;quot; &#39; &amp;"), "&lt; &quot; ' &");
+});
 
 test("the homepage lists every published post newest first", () => {
   assert.ok(posts.length > 0, "The blog should contain a starter post");
