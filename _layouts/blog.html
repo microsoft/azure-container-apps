@@ -1,0 +1,14 @@
+---
+layout: default
+---
+<header class="page-header">
+  <p class="eyebrow">From the Azure Container Apps team</p>
+  <h1>{{ page.title | escape }}</h1>
+  <p class="page-description">{{ page.description | escape }}</p>
+</header>
+<div class="blog-grid">
+  <div class="blog-content">{{ content }}</div>
+  <aside class="sidebar" aria-label="Explore the blog">
+    {% include sidebar.html %}
+  </aside>
+</div>

@@ -1,0 +1,27 @@
+<section class="sidebar-section">
+  <h2>Browse by date</h2>
+  {% assign months = site.posts | group_by_exp: 'post', "post.date | date: '%Y-%m'" %}
+  <ul class="browse-list">
+    {% for month in months %}
+    <li><a href="{{ '/archive/' | relative_url }}#{{ month.name }}">{{ month.items.first.date | date: "%B %Y" }}<span class="count">{{ month.items.size }}</span></a></li>
+    {% endfor %}
+  </ul>
+</section>
+{% if site.tags.size > 0 %}
+<section class="sidebar-section">
+  <h2>Explore topics</h2>
+  <ul class="tag-list">
+    {% assign tags = site.tags | sort %}
+    {% for tag in tags %}
+    {% assign tag_anchor = tag[0] | url_encode %}
+    <li><a class="tag" href="{{ '/tags/' | relative_url }}#tag-{{ tag_anchor | url_encode }}">{{ tag[0] | escape }} <span class="count">{{ tag[1].size }}</span></a></li>
+    {% endfor %}
+  </ul>
+</section>
+{% endif %}
+<section class="sidebar-section resources">
+  <h2>Other links</h2>
+  <a href="{{ '/aca-getting-started/' | relative_url }}">Resources &amp; getting started <span aria-hidden="true">&rarr;</span></a>
+  <a href="https://github.com/orgs/microsoft/projects/540">Public roadmap <span aria-hidden="true">&nearr;</span></a>
+  <a href="https://github.com/{{ site.repository }}/issues">Feedback &amp; issues <span aria-hidden="true">&nearr;</span></a>
+</section>

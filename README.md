@@ -13,6 +13,7 @@ With Azure Container Apps, you can:
 
 ## Get Started
 
+- **Blog**: [Azure Container Apps blog](https://microsoft.github.io/azure-container-apps/) · [Publish a post](_posts/README.md)
 - **Latest Updates**: [Pinned monthly update in issues](https://github.com/microsoft/azure-container-apps/issues)
 - **In-flight work**: [External Roadmap](https://github.com/orgs/microsoft/projects/540)
 - **Samples & updates**: [aka.ms/aca/start](https://aka.ms/aca/start)
@@ -21,6 +22,25 @@ With Azure Container Apps, you can:
 
 
 
+
+## Blog source and local preview
+
+The blog's Jekyll source lives at the repository root: `_posts` for Markdown
+posts, `_layouts` and `_includes` for templates, `assets` for styling, and
+`_config.yml` for site settings. [Adding a post](_posts/README.md) only requires
+one Markdown file; date and tag navigation update automatically.
+
+With Ruby and Bundler installed:
+
+```sh
+bundle install
+bundle exec jekyll serve
+```
+
+Open `http://localhost:4000/azure-container-apps/`. The existing
+`aca-getting-started/` resource hub is preserved. GitHub Actions validates
+pull requests and builds the site with the official GitHub Pages Jekyll
+action, then publishes `_site` after a merge to `main`.
 
 ## Contributing
 

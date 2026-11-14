@@ -1,0 +1,18 @@
+---
+layout: blog
+title: The archive
+description: Every post, organized by month. Start with the latest or explore a little further back.
+permalink: /archive/
+---
+{% assign months = site.posts | group_by_exp: 'post', "post.date | date: '%Y-%m'" %}
+<nav class="index-nav" aria-label="Jump to a month">
+  {% for month in months %}
+  <a href="#{{ month.name }}">{{ month.items.first.date | date: "%B %Y" }} <span class="count">{{ month.items.size }}</span></a>
+  {% endfor %}
+</nav>
+{% for month in months %}
+<section class="index-group" aria-labelledby="{{ month.name }}">
+  <h2 class="section-title" id="{{ month.name }}">{{ month.items.first.date | date: "%B %Y" }}</h2>
+  {% include post-list.html posts=month.items heading='h3' %}
+</section>
+{% endfor %}

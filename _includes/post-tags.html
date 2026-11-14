@@ -1,0 +1,8 @@
+{% if include.post.tags.size > 0 %}
+<ul class="tag-list" aria-label="Tags">
+  {% for tag in include.post.tags %}
+  {% assign tag_anchor = tag | url_encode %}
+  <li><a class="tag" href="{{ '/tags/' | relative_url }}#tag-{{ tag_anchor | url_encode }}">{{ tag | escape }}</a></li>
+  {% endfor %}
+</ul>
+{% endif %}
