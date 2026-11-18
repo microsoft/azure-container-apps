@@ -6,14 +6,9 @@ on:
       - main
   pull_request:
     paths:
-      - "_config.yml"
-      - "_includes/**"
-      - "_layouts/**"
-      - "_posts/**"
-      - "assets/**"
-      - "*.html"
-      - "Gemfile*"
-      - "scripts/test-blog.mjs"
+      - "blog/**"
+      - "aca-getting-started/**"
+      - "docs/**"
       - ".github/workflows/staticpages.yml"
   workflow_dispatch:
 
@@ -31,10 +26,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
 
+      - name: Stage existing static resources
+        run: cp -R aca-getting-started docs blog/
+
       - name: Build with GitHub Pages Jekyll
         uses: actions/jekyll-build-pages@44a6e6beabd48582f863aeeb6cb2151cc1716697 # v1.0.13
         with:
-          source: ./
+          source: ./blog
           destination: ./_site
 
       - name: Setup Node LTS
@@ -43,7 +41,7 @@ jobs:
           node-version: "lts/*"
 
       - name: Test blog navigation and links
-        run: node --test scripts/test-blog.mjs
+        run: node --test blog/scripts/test-blog.mjs
 
       - name: Upload artifact
         if: github.ref == 'refs/heads/main'

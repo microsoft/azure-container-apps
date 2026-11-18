@@ -10,6 +10,8 @@ _site/
 .jekyll-metadata
 .bundle/
 vendor/bundle/
+/blog/aca-getting-started/
+/blog/docs/
 
 # User-specific files
 *.rsuser
