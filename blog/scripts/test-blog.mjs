@@ -86,10 +86,19 @@ test("the supplied logo is published and the author index is removed", () => {
   assert.ok(!existsSync(join(root, "authors", "index.html")));
 });
 
+test("GitHub authoring links point to the isolated blog source", () => {
+  assert.ok(homepage.includes("https://github.com/microsoft/azure-container-apps/blob/main/blog/_posts/README.md"));
+  for (const post of posts) {
+    const file = decodeURIComponent(new URL(post.url, origin).pathname.slice(origin.pathname.length)) + "index.html";
+    assert.match(read(file), /href="https:\/\/github\.com\/microsoft\/azure-container-apps\/edit\/main\/blog\/_posts\/[^"]+\.md"/);
+  }
+});
+
 test("the resource hub remains available and non-site source stays private to GitHub", () => {
   assert.ok(existsSync(join(root, "aca-getting-started", "index.html")));
+  assert.ok(existsSync(join(root, "docs", "images", "Secrets-change-steps-portal.png")));
   assert.ok(existsSync(join(root, "feed.xml")));
-  for (const file of ["AGENTS.md", "Gemfile", "README.md", "scripts/test-blog.mjs", "plugin"]) {
+  for (const file of ["AGENTS.md", "Gemfile", "README.md", "blog", "aca-cli", "marketplace.json", "plugin", "preview", "scripts", "templates"]) {
     assert.ok(!existsSync(join(root, file)), `Non-site source unexpectedly published: ${file}`);
   }
 });

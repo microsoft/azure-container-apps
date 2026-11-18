@@ -2,7 +2,7 @@
 
 Add **one Markdown file** here. No template or navigation updates are needed.
 
-1. [Create a post in GitHub](https://github.com/microsoft/azure-container-apps/new/main/_posts).
+1. [Create a post in GitHub](https://github.com/microsoft/azure-container-apps/new/main/blog/_posts).
 2. Name it `YYYY-MM-DD-your-post-title.md` and paste the template below.
 3. Write the post and open a pull request. After approval and merge, GitHub
    Actions builds and publishes the site automatically.
@@ -31,7 +31,8 @@ tags; you can also omit tags entirely.
 opening paragraph in post lists and link previews. The `<!--more-->` marker
 keeps the rest of the article out of the list preview.
 
-Put images under `assets/images/` and use a base-path-aware link:
+Put images under `blog/assets/images/` and use a base-path-aware link
+(the published asset URLs do not include `blog/`):
 
 ```liquid
 ![Describe the image]({{ '/assets/images/your-image.png' | relative_url }})
